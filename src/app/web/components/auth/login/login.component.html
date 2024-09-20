@@ -1,0 +1,79 @@
+<!-- ----------- -->
+<!-- <div class="login">
+    <div class="account-login">
+        <h1 class="text-center font-bold" style="margin-bottom: 10%;"> Login</h1>
+
+        <form control="" class="form-group login-form">
+            <input type="text" [(ngModel)]="username" name="username" id="username" class="form__input text-center"
+                placeholder="Username">
+            <input type="password" [(ngModel)]="password" name="password" id="password" class="form__input text-center"
+                placeholder="Password">
+            <button type="submit" (window:keypress)="onSomeAction($event)" (click)="onSubmit()"
+                class="btn">Login</button>
+
+        </form>  
+        <p>version: 20230717@3.6</p>
+    </div>
+</div> -->
+
+<!-- ====================== -->
+
+<section [class]="returnClassBg() " >
+  <div class="container-fluid h-custom">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-md-9 col-lg-6 col-xl-5">
+        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="img-fluid"
+          alt="Sample image">
+      </div>
+      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1"
+        style="min-height: 350px;border-radius: 20px;">
+        <form class="p-7 card">
+          <h1 class="text-center font-bold" style="margin-bottom: 10%;"> Login </h1>
+
+          <!-- Email input -->
+          <div class="form-outline mb-4">
+            <h6 class="form-label font-bold" for="username">User name<span style="color: red; font-weight: bold;">
+                *</span></h6>
+            <input type="text" [(ngModel)]="username" name="username" id="username" class="form-control form-control-lg"
+              placeholder="Enter Username">
+
+          </div>
+
+          <!-- Password input -->
+          <div class="form-outline mb-3">
+            <h6 class="form-label font-bold" for="form3Example4">Password<span
+                style="color: red; font-weight: bold;"> *</span></h6>
+            <input type="password" [(ngModel)]="password" name="password" id="password"
+              class="form-control form-control-lg" placeholder="Enter Password">
+          </div>
+
+          <div class="text-center text-lg-start mt-4 pt-2">
+            <button type="button" (window:keypress)="onSomeAction($event)" (click)="onSubmit()"
+              class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+          </div>
+          <p-messages [value]="msgsInfo"></p-messages>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+ 
+  <p class="text-center">version: {{version}}</p>
+</section>
+
+<!-- ====================== -->
+
+<p-dialog header="Dialog" [(visible)]="display" [modal]="true" showEffect="fade" [style]="{width: '30vw'}"
+  [breakpoints]="{ '960px': '75vw'}">
+  <p class="line-height-3 m-0">
+    {{message}}
+  </p>
+  <ng-template pTemplate="footer" class="p-toolbar-group-right">
+
+    <p-button icon="pi pi-check " label="Ok" (click)="OK()"
+      styleClass="p-button-outlined p-button-danger float-right"></p-button>
+
+  </ng-template>
+</p-dialog>
+<p-toast></p-toast>

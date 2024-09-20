@@ -1,0 +1,159 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+
+<div class="card animation-duration-500 box">
+    <div class="row">
+        <div class="md:col-6">
+            <h6>Month</h6>
+            <p-dropdown [options]="listMonth" [(ngModel)]="year_month" [showClear]="true" [filter]="true"
+                filterBy="name" [style]="{'minWidth':'100%'}" placeholder="Select a Month"
+                optionLabel="name"></p-dropdown>
+        </div>
+        <div class="md:col-6">
+            <h6>Employee</h6>
+            <app-control-employee-list [multiSelect]="true" (outValue)="selectEmployee($event)"
+                [placeholder]="'Select Employee'" [employee_type_id]="'7'" [project_id]="project_id"
+                (outClear)="clearSelectEmployee($event)"></app-control-employee-list>
+        </div>
+    </div>
+</div>
+
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+        <button [loading]="loading" pButton pRipple label="Filter" icon="pi pi-search" class="p-button-sm mr-2"
+            (click)="loadData(1)"></button>
+
+        <button type="button" label="Raw data" pButton (click)="export()" pRipple icon="pi pi-file-excel"
+            style="float: right" class="p-button-sm mr-2"></button>
+        <button type="button" (click)="ShowHideTemplate(1)" label="Import Excel" pButton pRipple
+            class="p-button-sm mr-2" icon="pi pi-upload"></button>
+        <i class="pi pi-bars p-toolbar-separator align-middle"></i>
+        <button pButton pRipple label="Action" icon="pi pi-sitemap" class="p-button-success p-button-sm mr-2"
+            (click)="openNew()"></button>
+
+
+        <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+            enterActiveClass="fadeinup" (click)="showFilter()" tooltipPosition="top" icon="pi pi-eye"
+            class=" p-button-success p-button-sm mr-2" [ngStyle]="{'display': showFiter ?'none':'flex'}"></button>
+
+        <button pButton type="button" pTooltip="Hide Filter" (click)="showFilter()" tooltipPosition="top"
+            icon="pi pi-eye-slash" class="p-button-warning p-button-sm mr-2" pStyleClass=".box"
+            leaveActiveClass="fadeoutup" leaveToClass="hidden"
+            [ngStyle]="{'display': !showFiter?'none':'flex'}"></button>
+
+    </ng-template>
+
+    <ng-template pTemplate="right">
+
+    </ng-template>
+</p-toolbar>
+
+
+<div class="card" *ngIf="showTemplate === 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input class="form-control" type="file" (change)="onChange($event)" #myInputFile accept=".xlsx" />
+            </div>
+
+            <button pButton pRipple label="Get Template" icon="pi pi-file-export" (click)="getTemplate()"
+                class="p-button-sm p-button-info mr-2"></button>
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" label="Upload File" icon="pi pi-upload"
+                class="p-button-sm p-button-success"></button>
+        </div>
+    </p-toolbar>
+
+    <hr>
+
+    <div class="card" *ngIf="dataError">
+        <p-table #dt [columns]="cols" [value]="dataError" selectionMode="multiple" [exportHeader]="'customExportHeader'"
+            [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="caption">
+                <div class="flex">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()"
+                        class="p-button-success ml-auto" pTooltip="XLS" tooltipPosition="bottom"></button>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th class="text-center" *ngFor="let col of columns">
+                        {{ col.header }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns">
+                        <p [class]="col.field !== 'error_name' ? 'text-center' : ''">{{ rowData[col.field] }} </p>
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+    </div>
+
+    <hr>
+    <div class="card" *ngIf="dataMessError">
+        <div class=" col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">
+                    Error Name :
+                </div>
+                <div class="col-11">
+                    {{dataMessError}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="card">
+    <p-toast></p-toast>
+
+    <!--   [paginator]="true"  -->
+    <p-table #dt [value]="listSellInEmployee" [rows]="20" [tableStyle]="{ 'min-width': '75rem' }" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            Total Item : {{totalRecords}}
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+        <ng-template pTemplate="header">
+
+            <tr>
+                <th class="text-center">RowNumber</th>
+                <th class="text-center">Employee</th>
+                <th class="text-center">Target</th>
+                <th class="text-center">Year Month</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr [pTooltip]="item._toolTip" tooltipPosition="top">
+                <td class="text-center">{{ item.rowNumber }}</td>
+                <td> <span class="font-bold" style="color: green;">[{{ item.employee_id }}]</span> -
+                    {{item.employee_code}} - {{item.employee_name}}</td>
+                <td class="text-center font-bold" style="color: green;">
+                    <!-- {{ item.value }} -->
+                    {{item.value | number: '1.0-0'}}
+                </td>
+                <td class="text-center">{{ item._year_month }}</td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+<p-dialog [(visible)]="employeeDialog" [style]="{ width: '450px' }" header="Employee Action Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <p class="font-bold m-0" style="color:red"> * input = 0: Remove </p>
+        <p class="font-bold m-0" style="color:red"> * input > 0: Add / Update </p>
+        <p-inputNumber class="mt-2" id="value" [(ngModel)]="value"></p-inputNumber>
+        <button type="button" (click)="saveEmployee()" label="Submit" pButton pRipple icon="pi pi-sitemap"
+            style="float: right" class="p-button-sm mt-2"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

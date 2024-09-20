@@ -1,0 +1,228 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<p-toast></p-toast>
+
+<section [ngStyle]="{'pointer-events': disabled_form == true?'none':''}">
+    <div class="row grid animation-duration-500 mt-2">
+        <div class="md:col-4 mt-2">
+            <div class="card">
+                <div class="row">
+                    <div class="md:col-12">
+                        <h6>{{GetLanguage('lb_send_to')}} <label class="allow">*</label></h6>
+                        <app-control-employee-list (outValue)="selectEmployee($event)" [project_id]="project_id"
+                            [placeholder]="GetLanguage('lb_select_employee')"
+                            [employee_type_id]="'7'"></app-control-employee-list>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="md:col-12">
+                        <h6>{{GetLanguage('lb_transaction_note')}} </h6>
+                        <input [style]="{'minWidth':'100%'}" type="text" pInputText
+                            [(ngModel)]="transaction.transaction_note" placeholder="Enter note">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="field ">
+                        <input pInputText [style]="{'minWidth':'100%'}" class="text-center font-bold mr-2 mb-2"
+                            [(ngModel)]="filename" placeholder="File name" />
+
+                        <input id="file" [style]="{'minWidth':'100%'}" class="form-control form-control-sm" #myInput
+                            (change)="onUploadFile($event)" type="file" />
+                    </div>
+
+                    <div class="flex col-12 flex-column max-w-full gap-2 ">
+                        <div class="flex align-items-center " *ngFor="let item of list_file">
+                            <i class="pi pi-paperclip"></i>
+                            <div class="text-900 font-semibold block ml-2"><a target="_blank"
+                                    [href]="item.url">{{item.file_name}} </a></div>
+                            <i (click)="deletefile(item.url)" class="pi pi-trash cursor_pointer ml-4"
+                                style="color: red;"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="md:col-8 mt-2">
+            <div class="card">
+                <div class="flex justify-content-center mb-4">
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex align-items-center" *ngFor="let item of item_type_list">
+                            <p-radioButton class="text-center" [inputId]="item.code" name="transaction_type"
+                                [value]="item" [(ngModel)]="type_select"
+                                (ngModelChange)="changeTypeItem()"></p-radioButton>
+                            <label [for]="item.code" class="ml-2">{{ item.name }}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="col-12">
+                        <div class="row grid">
+                            <!-- mt-2 -->
+                            <div class="md:col-8">
+                                <div *ngIf="type_select && type_select.code == 'PRODUCT'">
+                                    <div class="col-12">
+                                        <div class="row grid">
+                                            <div class="md:col-9">
+                                                <app-control-osa-product (outValue)="selectItemId($event)"></app-control-osa-product> 
+                                            </div>
+                                            <div class="md:col-3"> 
+                                                <p-dropdown [options]="listTypes" [(ngModel)]="selectedType" 
+                                                    placeholder="Select a type" optionLabel="name" [filter]="true"  
+                                                    filterBy="name" [showClear]="true" [style]="{'width':'100%'}" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="type_select && type_select.code == 'GIFT'" class="mt-3">
+                                    <app-control-gift (outValue)="selectItemId($event)"></app-control-gift>
+                                </div>
+                            </div>
+                            <div class="md:col-4 mt-3" *ngIf="type_select.code == 'PRODUCT'"> 
+                                <input [style]="{'minWidth':'100%'}" type="text" pInputText
+                                [(ngModel)]="listQrCode" (change)="enterQRCODE()"  placeholder="Focus a mouse in the scan the qr code">
+                            </div>
+                            <div class="md:col-4 mt-3" *ngIf="type_select.code == 'GIFT'">
+                                <p-inputNumber [min]="1" id="amount" [(ngModel)]="quantity"
+                                    [style]="{'minWidth':'100%','maxWidth':'100%', 'width' : '100%'}"
+                                    placeholder="Enter quantity"></p-inputNumber>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field" style="text-align: right;" *ngIf="item_detail && quantity">
+                    <button pButton type="button" (click)="pushItem()" label="Thêm" icon="pi pi-arrow-down"
+                        class="p-button-sm p-button-success mr-2 ml-2"></button>
+                </div>
+                <h4 class="text-center">DANH SÁCH ITEM <label class="allow">*</label></h4>
+                <p-panel header="SẢN PHẨM">
+                    <p-dataView #dv [value]="transaction_item_product" *ngIf="transaction_item.length >0 ">
+                        <ng-template let-item pTemplate="listItem">
+                                    <div class="col-4" *ngIf="item.item_type == 'PRODUCT'">
+                                        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                            <p>
+                                                <i (click)="delete_item_product(item.item_id)" class="pi pi-trash cursor_pointer ml-4"
+                                                    style="color: red;"></i>
+                                            </p>
+                                            <p-image [src]="item.image" [alt]="item.item_type" width="40"
+                                                [preview]="true"></p-image>
+                                            <div
+                                                class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                                <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                                    <div class="text-2xl font-bold text-900">{{ item.item_name }}</div>
+                                                    <div class="textfont-bold text-900">Số lượng <b>{{ item.quantity }} </b>
+                                                    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </ng-template>
+                    </p-dataView>
+
+
+                    <p-table [scrollable]="true" scrollHeight="200px"  [value]="transaction_item" [tableStyle]="{ 'min-width': '50rem' }">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>#</th>
+                                <th>Product Name</th>
+                                <th>QR Code</th>
+                                <th>Product Type</th>
+                            </tr>
+                        </ng-template>
+                       
+                        <ng-template pTemplate="body" let-product>
+                            <tr  *ngIf="product.item_type == 'PRODUCT'">
+                                <td>
+                                    <i (click)="delete_item_productbarcode(product.barcode)" class="pi pi-trash cursor_pointer ml-4"
+                                    style="color: red;"></i></td>
+                                <td>{{ product.item_name }}</td>
+                                <td>{{ product.barcode }}</td>
+                                <td>{{ product.product_type }}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <div class="flex align-items-center justify-content-between">
+                                In total there are {{transaction_item ? GetTotalProduct(transaction_item) : 0 }} products.
+                            </div>
+                        </ng-template>
+                    </p-table>
+
+                        <!--   <p-dataView #dv [value]="transaction_item" *ngIf="transaction_item.length >0 ">
+                       
+
+                  <ng-template let-item pTemplate="listItem">
+                            
+
+                            <div class="col-4" *ngIf="item.item_type == 'PRODUCT'">
+                                <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                    
+                                    <p>
+                                        <i (click)="delete_item(item.id)" class="pi pi-trash cursor_pointer ml-4"
+                                            style="color: red;"></i>
+                                    </p>
+                                    <p-image [src]="item.image" [alt]="item.item_type" width="40"
+                                        [preview]="true"></p-image>
+                                    <div
+                                        class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                        <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                            <div class="text-2xl font-bold text-900">{{ item.item_name }}</div>
+                                            <div class="text-2xl font-bold text-900">{{ item.barcode }}</div>
+                                            <div class="textfont-bold text-900">Số lượng <b>{{ item.quantity }} </b>
+                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </ng-template>
+                    </p-dataView>-->
+                </p-panel>
+                <br>
+                <p-panel header="QUÀ TẶNG">
+                    <p-dataView #dv [value]="transaction_item" *ngIf="transaction_item.length >0 ">
+                        <ng-template let-item pTemplate="listItem">
+                            <div class="col-4" *ngIf="item.item_type == 'GIFT'">
+                                <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                    <p>
+                                        <i (click)="delete_item(item.id)" class="pi pi-trash cursor_pointer ml-4"
+                                            style="color: red;"></i>
+                                    </p>
+                                    <p-image [src]="item.image" [alt]="item.item_type" width="40"
+                                        [preview]="true"></p-image>
+                                    <div
+                                        class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                        <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                            <div class="text-2xl font-bold text-900">{{ item.item_name }}</div>
+                                            <div class="textfont-bold text-900">Số lượng <b>{{ item.quantity }} </b>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dataView>
+                </p-panel>
+
+            </div>
+        </div>
+    </div>
+    <div class="grid animation-duration-500 box">
+        <div class="col-12">
+            <div class="card">
+                <p-toolbar>
+                    <div class="p-toolbar-group-end">
+                        <button pButton type="button" label="Hoàn thành" icon="pi pi-arrow-up"
+                            class="p-button-sm p-button-success mr-2 ml-2" (click)="DONE()"></button>
+                    </div>
+                </p-toolbar>
+            </div>
+        </div>
+    </div>
+
+</section>
+

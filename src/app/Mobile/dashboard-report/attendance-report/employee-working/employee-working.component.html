@@ -1,0 +1,25 @@
+<div class="wrapper flex flex-column w-full h-fit p-3">
+    <div pRipple class="employee flex flex-row w-full h-fit gap-3 p-3 bg-white mb-3 shadow-5" *ngFor="let item of employeeList">
+        <p-avatar *ngIf="item.image"
+            image="{{item.image}}" 
+            size="xlarge"
+            shape="circle" />
+        <p-skeleton shape="circle" size="4rem" styleClass="mr-2" *ngIf="!item.image" />
+
+        <div class="flex flex-column align-items-start justify-content-start gap-2">
+            <p *ngIf="item.employee_name" class="text-base font-bold m-0" style="color: #0000AE">{{item.employee_name}}</p>
+            <p-skeleton width="5rem" styleClass="mb-2" *ngIf="!item.employee_name" />
+
+            <div class="flex flex-row align-items-start justify-content-center gap-3">
+                <p *ngIf="item.employee_code" class="text-sm m-0">{{item.employee_code}}</p>
+                <p-skeleton height="2rem" styleClass="mb-2" *ngIf="!item.employee_code" />
+
+                <i class="pi pi-circle-fill" style="font-size: 0.3rem; align-self: center;"></i>
+
+                <p *ngIf="item.employee_type_name" class="text-sm m-0">{{item.employee_type_name}}</p>
+                <p-skeleton height="2rem" styleClass="mb-2" *ngIf="!item.employee_type_name" />
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+.w-100{
+    width: 100%;
+}
+.h-100{
+    height: 100%;
+}
+.my-body {
+    zoom: 80%;
+    -moz-transform: scale(0.8);
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(0.8);
+    -o-transform-origin: 0 0;
+    
+    -webkit-transform-origin: 0 0;
+}
+.sum_amount{
+    font-size: large;
+}
+
+body {
+    touch-action: manipulation;
+  }
+  
+  /* Disable pinch zoom */
+  @viewport {
+    zoom: 1.0;
+    user-zoom: fixed;
+  }

@@ -1,0 +1,498 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<p-toast></p-toast>
+<div class="mb-2">
+    <p-breadcrumb class="max-w-full" [model]="items_menu" [home]="home"></p-breadcrumb>
+</div>
+
+<div class="styleSearch">
+    <p-toolbar>
+        <div class="flex flex-column align-items-start justify-content-between p-toolbar-group-start gap-4">
+
+            <div class="flex justify-content-end align-items-center gap-4">
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Start Date - End Date</h6>
+                    <p-calendar inputId="date" [(ngModel)]="rangeDates" selectionMode="range"
+                        placeholder="yy/mm/dd - yy/mm/dd" appendTo="body" dateFormat="yy/mm/dd" [readonlyInput]="true"
+                        class="mr-2" [showButtonBar]="true"></p-calendar>
+                </div>
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Area</h6>
+                    <!-- {{itemArea |json}} -->
+                    <p-multiSelect [options]="listArea" [(ngModel)]="selectedArea" placeholder="Select area"
+                        optionLabel="name" display="chip" [showClear]="true" appendTo="body" class="mr-2"
+                        [filter]="true" filterBy="name" (onChange)="selectArea($event)" [style]="{ maxWidth: '200px' }"
+                        (onClear)="clearSelectArea()"></p-multiSelect>
+
+                </div>
+
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Region</h6>
+                    <!-- {{itemRegion|json}} -->
+                    <p-multiSelect [options]="listRegion" [(ngModel)]="selectedRegion" placeholder="Select region"
+                        optionLabel="name" display="chip" [showClear]="true" appendTo="body" class="mr-2"
+                        [filter]="true" filterBy="name" (onChange)="selectRegion($event)"
+                        [style]="{ maxWidth: '200px' }" (onClear)="clearSelectRegion()"></p-multiSelect>
+
+                </div>
+
+                <div class="p-input-icon-right flex flex-column gap-2" > 
+                    <h6 class="text-sm font-medium m-0">Shop Type</h6> 
+                    <app-control-shop-type [multiSelect]="true" (outValue)="selectShopType($event)"
+                    (outClear)="clearSelectShopType($event)"></app-control-shop-type>
+
+                </div>
+
+                <div class="p-input-icon-right flex flex-column gap-2" *ngIf="checkManager == true">
+                    <h6 class="text-sm font-medium m-0">Manager</h6>
+                    <!-- {{manager_id |json}} -->
+                    <app-control-employee-list (outValue)="selectManager($event)" class="mr-2"
+                        [inputStyle]="{'minWidth':'200px','maxWidth':'300px' }" [employee_type_id]="'8'"
+                        [project_id]="project_id" [multiSelect]="true" [placeholder]="'Select manager'"
+                        (outClear)="clearSelectManager($event)"></app-control-employee-list>
+
+                </div>
+            </div>
+
+            <div class="flex justify-content-end align-items-center gap-4">
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Product</h6>
+                    <!-- {{itemProduct|json}} -->
+                    <app-control-osa-product [selectMulti]="true" (outValue)="selectProduct($event)"
+                        [inputStyle]="{maxWidth: '200px'}" class="mr-2"
+                        (outClear)="clearSelectProduct($event)"></app-control-osa-product>
+
+                </div>
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Category</h6>
+                    <!-- {{itemCategory|json}} -->
+                    <app-control-osa-category (outValue)="selectedCategory($event)" [selectMulti]="true"
+                        (outClear)="clearSelectCategory($event)"
+                        [inputStyle]="{'minWidth':'200px','maxWidth':'300px' }"></app-control-osa-category>
+                </div>
+
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Brand</h6>
+                    <!-- {{brand_name|json}} -->
+                    <app-control-brand (outValue)="selectedBrand($event)" [selectMulti]="true"
+                        (outClear)="clearSelectBrand($event)"
+                        [inputStyle]="{'minWidth':'200px','maxWidth':'300px' }"></app-control-brand>
+                </div>
+            </div>
+
+        </div>
+        <div class="p-toolbar-group-end">
+            <p-button (onClick)="getData()" class="mt-4"><span class="pi pi-search"></span></p-button>
+        </div>
+    </p-toolbar>
+</div>
+
+
+
+<div class="card">
+    <p-tabView>
+        <p-tabPanel header="Dashboard I">
+
+            <div class="card">
+
+                <div class="grid">
+                    <div class="md:col-6">
+
+                        <figure class="highcharts-figure" 
+                            [ngClass]="{'hide-loadding': loading.SalesReportArea == true}">
+                            <div id="SalesReportArea"></div>
+                        </figure>
+
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportArea == true"> </p-skeleton>
+
+                    </div>
+                    <div class="md:col-6">
+                        <figure class="highcharts-figure"
+                            [ngClass]="{'hide-loadding': loading.SalesReportRegion == true}">
+                            <div id="SalesReportRegion"></div>
+                        </figure>
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportRegion == true"> </p-skeleton>
+                    </div>
+                </div>
+
+
+                <div class="grid">
+                    <div class="md:col-3">
+                        <figure class="highcharts-figure"
+                            [ngClass]="{'hide-loadding': loading.SalesReportArea == true}">
+                            <div id="SalesReportAreaQuantity"></div>
+                        </figure>
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportArea == true"> </p-skeleton>
+                    </div>
+                    <div class="md:col-3">
+                        <figure class="highcharts-figure"
+                            [ngClass]="{'hide-loadding': loading.SalesReportArea == true}">
+                            <div id="SalesReportAreaSales"></div>
+                        </figure>
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportArea == true"> </p-skeleton>
+                    </div>
+
+
+                    <div class="md:col-3">
+                        <figure class="highcharts-figure"
+                            [ngClass]="{'hide-loadding': loading.SalesReportRegion == true}">
+                            <div id="SalesReportRegionQuantity"></div>
+                        </figure>
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportRegion == true"> </p-skeleton>
+                    </div>
+                    <div class="md:col-3">
+                        <figure class="highcharts-figure"
+                            [ngClass]="{'hide-loadding': loading.SalesReportRegion == true}">
+                            <div id="SalesReportRegionSales"></div>
+                        </figure>
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportRegion == true"> </p-skeleton>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Employee</h6>
+                            <!-- <app-control-employee-list (outValue)="selectEmployeeBR($event)"
+                                [placeholder]="'Select Employee'"
+                                [inputStyle]="{'minWidth':'200px','maxWidth':'300px','margin-top':'0.5rem'}"
+                                [employee_type_id]="'7'" [project_id]="project_id" [multiSelect]="true"
+                                (outClear)="clearEmployeeBR($event)"></app-control-employee-list> -->
+
+                            <p-multiSelect [options]="listEmployeeBR" [(ngModel)]="selectedEmployeeBR"
+                                placeholder="Select employee" optionLabel="name" display="chip" [showClear]="true"
+                                appendTo="body" class="mr-2" [filter]="true" filterBy="name"
+                                (onChange)="selectEmployeeBR_Filter($event)" [style]="{ maxWidth: '200px' }"
+                                (onClear)="clearSelectEmployeeBR()"></p-multiSelect>
+                        </div>
+
+                    </div>
+                </div>
+
+                <figure class="highcharts-figure" [ngClass]="{'hide-loadding': loading.SalesReportBR == true}">
+                    <div id="SalesReportBR"></div>
+                </figure>
+                <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportBR == true"> </p-skeleton>
+            </div>
+            <div class="card">
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+                        <!-- {{shop_code|json}} -->
+                        <!-- <p-multiSelect [options]="listShopOutlet" [(ngModel)]="selectedShopOutlet"
+                                placeholder="Select shop" optionLabel="name" display="chip" [showClear]="true"
+                                appendTo="body" class="mr-2" [filter]="true" filterBy="name"
+                                (onChange)="selectShopOutlet($event)" [style]="{ maxWidth: '200px' }"
+                                (onClear)="clearSelectShopOutlet()"></p-multiSelect> -->
+
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Shop Code</h6>
+
+                            <input (ngModelChange)="selectShopCodeOutlet($event)" type="text" pInputText
+                                [(ngModel)]="shop_code" placeholder="List Shop Code" />
+
+                        </div>
+
+                        <!-- placeholder="Shop Name" -->
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Shop Name</h6>
+                            <input (ngModelChange)="selectShopNameOutlet($event)" type="text" pInputText
+                                [(ngModel)]="shop_name" />
+                        </div>
+
+                    </div>
+                </div>
+
+                <figure class="highcharts-figure" [ngClass]="{'hide-loadding': loading.SalesReportOutlet == true}">
+                    <div id="SalesReportOutlet"></div>
+                </figure>
+                <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportOutlet == true"> </p-skeleton>
+            </div>
+
+            <div class="card">
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Date</h6>
+                            <p-calendar inputId="date" [(ngModel)]="itemDate" placeholder="dd/mm/yy" appendTo="body"
+                                (ngModelChange)="changeReportDate($event)" dateFormat="dd/mm/yy" [readonlyInput]="true"
+                                class="mr-2" [showButtonBar]="true" [minDate]="rangeDates[0]"
+                                [maxDate]="rangeDates[1]"></p-calendar>
+                        </div>
+
+                    </div>
+                </div>
+
+                <figure class="highcharts-figure" [ngClass]="{'hide-loadding': loading.SalesReportDate == true}">
+                    <div id="SalesReportDate"></div>
+                </figure>
+                <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportDate == true"> </p-skeleton>
+            </div>
+
+            <div class="card">
+                <div class="grid">
+                    <div class="md:col-6">
+                        <figure class="highcharts-figure"
+                            [ngClass]="{'hide-loadding': loading.SalesReportProduct == true}">
+                            <div id="SalesReportProductQuantity"></div>
+                        </figure>
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportProduct == true">
+                        </p-skeleton>
+                    </div>
+                    <div class="md:col-6">
+                        <figure class="highcharts-figure"
+                            [ngClass]="{'hide-loadding': loading.SalesReportProduct == true}">
+                            <div id="SalesReportProductSales"></div>
+                        </figure>
+                        <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportProduct == true">
+                        </p-skeleton>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Employee</h6>
+                            <!-- {{employee_SKU_id|json}} -->
+                            <!-- <app-control-employee-list (outValue)="selectEmployeeSKU($event)"
+                                [placeholder]="'Select Employee'"
+                                [inputStyle]="{'minWidth':'200px','maxWidth':'300px','margin-top':'0.5rem'}"
+                                [employee_type_id]="'7'" [project_id]="project_id" (outClear)="clearEmployeeSKU($event)"
+                                [multiSelect]="true"></app-control-employee-list> -->
+
+                            <p-multiSelect [options]="listEmployeeSKU" [(ngModel)]="selectedEmployeeSKU"
+                                placeholder="Select employee" optionLabel="name" display="chip" [showClear]="true"
+                                appendTo="body" class="mr-2" [filter]="true" filterBy="name"
+                                (onChange)="selectEmployeeSKU_Filter($event)" [style]="{ maxWidth: '200px' }"
+                                (onClear)="clearSelectEmployeeSKU()"></p-multiSelect>
+                        </div>
+                    </div>
+                </div>
+
+
+                <figure class="highcharts-figure" [ngClass]="{'hide-loadding': loading.SalesReportSKUEmployee == true}">
+                    <div id="SalesReportSKUEmployee"></div>
+                </figure>
+                <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportSKUEmployee == true">
+                </p-skeleton>
+            </div>
+
+            <div class="card">
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+
+                        <!-- <p-multiSelect [options]="listShopSKU" [(ngModel)]="selectedShopSKU"
+                                placeholder="Select shop" optionLabel="name" display="chip" [showClear]="true"
+                                appendTo="body" class="mr-2" [filter]="true" filterBy="name"
+                                (onChange)="selectShopSKU($event)" [style]="{ maxWidth: '200px' }"
+                                (onClear)="clearSelectShopSKU()"></p-multiSelect> -->
+
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Shop Code</h6>
+                            <!-- {{shop_code_sku|json}} -->
+                            <input (ngModelChange)="selectShopCodeSKU($event)" type="text" pInputText
+                                [(ngModel)]="shop_code_sku" placeholder="List Shop Code" />
+
+                        </div>
+
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Shop Name</h6>
+                            <input (ngModelChange)="selectShopNameSKU($event)" type="text" pInputText
+                                [(ngModel)]="shop_name_sku" />
+                        </div>
+
+                    </div>
+                </div>
+                <figure class="highcharts-figure" [ngClass]="{'hide-loadding': loading.SalesReportSKUShop == true}">
+                    <div id="SalesReportSKUShop"></div>
+                </figure>
+                <p-skeleton width="100%" height="400px" *ngIf="loading.SalesReportSKUShop == true">
+                </p-skeleton>
+            </div>
+
+
+        </p-tabPanel>
+
+        <p-tabPanel header="Dashboard II">
+
+            <div class="card">
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Employee</h6>
+                            <app-control-employee-list (outValue)="selectEmployee($event)"
+                                [placeholder]="'Select Employee'"
+                                [inputStyle]="{'minWidth':'200px','maxWidth':'300px','margin-top':'0.5rem'}"
+                                [employee_type_id]="'7'" [project_id]="project_id"
+                                [multiSelect]="true"></app-control-employee-list>
+
+                        </div>
+
+                    </div>
+                </div>
+                <figure class="highcharts-figure">
+                    <div id="totalAmountEmployee"></div>
+                </figure>
+
+                <div class="card" *ngIf="viewDataTableEmployee == true">
+
+                    <p-table [value]="listEmployees" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true"
+                        [rows]="5" [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [rowsPerPageOptions]="[5, 10, 20]">
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Employee</th>
+                                <th class="text-center">Result</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr>
+                                <td><span class="font-bold" style="color: green;">[{{item.employee_id}}]</span> -
+                                    {{item.employee_code}} - {{item.employee_name}}</td>
+                                <td>
+                                    <p-progressBar [value]="item.percent" [pTooltip]="item.toolTip"
+                                        tooltipPosition="top" class="cursor_pointer"></p-progressBar>
+                                    <div class="flex justify-content-end align-items-center gap-2">
+                                        <!-- class="p-input-icon-right flex flex-column gap-2" -->
+                                        <label *ngIf="item.overtargets != null">Over Targets: <span class="font-bold"
+                                                style="color: red;">{{item.overtargets}} M</span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                </div>
+
+                <p-toast></p-toast>
+                <p-dialog [modal]="true" [(visible)]="actualEmployeeDialog" [style]="{ width: '450px' }"
+                    header="Employee Actual Details">
+                    <ng-template pTemplate="content">
+                        <p-table [value]="dataTAEmployee.item" selectionMode="single" [(selection)]="selectedProduct"
+                            [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="text-center" pSortableColumn="report_date">Report Date<p-sortIcon
+                                            field="report_date"></p-sortIcon>
+                                    </th>
+                                    <th class="text-center" pSortableColumn="amount">Actual (M) <p-sortIcon
+                                            field="amount"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-item>
+                                <tr [pSelectableRow]="rowData">
+                                    <td class="text-center">{{ item._report_date }}</td>
+                                    <td class="text-center font-bold" style="color: green;">{{ item.amount }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </ng-template>
+                </p-dialog>
+
+
+            </div>
+
+            <div class="card">
+
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Top</h6>
+                            <p-inputNumber id="topEmployee" [(ngModel)]="topEmployee" class="mr-2"
+                                (onInput)="searchTop2($event)"></p-inputNumber>
+                        </div>
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Key</h6>
+                            <p-dropdown [options]="keysEmployee" [(ngModel)]="selectedKeyEmployee" optionLabel="name"
+                                [showClear]="true" placeholder="Select a key" [filter]="true" [filterBy]="'name'"
+                                class="mr-2" (onChange)="searchKey2($event)"></p-dropdown>
+                        </div>
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Sort</h6>
+
+                            <p-toggleButton [(ngModel)]="checkedEmployee" [onIcon]="icon_sort"
+                                offIcon="pi pi-sort-numeric-up-alt" (onChange)="handleSort2()"></p-toggleButton>
+                        </div>
+                    </div>
+                </div>
+
+                <figure class="highcharts-figure">
+                    <div id="TotalSalesTopEmployee"></div>
+                </figure>
+            </div>
+
+
+            <figure class="highcharts-figure">
+                <div id="TotalSalesAmount"></div>
+            </figure>
+
+            <div class="gird">
+                <div class="row">
+                    <div class="md:col-6">
+                        <figure class="highcharts-figure">
+                            <div id="TotalSalesArea"></div>
+                        </figure>
+
+                    </div>
+                    <div class="md:col-6">
+                        <figure class="highcharts-figure">
+                            <div id="TotalSalesProduct"></div>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+
+            <figure class="highcharts-figure">
+                <div id="TotalSalesQuantity"></div>
+            </figure>
+
+
+            <div class="card">
+
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <div class="flex justify-content-end align-items-center gap-2">
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Top</h6>
+                            <p-inputNumber id="top" [(ngModel)]="top" class="mr-2"
+                                (onInput)="searchTop($event)"></p-inputNumber>
+                        </div>
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Key</h6>
+                            <p-dropdown [options]="keys" [(ngModel)]="selectedKey" optionLabel="name" [showClear]="true"
+                                placeholder="Select a key" [filter]="true" [filterBy]="'name'" class="mr-2"
+                                (onChange)="searchKey($event)"></p-dropdown>
+                        </div>
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Sort</h6>
+
+                            <p-toggleButton [(ngModel)]="checked" [onIcon]="icon_sort"
+                                offIcon="pi pi-sort-numeric-up-alt" (onChange)="handleSort()"></p-toggleButton>
+
+                        </div>
+                    </div>
+                </div>
+
+                <figure class="highcharts-figure">
+                    <div id="TotalSalesTopShop"></div>
+                </figure>
+            </div>
+
+        </p-tabPanel>
+
+    </p-tabView>
+</div>
+
+
+
+
+
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<script src="https://code.highcharts.com/modules/pareto.js"></script>

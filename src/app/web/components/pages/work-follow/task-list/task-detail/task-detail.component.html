@@ -1,0 +1,335 @@
+<p-dialog [header]="item_work.header" [(visible)]="item_work.visible" [modal]="true" [style]="{ width: '60vw' }"
+    [maximizable]="true">
+    <div class="col-12 md:col-12 flex flex-wrap ">
+        <div class="lg:col-7" [ngClass]="zoomVisible ? 'hidden' : ''">
+            <div class="card">
+                <div class="col-12 p-0">
+                    <h5>Task Name</h5>
+                    <div class="field">
+                        <input [style]="{'minWidth':'100%'}" placeholder="Task Name" pInputText id="taskname"
+                            [(ngModel)]="data.task_name" type="text" />
+                    </div>
+                </div>
+                <div class="col-12 p-0">
+                    <h5>Tag</h5>
+                    <div class="field">
+
+                        <input [style]="{'minWidth':'100%'}" placeholder="Tag" pInputText id="tag"
+                            [(ngModel)]="data.tag" type="text" />
+                        <hr>
+                        <span *ngFor="let item of listTag" class="ml-2 cursor_pointer" (click)="GetChip(item)"><p-chip
+                                [label]="item"></p-chip></span>
+
+                    </div>
+                </div>
+
+                <div class="col-12 p-0 mb-3 ">
+                    <h5>Time</h5>
+                    <p-calendar [style]="{'minWidth':'100%'}" appendTo="body" [showClear]="true" [(ngModel)]="time"
+                        [showIcon]="true" selectionMode="range" placeholder="yy/mm/dd - yy/mm/dd" dateFormat="yy/mm/dd"
+                        [readonlyInput]="true" appendTo="body"></p-calendar>
+                </div>
+                <div class="col-12 p-0 mb-3 ">
+                    <h5>Prioritize</h5>
+                    <div class="field">
+                        <p-inputNumber id="prioritize" [(ngModel)]="data.prioritize"
+                            [style]="{'minWidth':'100%','maxWidth':'100%', 'width' : '100%'}"
+                            placeholder="Prioritize"></p-inputNumber>
+                    </div>
+                </div>
+
+                <div class="col-12 p-0 ">
+                    <h5>Assignees</h5>
+                    <div class="field">
+                        <app-employee-task [action]="data.action" (outValue)="selectItem_user($event)" [employee_id]="0"
+                            [assignees]="data.assignees"></app-employee-task>
+                    </div>
+                </div>
+                <div class="col-12 p-0 ">
+
+                    <h5>Team Follow</h5>
+                    <div class="field">
+                        <app-employee-task [action]="data.action" (outValueTeam)="selectItem_TeamUser($event)"
+                            [control]="'team-follow'" [employee_id]="0" [team]="team"></app-employee-task>
+                    </div>
+                </div>
+                <div class="col-12 p-0 ">
+                    <h5>Status</h5>
+                    <div class="field">
+                        <app-task-status (outValue)="selectItem_Status($event)" [selected]="status" [control]="'status'"
+                            [action]="action"></app-task-status>
+                    </div>
+                </div>
+                <div class="col-12 p-0 ">
+                    <h5>Test Status</h5>
+                    <div class="field">
+                        <app-task-status (outValue)="selectItem_TesingStatus($event)" [control]="'testing-status'"
+                            [selected]="testStatus" [action]="action"></app-task-status>
+                    </div>
+                </div>
+
+                <div class="col-12 p-0">
+                    <div class="p-formgrid grid flex-column">
+                        <div class="field col-12 m-0 ">
+                            <h5>File attachment</h5>
+                            <input pInputText [style]="{'minWidth':'100%'}" class="text-center font-bold mr-2 mb-2"
+                                [(ngModel)]="filename" placeholder="file name" />
+                            <input id="file" [style]="{'minWidth':'100%'}" class="form-control form-control-sm" #myInput
+                                (change)="onUploadFile($event)" type="file" />
+                        </div>
+                        <div class="flex col-12 flex-column max-w-full gap-2 ">
+                            <div class="flex align-items-center " *ngFor="let item of list_file">
+                                <i class="pi pi-paperclip"></i>
+                                <div class="text-900 font-semibold block ml-2"><a target="_blank"
+                                        [href]="item.url">{{item.file_name}} </a></div>
+                                <i (click)="removeItem(item.url)" class="pi pi-trash cursor_pointer ml-4"
+                                    style="color: red;"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-12 p-0">
+                    <!-- <h5>Description</h5>
+                    <div class="field">
+                        <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="data.description"
+                            [config]="editorConfig"></angular-editor>
+                    </div> -->
+
+                    <div class="flex-col gap-4">
+                        <div class="flex align-items-center gap-4">
+                            <!-- <p-chip class="font-bold " label="Description"></p-chip> -->
+                            <h5 class="m-0">Description</h5>
+                            <button pButton type="button" pTooltip="Show Description" pStyleClass=".box"
+                                enterClass="hidden" enterActiveClass="fadeinup" (click)="showDescript()"
+                                tooltipPosition="top" icon="pi pi-file-edit" class=" p-button-success p-button-sm"
+                                [ngStyle]="{'display': !showDescription ?'none':'flex'}"></button>
+
+                            <button pButton type="button" pTooltip="Hide Description" (click)="showDescript()"
+                                tooltipPosition="top" icon="pi pi-eye"
+                                class="p-button-warning p-button-sm align-items-center" pStyleClass=".box"
+                                leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                                [ngStyle]="{'display': showDescription?'none':'flex'}">
+                            </button>
+                        </div>
+                        <div *ngIf="!showDescription || !data.description" class="animation-duration-500 box mt-2">
+                            <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="data.description"
+                                [config]="editorConfig"></angular-editor>
+                        </div>
+                        <div *ngIf="showDescription && data.description" class="animation-duration-500 box mt-2 ">
+                            <div [innerHTML]="data.description" class="card cursor-pointer">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 " [ngClass]="zoomVisible ? '' : 'lg:col-5'">
+
+            <!-- history -->
+            <div class="card" *ngIf="events.length > 0" [ngClass]="zoomVisible ? 'hidden' : ''">
+                <div class="col-12  border-bottom-1 border-300">
+                    <div class="flex align-items-center justify-content-between ">
+                        <div class="flex align-items-center gap-2">
+                            <h5 class="m-0">History</h5>
+                            <i class="pi pi-history"></i>
+                        </div>
+
+                        <h6 *ngIf="isShow" (click)="isHidden()"
+                            class="pi cursor-pointer pi-times border p-2 border-circle m-0"></h6>
+
+                    </div>
+                </div>
+                <div class="row ">
+
+                    <div class=" col-12 ">
+                        <h6></h6>
+                        <div class="flex flex-column " *ngIf="!isShow">
+                            <p-timeline [value]="dataHistory" [align]="align" [style]="{'minWidth':'100%'}">
+                                <ng-template pTemplate="marker" let-event>
+                                    <span
+                                        class="border-circle w-2rem h-2rem flex align-items-center justify-content-center shadow-2"
+                                        [style.backgroundColor]="event.color">
+                                        <i [ngClass]="event.icon"></i>
+                                    </span>
+                                </ng-template>
+                                <ng-template pTemplate="content" let-event>
+                                    <small class="p-text-secondary pi pi-clock m-0"> {{event.date}}</small>
+                                    <div>
+                                        <h6 class="m-0">Update by : {{event.assignees_name}}</h6>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="opposite" let-event>
+                                    <p-tag class="cursor-pointer" (click)="detailStatusHistory(event.date)"
+                                        [severity]="event.status === 'ToDo' ? '' : event.status === 'Deploy'? 'success':event.status === 'Develop' ? 'success': event.status === 'Completed' ? 'success': event.status === 'Reject' ?'danger':'danger' "
+                                        [value]="event.status" [rounded]="true"> </p-tag>
+                                </ng-template>
+                            </p-timeline>
+
+                            <div *ngIf="events.length > 2">
+                                <small *ngIf="!showHistory" class="flex justify-content-center mt-3 cursor-pointer">
+                                    <p-chip (click)="pageHistory(1)" label="Show more" icon="pi pi-angle-down">
+                                    </p-chip>
+                                </small>
+                                <small *ngIf="showHistory" class="flex justify-content-center mt-3 cursor-pointer">
+                                    <p-chip (click)="pageHistory(0)" label="Hidden" icon="pi pi-angle-up">
+                                    </p-chip>
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <!-- detailItemHistory -->
+
+                        <div class="flex flex-column flex-wrap" *ngIf="isShow">
+                            <div class="col-12 p-0">
+                                <h5>Task Name</h5>
+                                <div class="field">
+                                    <input [style]="{'minWidth':'100%'}" placeholder="Task Name" [disabled]="true"
+                                        pInputText id="taskname" [(ngModel)]="historyDetailData.task_name"
+                                        type="text" />
+                                </div>
+
+                                <h5>Prioritize</h5>
+                                <div class="field">
+                                    <p-inputNumber id="prioritize" [(ngModel)]="historyDetailData.prioritize"
+                                        [style]="{'minWidth':'100%','maxWidth':'100%', 'width' : '100%'}"
+                                        placeholder="Prioritize"></p-inputNumber>
+                                </div>
+
+                            </div>
+                            <div class="col-12 p-0">
+                                <h5>Tag</h5>
+                                <div class="field">
+                                    <input [style]="{'minWidth':'100%'}" placeholder="Tag" [disabled]="true" pInputText
+                                        id="tag" [(ngModel)]="historyDetailData.tag" type="text" />
+                                    <hr>
+                                </div>
+                            </div>
+
+                            <div class="col-12 p-0 mb-3 ">
+                                <h5>Time</h5>
+                                <p-calendar [style]="{'minWidth':'100%'}" [(ngModel)]="timeHistory" [showIcon]="true"
+                                    selectionMode="range" placeholder="yy/mm/dd - yy/mm/dd" dateFormat="yy/mm/dd"
+                                    [disabled]="true" [readonlyInput]="true" appendTo="body"></p-calendar>
+                            </div>
+                            <div class="col-12 p-0 ">
+                                <h5>Assignees</h5>
+                                <div class="field">
+                                    <input [style]="{'minWidth':'100%'}" placeholder="Tag" pInputText id="tag"
+                                        [(ngModel)]="historyDetailData.assignees_name" [disabled]="true" type="text" />
+                                    <hr>
+                                </div>
+                            </div>
+                            <div class="col-12 p-0 ">
+                                <h5>Status</h5>
+                                <div class="field">
+                                    <input [style]="{'minWidth':'100%'}" placeholder="Tag" pInputText id="tag"
+                                        [(ngModel)]="historyDetailData.status" [disabled]="true" type="text" />
+                                    <hr>
+                                </div>
+                            </div>
+                            <div class="col-12 p-0 ">
+                                <h5>Test Status</h5>
+                                <div class="field">
+                                    <input [style]="{'minWidth':'100%'}" [disabled]="true" placeholder="Tag" pInputText
+                                        id="tag" [(ngModel)]="historyDetailData.testing_status" type="text" />
+                                    <hr>
+                                </div>
+                            </div>
+
+                            <div class="col-12 p-0">
+                                <div class="p-formgrid grid flex-column">
+                                    <div class="field col-12 m-0 ">
+                                        <h5>File attachment</h5>
+                                        <input pInputText [style]="{'minWidth':'100%'}" [disabled]="true"
+                                            class="text-center font-bold mr-2 mb-2" [(ngModel)]="filename"
+                                            placeholder="file name" />
+
+                                    </div>
+                                    <div class="flex col-12 flex-column max-w-full gap-2 ">
+                                        <div class="flex align-items-center " *ngFor="let item of list_file">
+                                            <i class="pi pi-paperclip"></i>
+                                            <div class="text-900 font-semibold block ml-2"><a target="_blank"
+                                                    [href]="item.url">{{item.file_name}} </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-12 p-0" *ngIf="historyDetailData.description">
+                                <h5>Description</h5>
+                                <div [innerHTML]="historyDetailData.description" class="card"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="card flex gap-4 ">
+                <div class="flex gap-2 align-items-center justify-content-between border-bottom-1 border-300 pb-3">
+                    <div class="flex gap-2 align-items-center">
+                        <h5 class="m-0">Note</h5>
+                        <h5 class="pi pi-file-edit m-0"></h5>
+                    </div>
+                    <div>
+                        <h5 (click)="zoom()" class="pi m-0 p-2 cursor-pointer "
+                            [ngClass]="zoomVisible ? 'pi-window-minimize' : 'pi-window-maximize'"></h5>
+                    </div>
+                </div>
+                <div class="col-12 p-0">
+                    <div class="field">
+                        <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="newNote"
+                            [config]='editorConfig'></angular-editor>
+                    </div>
+                    <button (click)="createNote()" pButton pRipple [style]="{'minWidth':'100%'}" label="Update Note"
+                        class="p-button-success"></button>
+                </div>
+                <div class="flex flex-column gap-4 " *ngFor="let item of noteItem ">
+                    <div class="flex gap-4 align-items-center">
+                        <div class="flex gap-2 align-items-center ">
+                            <h5 class="m-0">{{item.name}} </h5>
+                            <h5 class="pi pi-tags m-0"></h5>
+                        </div>
+                        <div class="flex gap-2 align-items-center  ">
+                            <h5 class="pi pi-clock m-0"></h5>
+                            <h5 class="m-0">{{item.time}} </h5>
+                        </div>
+                    </div>
+                    <div class="col-12 p-0">
+                        <div [innerHTML]="item.note" class="card"></div>
+                    </div>
+                </div>
+                <div *ngIf="note.length > 4">
+                    <small *ngIf="!showNoteItem" class="flex justify-content-center mt-3 cursor-pointer">
+                        <p-chip (click)="pageNote(1)" label="Show more" icon="pi pi-angle-down">
+                        </p-chip>
+                    </small>
+                    <small *ngIf="showNoteItem" class="flex justify-content-center mt-3 cursor-pointer">
+                        <p-chip (click)="pageNote(0)" label="Hidden" icon="pi pi-angle-up">
+                        </p-chip>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <ng-template pTemplate="footer" appendTo="body" class="px-6">
+        <p-button pRipple icon="pi pi-times" label="Cancel" (click)="handleCancel()" size="small"
+            styleClass="p-button-text"></p-button>
+        <!-- <p-button pRipple icon="pi pi-delete" label="Delete" (click)="handleCancel()" size="small"
+            styleClass="p-button-text"></p-button> -->
+        <p-button pRipple icon="pi pi-check" (click)="HandleUpdate()" label="Update" class="p-button-success pr-6"
+            severity="success"></p-button>
+    </ng-template>
+</p-dialog>

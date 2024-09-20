@@ -1,0 +1,57 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+
+<div *ngIf="action == 'create'">
+    <div class="container">
+        <div class="main-body"> 
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+ 
+                    <div class="card mt-3">    
+                        <div class="field p-fluid">
+                            <label htmlFor="category_name">Category Name<span style="color: red; font-weight: bold;"> *</span></label>
+                            <p>
+                                <input pInputText id="category_name" [(ngModel)]="category_name" type="text" />
+                            </p>
+                        </div>  
+ 
+                        <div class="field p-fluid">
+                            <label htmlFor="company">Company</label>
+                            <p>
+                                <input pInputText id="company" [(ngModel)]="company" type="text" />
+                            </p>
+                        </div>  
+
+                        <div class="field p-fluid">
+                            <label htmlFor="brand">Brand</label>
+                            <p>
+                                <input pInputText id="brand" [(ngModel)]="brand" type="text" />
+                            </p>
+                        </div>  
+                        <div class="field p-fluid">
+                            <label htmlFor="_package">Package</label>
+                            <p>
+                                <input pInputText id="_package" [(ngModel)]="_package" type="text" />
+                            </p>
+                        </div>  
+
+                        <div class="field p-fluid">
+                            <label htmlFor="orders">Orders</label>
+                            <p>
+                                <input pInputText id="orders" min="0" [(ngModel)]="orders" type="numebr" />
+                            </p>
+                        </div>  
+
+                        <div class="field p-fluid">
+                            <p-button label="Save" (click)="createCategory()" styleClass="p-button-success p-button-sm"></p-button> 
+                        </div>
+
+                    </div>
+                </div> 
+                
+            </div>
+
+        </div>
+    </div>
+</div> 

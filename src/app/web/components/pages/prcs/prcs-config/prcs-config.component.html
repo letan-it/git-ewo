@@ -1,0 +1,356 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-3">
+                    <h6>Process</h6>
+                    <p-dropdown [options]="filterProcesses" (onChange)="selectedFilterProcess($event)"
+                        optionLabel="process_name" [showClear]="true" [filter]="true" filterBy="process_name"
+                        [style]="{'minWidth':'100%'}" placeholder="Select Process">
+                        <ng-template let-filterProcess pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{filterProcess.process_name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>Status</h6>
+                    <p-dropdown [options]="filterStatuses" (onChange)="selectedFilterStatus($event)" optionLabel="name"
+                        [showClear]="true" (onClear)="clearFilterStatus()" [style]="{'minWidth':'100%'}"
+                        placeholder="Active">
+                        <ng-template let-filterStatus pTemplate="item">
+                            <div *ngIf="filterStatus.name === 'Active'; else Inactive">
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                    <div>{{ filterStatus.name }}</div>
+                                </div>
+                            </div>
+                            <ng-template #Inactive>
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                    <div>{{ filterStatus.name }}</div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData(1)" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-sm mr-2 mt-2"
+                        (click)="openNew()"></button>
+
+                    <p-splitButton label="Master" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2"
+                        [model]="itemsAction"></p-splitButton>
+
+                    <!-- <button type="button" label="Raw data" pButton (click)="export()" pRipple icon="pi pi-file-excel"
+                        style="float: right" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button type="button" label="Clone" pButton (click)="clone()" pRipple icon="pi pi-copy"
+                        style="float: right" class="p-button-sm mr-2 mt-2"></button> -->
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                        class=" p-button-success mr-2 mt-2"
+                        [ngStyle]="{'display' : showFilter === 1 ? 'none' : 'flex'}"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()"
+                        tooltipPosition="top" icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box" leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                        [ngStyle]="{'display' : showFilter === 0 ? 'none' : 'flex'}"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card" *ngIf="is_loadForm === 1">
+    <p-toast></p-toast>
+
+    <p-table #dt2 [value]="listProcessProject" *ngIf="listProcessProject && listProcessProject.length > 0"
+        [globalFilterFields]="['Prc_id, project_id', 'process_id', 'status', 'is_send_mail', 'is_notification', 'created_date']"
+        [rowHover]="false" [paginator]="true" [first]="first" [rows]="20" [rowsPerPageOptions]="[20, 50, 100]"
+        paginatorPosition="top" (onPage)="onPageChange($event)" selectionMode="single" dataKey="Prc_id"
+        styleClass="p-datatable-gridlines">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th style="width: 5rem"></th>
+                <th class="text-center" pSortableColumn="Prc_id">
+                    Prc ID <p-sortIcon field="Prc_id"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="process_id">
+                    Process ID <p-sortIcon field="process_id"></p-sortIcon>
+                </th>
+                <th class="text-center">Process name</th>
+                <th class="text-center">Total Step</th>
+                <th class="text-center" pSortableColumn="verified">
+                    Status <p-sortIcon field="verified"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="is_send_mail">
+                    Email <p-sortIcon field="is_send_mail"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="is_notification">
+                    Notification <p-sortIcon field="is_notification"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="created_date">
+                    Created date <p-sortIcon field="is_notification"></p-sortIcon>
+                </th>
+                <th class="text-center">Created by</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <tr>
+                <!-- <td>
+                    <p-tableCheckbox [value]="item"></p-tableCheckbox>
+                </td> -->
+                <td>
+                    <button type="button" pButton pRipple [pRowToggler]="item"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.Prc_id }}</span>
+                </td>
+                <td class="text-left w-fit">
+                    <span class="font-medium cursor-pointer" pTooltip="ID: {{item.process_id}}">{{ item.p_name }}</span>
+                </td>
+                <td class="text-left w-fit">
+                    <span class="font-medium">{{ item.process_name }}</span>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-bold">{{ item.total_step }}</span>
+                </td>
+                <td class="text-center w-fits">
+                    <app-control-status-check [status]="item.status"></app-control-status-check>
+                </td>
+                <td class="text-center w-fits">
+                    <app-control-status-check [status]="item.is_send_mail"></app-control-status-check>
+                </td>
+                <td class="text-center w-fits">
+                    <app-control-status-check [status]="item.is_notification"></app-control-status-check>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.created_date }}</span>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.created_by_name }}</span>
+                </td>
+                <td class="text-center flex flex-row align-items-center justify-content-around h-full">
+                    <button class="p-button-rounded p-button-text" style="font-size: 2.5rem" title="Edit"
+                        (click)="openEdit(item)" pButton pRipple type="button" icon="pi pi-pencil">
+                    </button>
+                    <button class="p-button-rounded p-button-text" style="font-size: 2.5rem" title="Edit Config"
+                        (click)="openConfig(item)" pButton pRipple type="button" icon="pi pi-sitemap">
+                    </button>
+                    <button class="p-button-rounded p-button-danger p-button-text" style="font-size: 2.5rem" title="Delete"
+                        (click)="openDelete(item, $event)" pButton pRipple type="button" icon="pi pi-trash"
+                        *ngIf="item.status === 1">
+                    </button>
+                    <p-confirmPopup></p-confirmPopup>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-item>
+            <tr style="text-align: center;">
+                <td colspan="100%" style="background-color: #E9ECEF;">
+                    <div class="p-2" style="width: 100% !important;">
+                        <!-- max-width: 1450px; -->
+                        <app-prcs-detail [inValue]="item" [action]="'view'" [finalTotalStep]="item.total_step"
+                            (triggerStatus)="checkTriggerStatus($event)" (outValue)="loadDataPrcsDetail($event)"
+                            (totalStep)="rerenderTotalStep($event)">
+                        </app-prcs-detail>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center "
+        *ngIf="listProcessProject && listProcessProject.length === 0" style="float: right;">
+        <h5>No data</h5>
+    </div>
+</div>
+
+<!-- Open Dialog Create Prcs Config -->
+<p-dialog [(visible)]="newPrcsConfigDialog" [style]="{ width: '60rem', height: 'fit-content' }"
+    header="Create new Prcs Config" [modal]="true" styleClass="p-fluid" [closable]="true">
+    <ng-template pTemplate="content">
+        <div class="wrapper-id-type flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+            <div class="field w-6">
+                <label for="process_id">Process<span class="font-bold" style="color: red;"> *</span></label>
+                <p-dropdown [options]="filterProcesses" (onChange)="selectedFilterProcess($event)"
+                    optionLabel="process_name" [showClear]="true" [filter]="true" filterBy="process_name"
+                    [style]="{'minWidth':'100%'}" placeholder="Select Process" appendTo="body">
+                    <ng-template let-filterProcess pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{filterProcess.process_name}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+
+            <div class="field w-6">
+                <label for="status">Status<span class="font-bold" style="color: red;"> *</span></label>
+                <p-dropdown [options]="reportStatuses" (onChange)="selectedStatus($event)" [(ngModel)]="reportStatus"
+                    optionLabel="name" id="Status" [showClear]="true" (onClear)="clearStatus()"
+                    [style]="{'minWidth':'100%'}" filterBy="name" placeholder="Select Status">
+                    <ng-template let-status pTemplate="item">
+                        <div *ngIf="status.name === 'Active'; else Inactive">
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                <div>{{ status.name }}</div>
+                            </div>
+                        </div>
+                        <ng-template #Inactive>
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                <div>{{ status.name }}</div>
+                            </div>
+                        </ng-template>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="field w-12">
+            <label for="ProcessName">Process name<span class="font-bold" style="color: red;"> *</span></label>
+            <input pInputText id="ProcessName" [(ngModel)]="newProcessName" placeholder="Please fill in Process Name" />
+        </div>
+
+        <div class="wrapper-id-type flex flex-row w-full h-fit align-items-center justify-content-between gap-5">
+            <div class="field w-full">
+                <p-checkbox label="Notification" id="before_input" [binary]="true" [value]="isNotification"
+                    [(ngModel)]="isNotification"></p-checkbox>
+            </div>
+            <div class="field w-full">
+                <p-checkbox label="Send Email" id="after_input" [binary]="true" [value]="isSendEmail"
+                    [(ngModel)]="isSendEmail"></p-checkbox>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-confirmDialog></p-confirmDialog>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveNewConfig($event)"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Open Dialog Edit Prcs Config -->
+<p-dialog [(visible)]="editPrcsConfigDialog" [style]="{ width: '60rem', height: 'fit-content' }"
+    header="Edit Prcs Config" [modal]="true" styleClass="p-fluid" [closable]="true">
+    <ng-template pTemplate="content">
+        <div class="wrapper-id-type flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+            <div class="field w-6">
+                <label for="process_id">Process<span class="font-bold" style="color: red;"> *</span></label>
+                <input type="text" pInputText id="process_id" [value]="editInfoProcess.process_name"
+                    [disabled]="true" />
+            </div>
+
+            <div class="field w-6">
+                <label for="status">Status<span class="font-bold" style="color: red;"> *</span></label>
+                <div *ngIf="editStatus === 1; else zero">
+                    <p-dropdown [options]="editStatuses" (onChange)="selectedEditStatus($event)"
+                        [(ngModel)]="editStatus" optionLabel="name" id="statusDropdown" [showClear]="false"
+                        [style]="{'minWidth':'100%'}" placeholder="Active">
+                        <ng-template let-editReportStatus pTemplate="item">
+                            <div *ngIf="editReportStatus.name === 'Active'; else Inactive">
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                    <div>{{ editReportStatus.name }}</div>
+                                </div>
+                            </div>
+                            <ng-template #Inactive>
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                    <div>{{ editReportStatus.name }}</div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <ng-template #zero>
+                    <p-dropdown [options]="editStatuses" (onChange)="selectedEditStatus($event)" optionLabel="name"
+                        [showClear]="false" placeholder="Inactive" [style]="{'minWidth':'100%'}">
+                    </p-dropdown>
+                </ng-template>
+            </div>
+        </div>
+
+        <div class="field w-12">
+            <label for="TypeValues">Process name</label>
+            <input pInputText id="TypeValues" [(ngModel)]="editProcessName" />
+        </div>
+
+        <div class="wrapper-id-type flex flex-row w-full h-fit align-items-center justify-content-between gap-5">
+            <div class="field w-full">
+                <p-checkbox label="Notification" id="is_notification" [binary]="true" [value]="editIsNotification"
+                    [(ngModel)]="editIsNotification"></p-checkbox>
+            </div>
+            <div class="field w-full">
+                <p-checkbox label="Send Email" id="is_send_mail" [binary]="true" [value]="editIsSendEmail"
+                    [(ngModel)]="editIsSendEmail"></p-checkbox>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-confirmDialog></p-confirmDialog>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveEditConfig($event)"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Open Dialog Prcs Configuration -->
+<p-dialog [(visible)]="openPrcsConfigDialog" [style]="{ width: '70vw', height: '70vh' }" header="Configuration Prcs"
+    [modal]="true" [closable]="true" [maximizable]="true">
+    <div *ngIf="configuration.config !== ''; else other" class="row">
+        <div class="col-6">
+            <ace-editor [(text)]="configuration.config" mode="json" style="height:400px;"></ace-editor>
+            <label style="color:red" *ngIf="checkSomeObject(configuration.config) === 1">JSON format error
+                config</label>
+        </div>
+        <div class="col-6">
+            <ngx-json-viewer [json]="someObject(configuration.config)" [depth]="3"></ngx-json-viewer>
+        </div>
+    </div>
+    <ng-template #other>
+        <div class="col-6">
+            <ace-editor [(text)]="configuration.config" mode="json" style="height:400px;"></ace-editor>
+            <!-- <label style="color:red" *ngIf="checkSomeObject(configuration.config) === 1">JSON format error config</label> -->
+        </div>
+        <div class="col-6"></div>
+    </ng-template>
+
+    <div class="card flex justify-content-center">
+        <div *ngIf="configuration.config !== ''; else otherBtn" class="flex flex-wrap gap-3">
+            <button type="button" (click)="updateConfig()" *ngIf="checkSomeObject(configuration.config) === 0"
+                class="p-button-sm p-button-success mr-2" label="Update" pButton pRipple icon="pi pi-check"></button>
+        </div>
+        <ng-template #otherBtn>
+            <div class="flex flex-wrap gap-3">
+                <button type="button" (click)="updateConfig()" *ngIf="checkSomeObject(configuration.config) !== 0"
+                    class="p-button-sm p-button-success mr-2" label="Create" pButton pRipple
+                    icon="pi pi-check"></button>
+            </div>
+        </ng-template>
+    </div>
+</p-dialog>

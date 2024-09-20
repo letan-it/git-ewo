@@ -1,0 +1,6 @@
+<section *ngIf="survey_data.tab!= undefined && survey_data.tab.survey_id == 72">
+    <app-survey-form-fixture [survey_data]="survey_data"></app-survey-form-fixture>
+</section>
+<section *ngIf="survey_data.tab!= undefined && survey_data.tab.model_edit == 2">
+    <app-survey-form-default [survey_data]="survey_data"></app-survey-form-default>
+</section>

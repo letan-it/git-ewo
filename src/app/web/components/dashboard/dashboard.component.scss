@@ -1,0 +1,134 @@
+// .donut-inner {
+//     margin-top: -50%; 
+//  }
+//  .donut-inner h5 {
+//     margin-bottom: 5px;
+//     margin-top: 0;
+//  }
+//  .donut-inner span {
+//     font-size: 12px;
+//  }
+
+:host ::ng-deep .p-calendar .p-inputtext {
+    background: white;
+    color: #333;
+}
+
+// :host ::ng-deep .p-calendar-w-btn .p-datepicker-trigger {
+//     background: white;
+//     color: #333;
+//     border: #ddd;
+//     // border: 1px 1px 1px 0 solid #ddd
+// }
+:host ::ng-deep .custom-cal .p-datepicker-calendar {
+    left: -85px;
+    top: 30px
+}
+.height-loading-chart{
+    min-height: 400px;
+}
+// .modal {
+//     left: -85px;
+//     top: 30px
+// }
+
+// BEGIN BARCHART POSM
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+#dataPOSM {
+    height: 400px;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+// END BARCHART POSM
+
+// BEGIN BARCHART POSM REASON
+#dataPOSMReason {
+    height: 400px;
+}
+
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+// END BARCHART POSM REASON
+ 
+ 

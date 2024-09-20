@@ -1,0 +1,10 @@
+<ng-container *ngIf="listWard && isLoadForm==0">
+    <p-dropdown [options]="listWard" [showClear]="true" (onChange)="returnValue(selectedWard)" [filter]="true"
+        filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedWard" [placeholder]="nameWard"
+        optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+<div *ngIf="isLoadForm==1">
+    <p-dropdown [options]="listWard" [showClear]="true" (onChange)="returnValue(selectedWard)" [filter]="true"
+        filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedWard"
+        [placeholder]="'Please choose District'" optionLabel=" name" appendTo="body"></p-dropdown>
+</div>

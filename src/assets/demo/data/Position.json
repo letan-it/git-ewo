@@ -1,0 +1,58 @@
+{
+    "data" : [
+        { 
+            "project_id"    : 2,
+            "position_code" : "AA"
+        },
+        { 
+            "project_id"    : 2,
+            "position_code" : "BB"
+        },
+        { 
+            "project_id"    : 2,
+            "position_code" : "CC"
+        },
+        { 
+            "project_id"    : 3,
+            "position_code" : "CC1"
+        },
+
+        
+        { 
+            "project_id"    : 4,
+            "position_code" : "PS"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "Srep"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "Office"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "RS"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "Ssup"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "PSRAC"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "RSTL"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "PSTL"
+        },
+        { 
+            "project_id"    : 4,
+            "position_code" : "DO"
+        } 
+    ]
+}

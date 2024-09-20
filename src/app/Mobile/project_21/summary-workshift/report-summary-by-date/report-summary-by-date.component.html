@@ -1,0 +1,292 @@
+<div class="wrapper flex flex-column align-items-center justify-content-center w-screen h-fit p-2">
+
+    <div class="flex align-items-center justify-content-start w-full h-fit mb-3" *ngIf="employee_type === 8 && screenWidth >= 768">
+        <app-control-employee-list
+            [multiSelect]="false"
+            [filterStatus]="filterStatus"
+            (outValue)="selectEmployee($event)"
+            [placeholder]="'Chọn nhân viên'"
+            [employee_type_id]="'7'"
+            [project_id]="project_id"
+            (outClear)="clearSelectEmployee($event)"
+            [style]="{'width':'50%'}"
+        ></app-control-employee-list>
+    </div>
+    <div class="flex align-items-center justify-content-start w-full h-fit mb-3" *ngIf="employee_type === 8 && screenWidth < 768">
+        <app-control-employee-list
+            [multiSelect]="false"
+            [filterStatus]="filterStatus"
+            (outValue)="selectEmployee($event)"
+            [placeholder]="'Chọn nhân viên'"
+            [employee_type_id]="'7'"
+            [project_id]="project_id"
+            (outClear)="clearSelectEmployee($event)"
+            [style]="{'width':'100%'}"
+        ></app-control-employee-list>
+    </div>
+
+    <div class="flex flex-wrap gap-2 w-fit" *ngIf="employee_id !== 0">
+        <ng-container *ngFor="let item of listRawData">
+            <div class="custom_size flex flex-row max-w-12rem h-fit p-3 bg-white shadow-6 border-round"
+                (click)="popupDetail(item)">
+                <div class="flex flex-column justify-content-between w-full">
+                    <div class="flex flex-row align-items-start w-full h-fit gap-2">
+                        <i class="pi pi-hashtag" style="font-size: 1.5rem; color: rgb(34, 240, 82);"></i>
+                        <p [ngStyle]="{color: item.background}" class="text-secondary text-base">{{item.name_vn}}</p>
+                    </div>
+                    <div class="flex flex-row align-items-center justify-content-between w-full">
+                        <i class="{{item.icon}}" style="font-size: 2rem"></i>
+
+                        <div class="border-circle w-4rem h-4rem border-solid border-1 font-bold flex align-items-center justify-content-center"
+                            *ngIf="item._key === 'qty' || item._key === 'sum_customer' || item._key === 'quantity_gift'">
+                            <p [ngStyle]="{color: item.color}" pTooltip="{{item.Values}}"
+                                class="font-bold text-3xl text-right">{{formatAmount(item.Values)}}</p>
+                        </div>
+
+                        <div
+                            *ngIf="item._key !== 'qty' && item._key !== 'sum_customer' && item._key !== 'quantity_gift'">
+                            <p [ngStyle]="{color: item.color}" pTooltip="{{item.Values}}"
+                                class="font-bold text-3xl text-right">{{formatAmount(item.Values)}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<!-- Detail Product -->
+<p-dialog [(visible)]="popupDetailProduct" [style]="{ width: '90%', height: 'fit-content' }"
+    header="Chi tiết sản phẩm đã bán" [modal]="true" styleClass="p-fluid" [closable]="true">
+
+    <p-tabView>
+        <p-tabPanel header="Summary">
+            <div class="flex flex-wrap gap-4 w-full">
+                <ng-container *ngFor="let item of summaryProduct">
+                    <div class="flex flex-row align-items-center justify-content-start gap-3">
+                        <p-image [src]="item.image" alt="Image product" width="100" loading="lazy" [preview]="true">
+                            <ng-template pTemplate="indicator">
+                                <i class="pi pi-eye"></i>
+                            </ng-template>
+                        </p-image>
+                        <div class="flex flex-column align-items-start justify-content-center gap-2">
+                            <p class="flex flex-row align-items-end gap-1"><span class="text-3xl font-bold">Số lượng:
+                                {{item.detailProduct.length}}</span><span
+                                class="text-xl mb-2 text-green-300 pi pi-box"></span></p>
+                            <p>{{item.product_name}}</p>
+                            <p *ngIf="item.type_product === 'DTC'">Giá tiền: {{item.price_system}} VNĐ</p>
+                            <p *ngIf="item.type_product === 'Store'">Giá tiền: {{item.price_store}} VNĐ</p>
+                        </div>
+                    </div>
+
+                </ng-container>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Gom theo cửa hàng">
+            <div class="wrapper flex flex-column align-items-center justify-content-center w-full h-fit p-1">
+                <div class="flex flex-wrap gap-2 w-full">
+                    <ng-container *ngFor="let item of listDetailProduct">
+                        <div class="flex flex-column w-full h-fit p-3 bg-white shadow-4 border-round mb-2">
+                            <div
+                                class="flex flex-row align-items-center justify-content-between w-full h-fit mb-2 gap-3">
+                                <div
+                                    class="flex flex-row w-fit h-fit align-items-center justify-content-between w-full gap-3">
+                                    <div
+                                        class="flex flex-column align-items-start justify-content-between w-full h-fit gap-1">
+                                        <span class="shop-name text-xl"><b>{{item.shop_name}}</b></span>
+                                        <span><i class="pi pi-home"
+                                                style="font-size: 1rem; margin-right: 0.5rem"></i>[{{item.shop_id}}] -
+                                            {{item.shop_code}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row align-items-end justify-content-end gap-2">
+                                    <span class="text-5xl font-bold">{{item.products.length}}</span><span
+                                        class="text-2xl text-green-300 mb-3 pi pi-box"></span>
+                                </div>
+                            </div>
+                            <div class="flex flex-column w-full justify-content-center">
+                                <p-accordion [multiple]="false">
+                                    <p-accordionTab>
+                                        <ng-template pTemplate="header">
+                                            <div
+                                                class="flex flex-column w-full h-fit align-items-start justify-content-between text-base">
+                                                <p><b>Các sản phẩm được bán:</b></p>
+                                            </div>
+                                        </ng-template>
+                                        <div class="flex flex-wrap gap-3 w-full">
+                                            <ng-container *ngFor="let child of item.products">
+                                                <div
+                                                    class="flex flex-row align-items-center justify-content-start gap-3">
+                                                    <p-image [src]="child.image" alt="Image product" width="80"
+                                                        loading="lazy" [preview]="true">
+                                                        <ng-template pTemplate="indicator">
+                                                            <i class="pi pi-eye"></i>
+                                                        </ng-template>
+                                                    </p-image>
+                                                    <div
+                                                        class="flex flex-column align-items-start justify-content-center gap-2">
+                                                        <p>{{child.product_name}}</p>
+                                                        <p *ngIf="child.type_product === 'DTC'">Giá tiền:
+                                                            {{child.price_system}} VNĐ</p>
+                                                        <p *ngIf="child.type_product === 'Store'">Giá tiền:
+                                                            {{child.price_store}} VNĐ</p>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </p-accordionTab>
+                                </p-accordion>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</p-dialog>
+
+<!-- Detail Survey -->
+<p-dialog [(visible)]="popupDetailSurvey" [style]="{ width: '90%', height: 'fit-content' }"
+    header="Thống kê số người tiếp cận" [modal]="true" styleClass="p-fluid" [closable]="true">
+
+    <div class="flex flex-column align-items-center w-full m-2">
+        <ng-container *ngFor="let item of listDetailSurvey">
+            <div class="flex flex-column w-full h-fit p-3 bg-white shadow-4 border-round mb-2">
+                <div class="flex flex-row align-items-center justify-content-between w-full h-fit mb-2 gap-3">
+                    <div class="flex flex-row w-fit h-fit align-items-center justify-content-between w-full gap-3">
+                        <div class="flex flex-column align-items-start justify-content-between w-full h-fit gap-1">
+                            <span class="shop-name text-xl"><b>{{item.shop_name}}</b></span>
+                            <span><i class="pi pi-home"
+                                    style="font-size: 1rem; margin-right: 0.5rem"></i>[{{item.shop_id}}] -
+                                {{item.shop_code}}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-row align-items-end justify-content-end gap-2">
+                        <span class="text-5xl font-bold text-end">{{item.surveys.length}}</span><span
+                            class="text-2xl text-green-300 mb-3 pi pi-user-plus"></span>
+                    </div>
+                </div>
+                <div class="flex flex-column w-full justify-content-center">
+                    <p-accordion [multiple]="false">
+                        <p-accordionTab>
+                            <ng-template pTemplate="header">
+                                <div
+                                    class="flex flex-column w-full h-fit align-items-start justify-content-between text-base">
+                                    <p><b>Thông tin người tiếp cận:</b></p>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-wrap gap-3 w-fit">
+                                <ng-container *ngFor="let child of item.surveys">
+                                    <div class="flex flex-column align-items-start gap-2">
+                                        <div class="flex flex-row align-items-start gap-2 w-full h-fit">
+                                            <p *ngIf="child.name_customer !== null" class="mb-0"><span
+                                                    class="text-xl text-green-300 pi pi-user"></span><b>
+                                                    {{child.name_customer}}</b> - </p>
+                                            <p *ngIf="child.age !== null">Độ tuổi: {{child.age}}</p>
+                                        </div>
+                                        <div class="flex flex-row align-items-start gap-2 w-full h-fit">
+                                            <p *ngIf="child.phone !== null"><span
+                                                    class="text-xl text-green-300 pi pi-phone"></span> {{child.phone}} -
+                                            </p>
+                                            <p *ngIf="child.type !== null"><span
+                                                    class="text-xl text-green-300 pi pi-tag"></span> {{child.type}}</p>
+                                        </div>
+                                        <div class="flex flex-row align-items-start gap-2 w-full h-fit">
+                                            <p *ngIf="child.group !== null"><span
+                                                    class="text-xl text-green-300 mb-2 pi pi-users"></span> {{child.group}}
+                                            </p>
+                                        </div>
+                                        <hr>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</p-dialog>
+
+<!-- Detail Gift -->
+<p-dialog [(visible)]="popupDetailGift" [style]="{ width: '90%', height: 'fit-content' }"
+    header="Chi tiết quà tặng đã sử dụng" [modal]="true" styleClass="p-fluid" [closable]="true">
+
+    <p-tabView>
+        <p-tabPanel header="Summary">
+            <div class="flex flex-wrap gap-4 w-full">
+                <ng-container *ngFor="let item of summaryGift">
+                    <div class="flex flex-row align-items-center justify-content-start gap-3">
+                        <p-image [src]="item.gift_image" alt="Image gift" width="100" loading="lazy" [preview]="true">
+                            <ng-template pTemplate="indicator">
+                                <i class="pi pi-eye"></i>
+                            </ng-template>
+                        </p-image>
+                        <div class="flex flex-column align-items-start justify-content-center gap-2">
+                            <p class="flex flex-row align-items-end gap-1"><span class="text-3xl font-bold">Số lượng:
+                                    {{item.detailGift.length}}</span><span
+                                    class="text-xl mb-2 text-green-300 pi pi-gift"></span></p>
+                            <p>[{{item.gift_id}}] - {{item.gift_code}}</p>
+                            <p><span class="text-xl text-green-300 mb-2 pi pi-gift"></span> {{item.gift_name}}</p>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Gom theo cửa hàng">
+            <div class="flex flex-column align-items-center w-full m-2">
+                <ng-container *ngFor="let item of listDetailGift">
+                    <div class="flex flex-column w-full h-fit p-3 bg-white shadow-4 border-round mb-2">
+                        <div class="flex flex-row align-items-center justify-content-between w-full h-fit mb-2 gap-3">
+                            <div
+                                class="flex flex-row w-fit h-fit align-items-center justify-content-between w-full gap-3">
+                                <div
+                                    class="flex flex-column align-items-start justify-content-between w-full h-fit gap-1">
+                                    <span class="shop-name text-xl"><b>{{item.shop_name}}</b></span>
+                                    <span><i class="pi pi-home"
+                                            style="font-size: 1rem; margin-right: 0.5rem"></i>[{{item.shop_id}}] -
+                                        {{item.shop_code}}</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-row align-items-end justify-content-end gap-2">
+                                <span class="text-5xl font-bold text-end">{{item.gifts.length}}</span><span
+                                    class="text-2xl text-green-300 mb-3 pi pi-gift"></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-column w-full justify-content-center">
+                            <p-accordion [multiple]="false">
+                                <p-accordionTab>
+                                    <ng-template pTemplate="header">
+                                        <div
+                                            class="flex flex-column w-full h-fit align-items-start justify-content-between text-base">
+                                            <p><b>Thông tin quà tặng:</b></p>
+                                        </div>
+                                    </ng-template>
+                                    <div class="flex flex-wrap gap-3 w-fit">
+                                        <ng-container *ngFor="let child of item.gifts">
+                                            <div class="flex flex-row align-items-center justify-content-start gap-3">
+                                                <p-image [src]="child.gift_image" alt="Image gift" width="80" loading="lazy"
+                                                    [preview]="true">
+                                                    <ng-template pTemplate="indicator">
+                                                        <i class="pi pi-eye"></i>
+                                                    </ng-template>
+                                                </p-image>
+                                                <div
+                                                    class="flex flex-column align-items-start justify-content-center gap-2">
+                                                    <p>[{{child.gift_id}}] - {{child.gift_code}}</p>
+                                                    <p><span class="text-xl text-green-300 mb-2 pi pi-gift"></span>
+                                                        {{child.gift_name}}</p>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                        </ng-container>
+                                    </div>
+                                </p-accordionTab>
+                            </p-accordion>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</p-dialog>

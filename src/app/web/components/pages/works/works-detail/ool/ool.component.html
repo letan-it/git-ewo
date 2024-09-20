@@ -1,0 +1,604 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<p-toast></p-toast>
+
+<div class="grid">
+    <div class="md:col-7">
+        <p-accordion
+            [multiple]="true"
+            class="w-full"
+            *ngIf="
+                inValue.data_ool &&
+                inValue.data_ool.result &&
+                inValue.data_ool.result.length > 0
+            "
+        >
+            <div *ngFor="let tab of inValue.data_ool.result" class="mb-4">
+                <p-accordionTab
+                    *ngFor="let detail of tab.details"
+                    class="p-fluid mb-4"
+                    [selected]="true"
+                >
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <p-tag
+                                [icon]="getIconTag(detail.ool_result)"
+                                [severity]="getSeverity(detail.ool_result)"
+                                [value]="detail.ool_result_name"
+                                class="mr-2"
+                                [pTooltip]="detail.resultTooltip"
+                                tooltipPosition="top"
+                            ></p-tag>
+                            <!-- ool_result, ool_result_code, ool_result_name -->
+                            <!-- ool_id, ool_code, ool_name  -->
+                            <!-- pTooltip="OOL Detail ID : {{detail.ool_detail_id}}" -->
+                            <span
+                                pTooltip="GUID : {{ detail.Guid }}"
+                                tooltipPosition="top"
+                                class="font-bold"
+                                >{{ detail.detail_ool_toolTip }}</span
+                            >
+                        </div>
+                        <div class="flex align-items-end" *ngIf="detail.note">
+                            <i
+                                [pTooltip]="detail.note"
+                                tooltipPosition="top"
+                                class="pi pi-comment cursor_pointer ml-2"
+                            ></i>
+                        </div>
+
+                        <div class="ml-auto">
+                            <p-badge
+                                *ngIf="detail.target && detail.target != null"
+                                [value]="'Target: ' + detail.target"
+                                class="mr-2"
+                            />
+                            <!-- *ngIf="isDelete" -->
+
+                            <button
+                                *ngIf="inValue.data_ool.is_edit_data == 1 && isCheckNotGdm == true"
+                                class="border-circle border-none w-3rem h-3rem"
+                                style="background-color: red"
+                                (click)="openDelete(detail, tab)"
+                            >
+                                <i
+                                    class="pi pi-trash"
+                                    style="font-size: 1rem; color: white"
+                                ></i>
+                            </button>
+
+                            <button
+                                *ngIf="inValue.data_ool.is_edit_data == 1"
+                                class="border-circle border-none w-3rem h-3rem ml-2"
+                                style="background-color: rgb(209, 196, 51)"
+                                (click)="openClone(detail, tab)"
+                            >
+                                <i
+                                    class="pi pi-clone"
+                                    style="font-size: 1rem; color: white"
+                                ></i>
+                            </button>
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="content">
+                        <!-- aria-sort="ascending" sortField="order"  => sortField="layer" 
+                        dataKey="layer" => id -->
+
+                        <p-table
+                            [value]="detail.details_item"
+                            dataKey="id"
+                            editMode="row"
+                            [resizableColumns]="true"
+                            [tableStyle]="{
+                                'min-width': '50rem',
+                                'line-height': 1
+                            }"
+                            #dt1
+                            [loading]="loading"
+                            [globalFilterFields]="[
+                                'ool_item_name',
+                                'value_string'
+                            ]"
+                            groupRowsBy="layer"
+                            rowGroupMode="subheader"
+                            aria-sort="ascending"
+                            sortField="order"
+                            sortMode="single"
+                            [scrollable]="true"
+                            scrollHeight="800px"
+                        >
+                            <ng-template pTemplate="header">
+                                <tr [ngStyle]="{ height: 'fit-content' }">
+                                    <th class="text-center">
+                                        Name
+                                        <!-- <p-columnFilter
+                                            type="text"
+                                            field="ool_item_name"
+                                            display="menu"
+                                        ></p-columnFilter> -->
+                                    </th>
+
+                                    <!-- <th class="text-center"> Result <p-columnFilter type="text" field="value_string"
+                                            display="menu"></p-columnFilter>
+                                    </th> -->
+                                    <th class="text-center">Result</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="groupheader"
+                                let-item
+                                let-rowIndex="rowIndex"
+                                let-expanded="expanded"
+                            >
+                                <tr
+                                    *ngIf="item.layer_name != null"
+                                    [ngStyle]="{ height: 'fit-content' }"
+                                >
+                                    <td colspan="3">
+                                        <!-- <button type="button" pButton pRipple [pRowToggler]="item"
+                                            class="p-button-text p-button-rounded p-button-plain mr-2"
+                                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button> -->
+                                        <span class="font-bold ml-2">{{
+                                            item.layer_name
+                                        }}</span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                            <!-- <ng-template pTemplate="groupfooter" let-item>
+                                <tr class="p-rowgroup-footer font-bold">
+                                    <td colspan="3" style="text-align: right">Total Row
+                                        {{calculateItemTotal(detail.details_item,item.layer)}}</td>
+                                </tr>
+                            </ng-template> -->
+
+                            <!-- pTemplate="rowexpansion" -->
+                            <ng-template
+                                pTemplate="body"
+                                let-item
+                                let-editing="editing"
+                                let-ri="rowIndex"
+                                let-rowIndex="rowIndex"
+                                dataKey="id"
+                            >
+                                <tr
+                                    [pEditableRow]="item"
+                                    *ngIf="item.show_web == 1"
+                                    [pTooltip]="item.tooltip"
+                                    tooltipPosition="top"
+                                    [ngStyle]="{ height: 'fit-content' }"
+                                >
+                                    <td>{{ item.ool_item_name }}</td>
+
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <!-- <input pInputText type="text" [(ngModel)]="item.value_string" required> -->
+
+                                                <input
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 1 ||
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 14
+                                                    "
+                                                    pInputText
+                                                    type="text"
+                                                    [(ngModel)]="
+                                                        item.value_string
+                                                    "
+                                                />
+
+                                                <input
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 2
+                                                    "
+                                                    type="number"
+                                                    min="0"
+                                                    pInputText
+                                                    [(ngModel)]="item.value_int"
+                                                    [pKeyFilter]="'int'"
+                                                />
+                                                <input
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 3
+                                                    "
+                                                    type="number"
+                                                    pInputText
+                                                    [(ngModel)]="
+                                                        item.value_decimal
+                                                    "
+                                                    [pKeyFilter]="
+                                                        patternDecimal
+                                                    "
+                                                />
+
+                                                <p-selectButton
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 6
+                                                    "
+                                                    [options]="stateOptions"
+                                                    (onOptionClick)="
+                                                        chooseSelectButton(
+                                                            $event,
+                                                            item
+                                                        )
+                                                    "
+                                                    [(ngModel)]="
+                                                        item.value_string
+                                                    "
+                                                    optionLabel="label"
+                                                    optionValue="value"
+                                                ></p-selectButton>
+
+                                                <p-dropdown
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 7
+                                                    "
+                                                    [(ngModel)]="
+                                                        item._value_string
+                                                    "
+                                                    [options]="
+                                                        item.answer_option
+                                                    "
+                                                    placeholder="Select a answer"
+                                                    [showClear]="true"
+                                                    appendTo="body"
+                                                    [filter]="true"
+                                                    filterBy="value"
+                                                    optionLabel="value"
+                                                    (onChange)="
+                                                        chooseSelect(
+                                                            $event,
+                                                            item
+                                                        )
+                                                    "
+                                                >
+                                                </p-dropdown>
+
+                                                <p-multiSelect
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 8
+                                                    "
+                                                    [showClear]="true"
+                                                    appendTo="body"
+                                                    [options]="
+                                                        item.answer_option
+                                                    "
+                                                    [(ngModel)]="
+                                                        item.value_string
+                                                    "
+                                                    [filter]="true"
+                                                    optionLabel="value"
+                                                    placeholder="Select the answer"
+                                                    display="chip"
+                                                    [style]="{ width: '400px' }"
+                                                    (onChange)="
+                                                        chooseMultiSelect(
+                                                            $event,
+                                                            item
+                                                        )
+                                                    "
+                                                ></p-multiSelect>
+
+                                                <p-dropdown
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 15
+                                                    "
+                                                    [(ngModel)]="
+                                                        item._value_string
+                                                    "
+                                                    [options]="
+                                                        item.product_option
+                                                    "
+                                                    placeholder="Select a answer"
+                                                    [showClear]="true"
+                                                    appendTo="body"
+                                                    [filter]="true"
+                                                    filterBy="value"
+                                                    optionLabel="value"
+                                                    (onChange)="
+                                                        chooseSelectProduct(
+                                                            $event,
+                                                            item
+                                                        )
+                                                    "
+                                                >
+                                                </p-dropdown>
+
+                                                <p-multiSelect
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 16
+                                                    "
+                                                    [showClear]="true"
+                                                    appendTo="body"
+                                                    [options]="
+                                                        item.product_option
+                                                    "
+                                                    [(ngModel)]="
+                                                        item.value_string
+                                                    "
+                                                    [filter]="true"
+                                                    optionLabel="value"
+                                                    placeholder="Select the answer"
+                                                    display="chip"
+                                                    [style]="{ width: '400px' }"
+                                                    (onChange)="
+                                                        chooseMultiSelect(
+                                                            $event,
+                                                            item
+                                                        )
+                                                    "
+                                                ></p-multiSelect>
+
+                                                <!-- [ngStyle]="{'max-width': '400px'}" -->
+                                                <!-- <div class="card flex justify-content-center">
+                                                    <p-multiSelect [options]="cities" [(ngModel)]="selectedCities"
+                                                        optionLabel="name" display="chip" [style]="{ width: '400px' }">
+                                                    </p-multiSelect>
+                                                </div> -->
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <label
+                                                    *ngIf="
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) != 8 &&
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) != 16
+                                                    "
+                                                >
+                                                    {{ item.value_string }}
+                                                </label>
+
+                                                <label
+                                                    *ngIf="
+                                                        (item.value_string &&
+                                                            checkValue(
+                                                                item.support_data,
+                                                                item.question_type,
+                                                                item.typeOf
+                                                            ) == 8) ||
+                                                        checkValue(
+                                                            item.support_data,
+                                                            item.question_type,
+                                                            item.typeOf
+                                                        ) == 16
+                                                    "
+                                                >
+                                                    <p
+                                                        *ngFor="
+                                                            let ans of item.value_string
+                                                        "
+                                                    >
+                                                        <label
+                                                            [pTooltip]="
+                                                                ans.name
+                                                            "
+                                                            >{{
+                                                                ans.value
+                                                            }}</label
+                                                        >
+                                                    </p>
+                                                </label>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+
+                                    <td>
+                                        <div
+                                            class="flex align-items-center justify-content-center gap-2"
+                                        >
+                                            <button
+                                                *ngIf="
+                                                    !editing &&
+                                                    inValue.data_ool
+                                                        .is_edit_data == 1
+                                                "
+                                                pTooltip="Edit Details"
+                                                tooltipPosition="top"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pInitEditableRow
+                                                icon="pi pi-pencil"
+                                                class="p-button-warning p-button-text"
+                                            ></button>
+
+                                            <button
+                                                *ngIf="editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pSaveEditableRow
+                                                icon="pi pi-check"
+                                                (click)="
+                                                    onRowEditSave(tab, item)
+                                                "
+                                                class="p-button-rounded p-button-text p-button-success mr-2"
+                                            ></button>
+
+                                            <button
+                                                *ngIf="editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pCancelEditableRow
+                                                icon="pi pi-times"
+                                                (click)="
+                                                    onRowEditCancel(item, ri)
+                                                "
+                                                class="p-button-rounded p-button-text p-button-danger"
+                                            ></button>
+
+                                            <button
+                                                pTooltip="History Details"
+                                                tooltipPosition="top"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                icon="pi pi-history"
+                                                (click)="op1.toggle($event)"
+                                                class="p-button-text"
+                                                *ngIf="
+                                                    item.history &&
+                                                    item.history.length > 0
+                                                "
+                                            ></button>
+
+                                            <!-- HISTORY DETAILS-->
+                                            <p-overlayPanel
+                                                #op1
+                                                [style]="{ width: '550px' }"
+                                                [showCloseIcon]="true"
+                                            >
+                                                <ng-template
+                                                    pTemplate="content"
+                                                >
+                                                    <p-table
+                                                        [value]="item.history"
+                                                        selectionMode="single"
+                                                        [paginator]="true"
+                                                        [rows]="3"
+                                                        responsiveLayout="scroll"
+                                                    >
+                                                        <ng-template
+                                                            pTemplate="header"
+                                                        >
+                                                            <tr>
+                                                                <th
+                                                                    class="text-center"
+                                                                >
+                                                                    Update By
+                                                                </th>
+                                                                <th
+                                                                    class="text-center"
+                                                                >
+                                                                    Value
+                                                                </th>
+                                                                <th
+                                                                    class="text-center"
+                                                                >
+                                                                    Update Date
+                                                                </th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template
+                                                            pTemplate="body"
+                                                            let-rowData
+                                                            let-his
+                                                        >
+                                                            <tr
+                                                                [pSelectableRow]="
+                                                                    rowData
+                                                                "
+                                                                *ngIf="
+                                                                    his.show_history ==
+                                                                    1
+                                                                "
+                                                            >
+                                                                <td
+                                                                    class="font-bold"
+                                                                    style="
+                                                                        color: green;
+                                                                    "
+                                                                >
+                                                                    [{{
+                                                                        his.update_by
+                                                                    }}] -
+                                                                    {{
+                                                                        his.update_code
+                                                                    }}
+                                                                    -
+                                                                    {{
+                                                                        his.update_name
+                                                                    }}
+                                                                </td>
+                                                                <td
+                                                                    class="text-center"
+                                                                >
+                                                                    {{
+                                                                        his.value_string
+                                                                    }}
+                                                                </td>
+                                                                <td
+                                                                    class="text-center"
+                                                                >
+                                                                    {{
+                                                                        his.update_date
+                                                                    }}
+                                                                </td>
+                                                            </tr>
+                                                        </ng-template>
+                                                    </p-table>
+                                                </ng-template>
+                                            </p-overlayPanel>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </ng-template>
+                </p-accordionTab>
+            </div>
+        </p-accordion>
+    </div>
+    <div class="md:col-5">
+        <!-- {{inValue.data_ool.details|json}} -->
+        <app-control-tab-photo
+            [KPI]="'OOL'"
+            [fulldata]="inValue"
+            [OOLconfig]="inValue.data_ool.details"
+            [inValue]="inValue.data_ool.image"
+            [is_edit_data]="inValue.data_ool.is_edit_data"
+        ></app-control-tab-photo>
+    </div>
+
+    <div class="grid">
+        <app-qc-result
+            [KPI]="'OOL'"
+            [inValue]="inValue.report_id"
+        ></app-qc-result>
+    </div>
+</div>
+<p-confirmDialog></p-confirmDialog>

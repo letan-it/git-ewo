@@ -1,0 +1,5 @@
+<p-multiSelect *ngIf="isLoadForm==0" class="p-fluid" [options]="listOOl" [(ngModel)]="selectedListOOL"
+    optionLabel="name" [showClear]="true" appendTo="body" placeholder="Select OOL List"
+    (onChange)="returnValue(selectedListOOL)" (onClear)="resetSelection()"></p-multiSelect>
+
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

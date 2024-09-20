@@ -1,0 +1,51 @@
+<div class="wrapper flex flex-column justify-content-between w-full h-full">
+    <div class="flex flex-column w-full align-items-start gap-3 mt-5 mb-3">
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="name" class="text-xl font-normal gap-1">
+                    <i class="pi pi-user" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Name</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.manager_name}}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="code" class="text-xl font-normal">
+                    <i class="pi pi-code" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Code</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.manager_code}}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="mobile" class="text-xl font-normal">
+                    <i class="pi pi-mobile" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Mobile</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.manager_mobile}}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="email" class="text-xl font-normal">
+                    <i class="pi pi-envelope" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Email</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.manager_mail}}</p>
+            </div>
+        </div>
+    </div>
+</div>

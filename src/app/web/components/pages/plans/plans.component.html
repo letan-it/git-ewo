@@ -1,0 +1,1104 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_month") }}</h6>
+
+                    <p-dropdown
+                        [options]="ListMonth"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="name"
+                        [style]="{ minWidth: '100%' }"
+                        [(ngModel)]="selectMonth"
+                        [placeholder]="
+                            selectMonth
+                                ? selectMonth.name
+                                : GetLanguage('lb_select-month')
+                        "
+                        optionLabel="name"
+                    ></p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_shoptype") }}</h6>
+                    <app-control-shop-type
+                        (outValue)="selectShopType($event)"
+                    ></app-control-shop-type>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_channel") }}</h6>
+                    <app-control-channel
+                        (outValue)="selectedChannel($event)"
+                    ></app-control-channel>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_router") }}</h6>
+                    <app-control-shop-router
+                        (outValue)="selectShopRouter($event)"
+                    ></app-control-shop-router>
+                </div>
+            </div>
+            <div class="row">
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_manager") }}</h6>
+                    <app-control-employee-list
+                        (outValue)="selectASM($event)"
+                        [placeholder]="GetLanguage('lb_select_manager')"
+                        [project_id]="project_id"
+                        [disabled]="
+                            userProfile.employee_type_id == 8 ? true : false
+                        "
+                        [itemManagerCode]="
+                            userProfile.employee_type_id == 8
+                                ? userProfile.employee_id
+                                : 0
+                        "
+                    ></app-control-employee-list>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_province") }}</h6>
+                    <app-control-province
+                        (outValue)="selectProvince($event)"
+                    ></app-control-province>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_district") }}</h6>
+                    <app-control-district
+                        [inValue]="item_Province"
+                        (outValue)="selectDistrict($event)"
+                    >
+                    </app-control-district>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_ward") }}</h6>
+                    <app-control-ward
+                        [inValue]="item_District"
+                        (outValue)="selectWard($event)"
+                    ></app-control-ward>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_status") }}</h6>
+                    <p-dropdown
+                        [options]="ListStatus"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="name"
+                        [style]="{ minWidth: '100%' }"
+                        [(ngModel)]="selectStatus"
+                        [placeholder]="GetLanguage('lb_select_status')"
+                        optionLabel="name"
+                    ></p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_shopcode") }}</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="shop_code"
+                        [placeholder]="GetLanguage('lb_select_list_shop')"
+                    />
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_project_shop_code") }}</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="project_shop_code"
+                        [placeholder]="
+                            GetLanguage('lb_select_project_shop_code')
+                        "
+                    />
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_customer_shop_code") }}</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="customer_shop_code"
+                        [placeholder]="
+                            GetLanguage('lb_select_customer_shop_code')
+                        "
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+                <input
+                    pInputText
+                    id="name1"
+                    class="text-center font-bold mr-2 mt-2"
+                    type="date"
+                    [(ngModel)]="PlanDate"
+                />
+                 
+                <app-control-employee-list
+                    (outValue)="selectEmployee($event)"
+                    [placeholder]="'Employee'"
+                    [inputStyle]="{
+                        minWidth: '200px',
+                        maxWidth: '300px',
+                        'margin-top': '0.5rem'
+                    }"
+                    [employee_type_id]="employee_type_id"
+                    [project_id]="project_id"
+                ></app-control-employee-list>
+
+                <button
+                    pButton
+                    type="button"
+                    [label]="GetLanguage('action.filter')"
+                    [loading]="isLoading_Filter"
+                    (click)="filter(1)"
+                    icon="pi pi-search"
+                    class="p-button-sm mr-2 ml-2 mt-2"
+                ></button>
+
+                <button
+                    *ngIf="checkAction()"
+                    pButton
+                    type="button"
+                    [label]="GetLanguage('action.shift')"
+                    [loading]="isLoading_Filter"
+                    (click)="viewShift()"
+                    icon="pi pi-cog"
+                    class="p-button-sm mr-2 ml-2 mt-2"
+                ></button>
+
+                <button
+                    type="button"
+                    (click)="export()"
+                    [label]="GetLanguage('action.rawdata')"
+                    pButton
+                    pRipple
+                    icon="pi pi-file-excel"
+                    class="p-button-sm mr-2 ml-2 mt-2"
+                    style="float: right"
+                ></button>
+
+                <button
+                    type="button"
+                    (click)="ShowHideTemplate()"
+                    [label]="GetLanguage('action.import')"
+                    pButton
+                    pRipple
+                    class="p-button-sm mr-2 mt-2"
+                    icon="pi pi-upload"
+                ></button>
+
+                <button
+                    type="button"
+                    (click)="ShowHideTemplate(2)"
+                    [label]="GetLanguage('action.importV2')"
+                    pButton
+                    pRipple
+                    class="p-button-sm mr-2 mt-2"
+                    icon="pi pi-upload"
+                ></button>
+
+                <!-- <a
+                    href="https://files.ewoapi.acacy.com.vn/202308/TEMPLATE/a1544182-e7bc-4b8e-9e8f-181d52949f0a_20230818094357.xlsx">
+                    <button type="button" label="Template Import Plan" pButton pRipple icon="pi pi-file-excel"
+                        class="p-button-sm" style="float: right;"></button>
+                </a> -->
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+
+                <button
+                    pButton
+                    type="button"
+                    [pTooltip]="GetLanguage('tp.showfilter')"
+                    pStyleClass=".box"
+                    enterClass="hidden"
+                    enterActiveClass="fadeinup"
+                    (click)="ShowHideFiter()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye"
+                    class="p-button-success mr-2 mt-2"
+                    [ngStyle]="{ display: showFiter == 1 ? 'none' : 'flex' }"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    [pTooltip]="GetLanguage('tp.hidefilter')"
+                    (click)="ShowHideFiter()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye-slash"
+                    class="p-button-warning mr-2 mt-2"
+                    pStyleClass=".box"
+                    leaveActiveClass="fadeoutup"
+                    leaveToClass="hidden"
+                    [ngStyle]="{ display: showFiter == 0 ? 'none' : 'flex' }"
+                ></button>
+            </div>
+
+            <div class="p-toolbar-group-right">
+                <button
+                    pButton
+                    type="button"
+                    [pTooltip]="GetLanguage('tp.showTable')"
+                    pStyleClass=".box2"
+                    enterClass="hidden"
+                    enterActiveClass="fadeinup"
+                    (click)="ShowHideTable()"
+                    tooltipPosition="top"
+                    icon="pi pi-table"
+                    class="p-button-success mr-2 mt-2"
+                    [ngStyle]="{ display: showTable == 1 ? 'none' : 'flex' }"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    [pTooltip]="GetLanguage('tp.showlist')"
+                    (click)="ShowHideTable()"
+                    tooltipPosition="top"
+                    icon="pi pi-list"
+                    class="p-button-warning mr-2 mt-2"
+                    pStyleClass=".box2"
+                    leaveActiveClass="fadeoutup"
+                    leaveToClass="hidden"
+                    [ngStyle]="{ display: showTable == 0 ? 'none' : 'flex' }"
+                ></button>
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+<div class="card" *ngIf="showTemplate == 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input
+                    class="form-control"
+                    type="file"
+                    (change)="onChangeFile($event)"
+                    #myInputFile
+                />
+            </div>
+            <a [href]="template_plan">
+                <button
+                    type="button"
+                    [label]="GetLanguage('action.gettemplate')"
+                    pButton
+                    pRipple
+                    icon="pi pi-file-export"
+                    class="p-button-sm ml-2 mr-2"
+                    style="float: right"
+                ></button>
+            </a>
+
+            <button
+                pButton
+                pRipple
+                class="ml-2 mr-2"
+                [label]="GetLanguage('action.upload')"
+                icon="pi pi-upload"
+                (click)="importTemplate()"
+                class="p-button-sm p-button-success"
+            ></button>
+        </div>
+    </p-toolbar>
+
+    <hr />
+    <div class="card" *ngIf="dataError">
+        <p-table [value]="dataError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Shop Code</th>
+                    <th>Employee Code</th>
+                    <th>Plan Date</th>
+                    <th>Shift Code</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.shop_code }}</td>
+                    <td>{{ error.employee_code }}</td>
+                    <td>{{ error.plan_date }}</td>
+                    <td>{{ error.shift_code }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <hr />
+    <div class="card" *ngIf="dataMessError">
+        <div class="col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">Error Name :</div>
+                <div class="col-11">
+                    {{ dataMessError }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" *ngIf="showTemplate == 2">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input
+                    class="form-control"
+                    type="file"
+                    (change)="onChangeFile($event)"
+                    #myInputFile
+                />
+            </div>
+            <!-- <button
+                *ngIf="project_id == 26"
+                type="button"
+                [label]="GetLanguage('action.gettemplate')"
+                pButton
+                pRipple
+                icon="pi pi-file-export"
+                class="p-button-sm ml-2 mr-2"
+                style="float: right"
+                (click)="getTemplate()"
+            ></button> -->
+            <a [href]="template_planV2">
+                <button
+                    type="button"
+                    [label]="GetLanguage('action.gettemplate')"
+                    pButton
+                    pRipple
+                    icon="pi pi-file-export"
+                    class="p-button-sm ml-2 mr-2"
+                    style="float: right"
+                ></button>
+            </a>
+
+            <!-- (click)="importTemplate()" -->
+
+            <button
+                pButton
+                pRipple
+                class="ml-2 mr-2"
+                [label]="GetLanguage('action.upload')"
+                icon="pi pi-upload"
+                (click)="importTemplateV2()"
+                class="p-button-sm p-button-success"
+            ></button>
+        </div>
+    </p-toolbar>
+
+    <hr />
+    <div class="card" *ngIf="dataError">
+        <p-table [value]="dataError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Shop Code</th>
+                    <th>Employee Code</th>
+                    <th>Plan Date</th>
+                    <th>Shift Code</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.shop_code }}</td>
+                    <td>{{ error.employee_code }}</td>
+                    <td>{{ error.plan_date }}</td>
+                    <td>{{ error.shift_code }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <hr />
+    <div class="card" *ngIf="dataMessError">
+        <div class="col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">Error Name :</div>
+                <div class="col-11">
+                    {{ dataMessError }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+<div class="grid animation-duration-500 box2" *ngIf="showTable == 0">
+    <div class="col-12">
+        <div class="row">
+            <div class="md:col-6">
+                <p-toolbar>
+                    <div class="p-toolbar-group-left">
+                        <app-control-shifts (outValue)="selectShift($event)">
+                        </app-control-shifts>
+                        <p-button
+                            (click)="op.toggle($event)"
+                            icon="pi pi-clock-o"
+                            label="Time"
+                            class="ml-2"
+                        />
+                        <p-overlayPanel #op>
+                            <div class="flex flex-column gap-3 w-25rem">
+                                <div class="row">
+                                    <div class="flex-auto col-5">
+                                        <label
+                                            for="calendar-timeonly"
+                                            class="font-bold block mb-2"
+                                        >
+                                            From time
+                                        </label>
+                                        <p-calendar
+                                            inputId="calendar-timeonly"
+                                            [(ngModel)]="from_time"
+                                            [timeOnly]="true"
+                                        />
+                                    </div>
+                                    <div class="flex-auto col-5">
+                                        <label
+                                            for="calendar-timeonly"
+                                            class="font-bold block mb-2"
+                                        >
+                                            To time
+                                        </label>
+                                        <p-calendar
+                                            inputId="calendar-timeonly"
+                                            [(ngModel)]="to_time"
+                                            [timeOnly]="true"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </p-overlayPanel>
+                    </div>
+
+                    <div class="p-toolbar-group-right">
+                        <!-- <button pButton type="button" label="Add"
+                            icon="pi pi-angle-right" (click)="addPlan()" class="p-button-success m-2"></button> -->
+
+                        <p-splitButton
+                            class="float-right"
+                            [label]="GetLanguage('action.add')"
+                            icon="pi pi-plus"
+                            (onClick)="addPlan()"
+                            [model]="itemsAdd"
+                            styleClass="p-button-sm p-button-success mb-2"
+                        >
+                        </p-splitButton>
+                    </div>
+                </p-toolbar>
+
+                <p-listbox
+                    *ngIf="is_loadForm == 0"
+                    [filter]="true"
+                    [listStyle]="{ 'max-height': '600px' }"
+                    [options]="ListShop"
+                    [(ngModel)]="selected_store"
+                    optionLabel="shop_code"
+                >
+                    <ng-template let-store pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <p-checkbox
+                                *ngIf="store.is_action == 1"
+                                [(ngModel)]="store.checked"
+                                [binary]="true"
+                                inputId="binary"
+                            ></p-checkbox>
+                            <div>
+                                {{ store.RowNum }}/{{ store.TotalRows }}. -
+                                {{ store.shop_code }} - {{ store.shop_name }} -
+                                {{ store.shop_address }} -
+                                {{ store.manager_name }} -
+                                {{ store._plan_date }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-listbox>
+                <div class="card" *ngIf="is_loadForm == 1">
+                    <div class="border-round border-1 surface-border p-4">
+                        <div class="flex mb-3">
+                            <div>
+                                <p-skeleton
+                                    width="10rem"
+                                    styleClass="mb-2"
+                                ></p-skeleton>
+                                <p-skeleton
+                                    width="5rem"
+                                    styleClass="mb-2"
+                                ></p-skeleton>
+                                <p-skeleton height=".5rem"></p-skeleton>
+                            </div>
+                        </div>
+                        <p-skeleton width="100%" height="200px"></p-skeleton>
+                    </div>
+                </div>
+                <p-paginator
+                    (onPageChange)="onPageChange($event)"
+                    [first]="first"
+                    [rows]="rows"
+                    [totalRecords]="totalRecords"
+                    [rowsPerPageOptions]="[50, 100]"
+                ></p-paginator>
+            </div>
+
+            <div class="md:col-6">
+                <p-toolbar>
+                    <div class="p-toolbar-group-left flex flex-wrap">
+                        <!-- <button pButton type="button" [label]="GetLanguage('action.remove')" (click)="removePlan()"
+                            icon="pi pi-angle-left" class="p-button-sm p-button-danger m-2"></button> -->
+
+                        <p-splitButton
+                            class="float-right"
+                            [label]="GetLanguage('action.remove')"
+                            icon="pi pi-angle-left"
+                            (onClick)="removePlan()"
+                            [model]="itemsRemove"
+                            styleClass="p-button-sm p-button-danger mb-2"
+                        >
+                        </p-splitButton>
+                    </div>
+                    <div class="p-toolbar-group-right"></div>
+                </p-toolbar>
+                <div class="card" *ngIf="is_loadForm == 1">
+                    <div class="border-round border-1 surface-border p-4">
+                        <div class="flex mb-3">
+                            <div>
+                                <p-skeleton
+                                    width="10rem"
+                                    styleClass="mb-2"
+                                ></p-skeleton>
+                                <p-skeleton
+                                    width="5rem"
+                                    styleClass="mb-2"
+                                ></p-skeleton>
+                                <p-skeleton height=".5rem"></p-skeleton>
+                            </div>
+                        </div>
+                        <p-skeleton width="100%" height="200px"></p-skeleton>
+                    </div>
+                </div>
+                <p-listbox
+                    *ngIf="is_loadForm == 0"
+                    [filter]="true"
+                    [listStyle]="{ 'max-height': '300px' }"
+                    [options]="Plan"
+                    [(ngModel)]="selected_plan"
+                    optionLabel="shop_code"
+                >
+                    <ng-template let-plan pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <p-checkbox
+                                *ngIf="plan.is_action == 1"
+                                [(ngModel)]="plan.checked"
+                                [binary]="true"
+                                inputId="binary"
+                            ></p-checkbox>
+
+                            <div>
+                                {{ plan.RowNum }}/{{ plan.TotalRows }}. -
+                                {{ plan.shop_code }} - {{ plan.shop_name }} -
+                                {{ plan.shop_address }} -
+                                {{ plan.manager_name }}-
+                                {{ plan._plan_date }} (Shift:
+                                {{ plan.shift_code }} {{ plan.plan_time }})
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-listbox>
+                <hr />
+                <p-listbox
+                    *ngIf="is_loadForm == 0"
+                    [filter]="true"
+                    [listStyle]="{ 'max-height': '250px' }"
+                    [options]="ATD"
+                    [(ngModel)]="selected_store"
+                    optionLabel="shop_code"
+                >
+                    <ng-template let-atd pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div
+                                style="color: red"
+                                pTooltip="The staff was timekeeper, could not withdraw the calendar"
+                                tooltipPosition="top"
+                            >
+                                {{ atd.RowNum }}/{{ atd.TotalRows }}. -
+                                {{ atd.shop_code }} - {{ atd.shop_name }} -
+                                {{ atd.shop_address }} - {{ atd.manager_name }}-
+                                {{ atd._plan_date }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-listbox>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid animation-duration-500 box2" *ngIf="showTable == 1">
+    <div class="col-12">
+        <div class="row">
+            <p-table
+                rowGroupMode="subheader"
+                groupRowsBy="manager_name"
+                [columns]="cols"
+                [value]="listEmployee"
+                [tableStyle]="{ 'min-width': '50rem' }"
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+            >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <!-- pFrozenColumn -->
+                        <th
+                            class="text-center w-1rem"
+                            [ngStyle]="{
+                                color: col.color,
+                                background: col.backgroup_color
+                            }"
+                            *ngFor="let col of columns"
+                        >
+                            {{ col.header }}
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <ng-template
+                    pTemplate="groupheader"
+                    let-rowData
+                    let-columns="columns"
+                >
+                    <tr pRowGroupHeader>
+                        <!-- pFrozenColumn -->
+                        <td colspan="2">
+                            <span class="font-bold ml-2 mr-2">{{
+                                rowData.manager_name
+                            }}</span>
+                        </td>
+                        <ng-container
+                            *ngFor="let col of columns; let i = index"
+                        >
+                            <td
+                                [ngStyle]="{ background: col.backgroup_color }"
+                                *ngIf="i >= 2"
+                            ></td>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <!-- pFrozenColumn -->
+                        <td
+                            [ngStyle]="{ background: col.backgroup_color }"
+                            *ngFor="let col of columns"
+                            class="text-center"
+                        >
+                            <label class="text-center">{{
+                                rowData[col.field]
+                            }}</label>
+                            <button
+                                (click)="showdata(col.type, rowData.data)"
+                                pButton
+                                *ngIf="
+                                    col.type > 0 &&
+                                    GetData(
+                                        col.type,
+                                        rowData.data,
+                                        rowData.result
+                                    ) != 0
+                                "
+                                class="p-button-icon p-button-success m-1"
+                            >
+                                {{
+                                    GetData(
+                                        col.type,
+                                        rowData.data,
+                                        rowData.result
+                                    )
+                                }}
+                            </button>
+
+                            <label
+                                *ngIf="
+                                    col.field != 'employee_code' &&
+                                    col.field != 'employee_name' &&
+                                    col.type > 0 &&
+                                    GetData(
+                                        col.type,
+                                        rowData.data,
+                                        rowData.result
+                                    ) == 0
+                                "
+                            >
+                                <!-- {{rowData[col.employee_id]|json}} -->
+                                <i
+                                    (click)="
+                                        showAddPlan(
+                                            rowData.employee_id,
+                                            rowData.employee_code,
+                                            rowData.employee_name,
+                                            col.type,
+                                            1
+                                        )
+                                    "
+                                    class="pi pi-plus-circle"
+                                    style="font-size: 1.1rem"
+                                ></i>
+                            </label>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-paginator
+                (onPageChange)="onPageChange1($event)"
+                [first]="first1"
+                [rows]="rows1"
+                [totalRecords]="TotalRowNumber"
+                [rowsPerPageOptions]="[10, 20, 30]"
+            ></p-paginator>
+        </div>
+    </div>
+</div>
+
+<p-dialog
+    [(visible)]="addPlanModal"
+    [style]="{ width: '450px' }"
+    header="Details Plan"
+    [modal]="true"
+    styleClass="p-fluid"
+>
+    <ng-template pTemplate="content">
+        <div class="field" class="text-center">
+            <!-- <span class="font-bold">Employee: </span> -->
+            <label class="text-center"
+                ><span class="font-bold" style="color: green"
+                    >[{{ plan.employee_id }}]</span
+                >
+                -
+                {{ plan.employee_code }}
+                - {{ plan.employee_name }}</label
+            >
+        </div>
+
+        <div class="field">
+            <label for="date" class="font-bold"
+                >Date<span class="font-bold" style="color: red"> *</span></label
+            >
+            <p-calendar
+                inputId="date"
+                [(ngModel)]="plan.date"
+                selectionMode="range"
+                placeholder="dd/mm/yy - dd/mm/yy"
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [readonlyInput]="true"
+                [showButtonBar]="true"
+                [minDate]="minDate"
+                [maxDate]="maxDate"
+            ></p-calendar>
+        </div>
+
+        <div class="field">
+            <label for="shop" class="font-bold"
+                >Shop<span class="font-bold" style="color: red"> *</span></label
+            >
+            <input
+                type="text"
+                pInputText
+                [(ngModel)]="plan.shops"
+                placeholder="SHOPCODE01 SHOPCODE02"
+            />
+        </div>
+
+        <div class="field">
+            <label for="shift" class="font-bold"
+                >Shift<span class="font-bold" style="color: red">
+                    *</span
+                ></label
+            >
+            <app-control-shifts
+                [style]="{ minWidth: '100%' }"
+                (outValue)="selectAddShift($event)"
+            ></app-control-shifts>
+        </div>
+
+        <div class="field col-3">
+            <p-button
+                (click)="op.toggle($event)"
+                icon="pi pi-clock-o"
+                label="Time"
+                class="flex align-items-center"
+            />
+            <p-overlayPanel #op>
+                <div class="flex flex-column gap-3 w-25rem">
+                    <div class="row">
+                        <div class="flex-auto col-5">
+                            <label
+                                for="calendar-timeonly"
+                                class="font-bold block mb-2"
+                            >
+                                From time
+                            </label>
+                            <p-calendar
+                                inputId="calendar-timeonly"
+                                [(ngModel)]="from_time"
+                                [timeOnly]="true"
+                            />
+                        </div>
+                        <div class="flex-auto col-5">
+                            <label
+                                for="calendar-timeonly"
+                                class="font-bold block mb-2"
+                            >
+                                To time
+                            </label>
+                            <p-calendar
+                                inputId="calendar-timeonly"
+                                [(ngModel)]="to_time"
+                                [timeOnly]="true"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </p-overlayPanel>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            label="Cancel"
+            icon="pi pi-times"
+            class="p-button-text"
+            (click)="hideDialog()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Remove"
+            icon="pi pi-trash"
+            class="p-button-text"
+            (click)="saveAddPlan('remove')"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Add"
+            icon="pi pi-check"
+            class="p-button-text"
+            (click)="saveAddPlan('create')"
+        ></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog
+    header="List Shop"
+    [(visible)]="planModal"
+    [modal]="true"
+    showEffect="fade "
+    [style]="{ width: '60vw' }"
+    [breakpoints]="{ '960px': '75vw' }"
+>
+    <div class="flex justify-content-end px-4 align-item-center gap-3">
+        <div class="flex justify-content-end align-items-center gap-2">
+            <div class="p-input-icon-left flex flex-column gap-2">
+                <button
+                    pButton
+                    pRipple
+                    label="Action"
+                    icon="pi pi-sitemap"
+                    class="p-button-text mb-2 mt-2"
+                    (click)="showDetail(2)"
+                ></button>
+            </div>
+        </div>
+    </div>
+
+    <p-table
+        [value]="listdetailplan"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        dataKey="id"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">Code</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">Shift</th>
+                <th class="text-center">Time</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <tr>
+                <td class="text-center">
+                    <button
+                        *ngIf="item.result && item.result.length > 0"
+                        type="button"
+                        pButton
+                        pRipple
+                        [pRowToggler]="item"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="
+                            expanded
+                                ? 'pi pi-chevron-down'
+                                : 'pi pi-chevron-right'
+                        "
+                    ></button>
+                </td>
+
+                <td class="font-bold" style="color: green">
+                    {{ item.shop_code }}
+                </td>
+                <td>{{ item.shop_name }}</td>
+                <td>{{ item.shop_address }}</td>
+                <td class="text-center">{{ item.shift_code }}</td>
+                <td>{{ item.plan_time }}</td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-item colspan="5">
+            <tr>
+                <td colspan="7">
+                    <div class="p-3">
+                        <p-carousel
+                            [value]="item.result"
+                            [numVisible]="3"
+                            [numScroll]="3"
+                            [circular]="false"
+                        >
+                            <p-tag
+                                [value]="item.report_id"
+                                [severity]="getSeverity(item.report_id)"
+                            >
+                            </p-tag
+                            ><span>{{ item.UUID }}</span>
+
+                            <ng-template let-item pTemplate="item">
+                                <div
+                                    class="border-1 surface-border border-round m-2 text-center py-5 px-3"
+                                    [pTooltip]="item.toolTip"
+                                    tooltipPosition="top"
+                                >
+                                    <div class="mb-3">
+                                        <img
+                                            [src]="item.atd_photo"
+                                            [alt]="item.atd_type"
+                                            class="w-6 shadow-2"
+                                            (click)="openImage(item.index)"
+                                        />
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">
+                                            {{ item.atd_time }}
+                                        </h6>
+                                        <p-tag
+                                            [value]="item.atd_type"
+                                            [severity]="
+                                                getSeverity(item.atd_type)
+                                            "
+                                        ></p-tag>
+                                        <div
+                                            class="mt-5 flex align-items-center justify-content-center gap-2"
+                                        >
+                                            MAP
+                                            <p-image
+                                                *ngIf="
+                                                    getKey(item.atd_type) == 1
+                                                "
+                                                (click)="
+                                                    mapPopup(
+                                                        item.latitude,
+                                                        item.longitude
+                                                    )
+                                                "
+                                                src="/assets/demo/images/works/marker_red.png"
+                                                alt="Image"
+                                                width="20px"
+                                            ></p-image>
+
+                                            <p-image
+                                                *ngIf="
+                                                    getKey(item.atd_type) == 2
+                                                "
+                                                (click)="
+                                                    mapPopup(
+                                                        item.latitude,
+                                                        item.longitude
+                                                    )
+                                                "
+                                                src="/assets/demo/images/works/marker_blue.png"
+                                                alt="Image"
+                                                width="20px"
+                                            ></p-image>
+
+                                            <p-image
+                                                *ngIf="
+                                                    getKey(item.atd_type) == 3
+                                                "
+                                                (click)="
+                                                    mapPopup(
+                                                        item.latitude,
+                                                        item.longitude
+                                                    )
+                                                "
+                                                src="/assets/demo/images/works/home.png"
+                                                alt="Image"
+                                                width="20px"
+                                            >
+                                            </p-image>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-carousel>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+    </ng-template>
+</p-dialog>
+
+<p-dialog
+    header="Notification"
+    [(visible)]="display"
+    [modal]="true"
+    showEffect="fade"
+    [style]="{ width: '30vw' }"
+    [breakpoints]="{ '960px': '75vw' }"
+>
+    <p class="line-height-3 m-1">
+        {{ message }}
+    </p>
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+        <button
+            pButton
+            icon="pi pi-check "
+            (click)="OK()"
+            label="Ok"
+            class="p-button-outlined float-right"
+            style="margin-right: 0%"
+        ></button>
+    </ng-template>
+</p-dialog>
+<p-toast />
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

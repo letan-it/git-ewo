@@ -1,0 +1,19 @@
+<ng-container *ngIf="listEmployeeProject && isLoadForm==0">
+
+    <p-multiSelect [options]="listEmployeeProject" [showToggleAll]="false" [showClear]="true" [filter]="true"
+        filterBy="Name" [virtualScroll]="true" [filter]="true" [virtualScrollItemSize]="43"
+        class="multiselect-custom-virtual-scroll p-fluid" (onChange)="returnValue(selectedEmployeeProject)"
+        [(ngModel)]="selectedEmployeeProject" optionLabel="Name" placeholder="Select a project" appendTo="body">
+
+
+        <ng-template let-project pTemplate="item">
+            <div class="flex align-items-center gap-2">
+                <img [src]="project.Image" [class]="'flag flag-ny'" style="width: 18px" />
+                <div>{{project.Name}}</div>
+            </div>
+        </ng-template>
+
+    </p-multiSelect>
+</ng-container>
+
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

@@ -1,0 +1,539 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_month") }}</h6>
+
+                    <p-dropdown
+                        [options]="ListMonth"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="name"
+                        [style]="{ minWidth: '100%' }"
+                        [(ngModel)]="selectMonth"
+                        [placeholder]="
+                            selectMonth
+                                ? selectMonth.name
+                                : GetLanguage('lb_select-month')
+                        "
+                        optionLabel="name"
+                    ></p-dropdown>
+                </div>
+                <div class="md:col-3" *ngIf="userProfile.employee_type_id != 7">
+                    <h6>{{ GetLanguage("f_manager") }}</h6>
+                    <app-control-employee-list
+                        (outValue)="selectASM($event)"
+                        [placeholder]="GetLanguage('lb_select_manager')"
+                        [project_id]="project_id"
+                        [disabled]="
+                            userProfile.employee_type_id == 8 ? true : false
+                        "
+                        [itemManagerCode]="
+                            userProfile.employee_type_id == 8
+                                ? userProfile.employee_id
+                                : 0
+                        "
+                    ></app-control-employee-list>
+                </div>
+
+                <div class="md:col-3" *ngIf="userProfile.employee_type_id != 7">
+                    <h6>{{ GetLanguage("f_employee") }}</h6>
+                    <app-control-employee-list
+                        (outValue)="selectEmployee($event)"
+                        [placeholder]="'Nhân viên'"
+                        [employee_type_id]="employee_type_id"
+                        [userLogin]="userLogin"
+                        [project_id]="project_id"
+                    ></app-control-employee-list>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_survey") }}</h6>
+                    <app-control-survey-list
+                        (outValue)="selectSurveyFilter($event)"
+                        [typeSurvey]="[5]"
+                    ></app-control-survey-list>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+                <!-- <input
+                    pInputText
+                    id="name1"
+                    class="text-center font-bold mr-2 mt-2"
+                    type="date"
+                    [(ngModel)]="PlanDate"
+                /> -->
+
+                <button
+                    pRipple
+                    pButton
+                    type="button"
+                    [label]="GetLanguage('action.filter')"
+                    [loading]="isLoading_Filter"
+                    (click)="filterTable(1)"
+                    icon="pi pi-search"
+                    class="p-button-sm mr-2 ml-2 mt-2"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    type="button"
+                    *ngIf="userProfile.employee_type_id != 7"
+                    class="p-button-success p-button-sm mr-2 ml-2 mt-2"
+                    (click)="openModel()"
+                    [label]="GetLanguage('action.create')"
+                    icon="pi pi-plus"
+                ></button>
+                <button
+                    type="button"
+                    (click)="export()"
+                    [label]="GetLanguage('action.rawdata')"
+                    pButton
+                    pRipple
+                    icon="pi pi-file-excel"
+                    class="p-button-sm mr-2 ml-2 mt-2"
+                    style="float: right"
+                ></button>
+                <button
+                    type="button"
+                    (click)="ShowHideTemplate()"
+                    [label]="GetLanguage('action.import')"
+                    pButton
+                    pRipple
+                    class="p-button-sm mr-2 mt-2"
+                    icon="pi pi-upload"
+                ></button>
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+
+                <button
+                    pButton
+                    type="button"
+                    [pTooltip]="GetLanguage('tp.showfilter')"
+                    pStyleClass=".box"
+                    enterClass="hidden"
+                    enterActiveClass="fadeinup"
+                    (click)="ShowHideFiter()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye"
+                    class="p-button-success mr-2 mt-2"
+                    [ngStyle]="{ display: showFiter == 1 ? 'none' : 'flex' }"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    [pTooltip]="GetLanguage('tp.hidefilter')"
+                    (click)="ShowHideFiter()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye-slash"
+                    class="p-button-warning mr-2 mt-2"
+                    pStyleClass=".box"
+                    leaveActiveClass="fadeoutup"
+                    leaveToClass="hidden"
+                    [ngStyle]="{ display: showFiter == 0 ? 'none' : 'flex' }"
+                ></button>
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+<div class="card" *ngIf="showTemplate == 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input
+                    class="form-control"
+                    type="file"
+                    (change)="onChangeFile($event)"
+                    #myInputFile
+                />
+            </div>
+            <button
+                type="button"
+                [label]="GetLanguage('action.gettemplate')"
+                pButton
+                pRipple
+                icon="pi pi-file-export"
+                class="p-button-sm ml-2 mr-2"
+                style="float: right"
+                (click)="getTemplate()"
+            ></button>
+
+            <button
+                pButton
+                pRipple
+                class="ml-2 mr-2"
+                [label]="GetLanguage('action.upload')"
+                icon="pi pi-upload"
+                (click)="importTemplate()"
+                class="p-button-sm p-button-success"
+            ></button>
+        </div>
+    </p-toolbar>
+
+    <hr />
+    <div class="card" *ngIf="dataError">
+        <p-table [value]="dataError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Shop Code</th>
+                    <th>Employee Code</th>
+                    <th>Plan Date</th>
+                    <th>Shift Code</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.shop_code }}</td>
+                    <td>{{ error.employee_code }}</td>
+                    <td>{{ error.plan_date }}</td>
+                    <td>{{ error.shift_code }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <hr />
+    <div class="card" *ngIf="dataMessError">
+        <div class="col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">Error Name :</div>
+                <div class="col-11">
+                    {{ dataMessError }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+<div class="grid animation-duration-500 box2">
+    <div class="col-12">
+        <div class="row">
+            <p-table
+                rowGroupMode="subheader"
+                [columns]="cols"
+                [value]="listEmployee"
+                [tableStyle]="{ 'min-width': '50rem' }"
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+            >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th
+                            class="text-center w-1rem"
+                            [ngStyle]="{
+                                color: col.color,
+                                background: col.backgroup_color
+                            }"
+                            *ngFor="let col of columns"
+                        >
+                            {{ col.header }}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td
+                            [ngStyle]="{ background: col.backgroup_color }"
+                            *ngFor="let col of columns"
+                            class="text-center"
+                        >
+                            <label class="text-center">{{
+                                rowData[col.field]
+                            }}</label>
+                            <button
+                                (click)="showdata(col.type, rowData)"
+                                pButton
+                                *ngIf="
+                                    col.type > 0 &&
+                                    GetData(col.type, rowData.data) != 0
+                                "
+                                class="p-button-icon p-button-success"
+                            >
+                                {{ GetData(col.type, rowData.data) }}
+                            </button>
+
+                            <label
+                                *ngIf="
+                                    col.field != 'employee_code' &&
+                                    col.field != 'employee_name' &&
+                                    col.type > 0 &&
+                                    GetData(col.type, rowData.data) == 0
+                                "
+                            >
+                                <i
+                                    (click)="showAddPlan(rowData, col)"
+                                    class="pi pi-plus-circle"
+                                    style="font-size: 1.1rem"
+                                ></i>
+                            </label>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-paginator
+                (onPageChange)="onPageChange1($event)"
+                [first]="first1"
+                [rows]="rows1"
+                [totalRecords]="TotalRowNumber"
+                [rowsPerPageOptions]="[10, 20, 30]"
+            ></p-paginator>
+        </div>
+    </div>
+</div>
+
+<p-dialog
+    [(visible)]="addPlanModal"
+    [style]="{ width: '450px' }"
+    header="Add coaching"
+    [modal]="true"
+    styleClass="p-fluid"
+    (onHide)="resetInput()"
+>
+    <ng-template pTemplate="content">
+        <div class="field" class="text-center" *ngIf="check_add">
+            <!-- <span class="font-bold">Employee: </span> -->
+            <label class="text-center"
+                ><span class="font-bold" style="color: green"
+                    >[{{ coaching.employee_checker_id }}]</span
+                >
+                -
+                {{ coaching.employee_checker_code }}
+                - {{ coaching.employee_checker_code }}</label
+            >
+        </div>
+        <div class="field">
+            <label for="date" class="font-bold"
+                >Người kiểm tra<span class="font-bold" style="color: red">
+                    *</span
+                ></label
+            >
+            <app-control-employee-list
+                (outValue)="selectEmployeeFCAction($event)"
+                [placeholder]="'Người kiểm tra'"
+                [inputStyle]="{
+                    minWidth: '200px',
+                    maxWidth: '100%',
+                    'margin-top': '0.5rem'
+                }"
+                [employee_type_id]="employee_type_id"
+                [project_id]="project_id"
+                [userLogin]="userLogin"
+            ></app-control-employee-list>
+        </div>
+        <div class="field">
+            <label for="date" class="font-bold"
+                >Ngày kiểm tra<span class="font-bold" style="color: red">
+                    *</span
+                ></label
+            >
+            <p-calendar
+                inputId="date"
+                [(ngModel)]="coaching.field_date"
+                selectionMode="range"
+                placeholder="dd/mm/yy - dd/mm/yy"
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [readonlyInput]="true"
+                [showButtonBar]="true"
+                [minDate]="minDate"
+                [maxDate]="maxDate"
+            ></p-calendar>
+        </div>
+        <div class="field">
+            <label for="date" class="font-bold"
+                >Nhân viên<span class="font-bold" style="color: red">
+                    *</span
+                ></label
+            >
+            <app-control-employee-list
+                (outValue)="selectEmployeeAction($event)"
+                [placeholder]="'Nhân viên'"
+                [inputStyle]="{
+                    minWidth: '200px',
+                    maxWidth: '100%',
+                    'margin-top': '0.5rem'
+                }"
+                [employee_type_id]="employee_type_id"
+                [project_id]="project_id"
+                [userLogin]="userLogin"
+            ></app-control-employee-list>
+        </div>
+        <div class="field">
+            <label for="date" class="font-bold"
+                >Bài khảo sát<span class="font-bold" style="color: red">
+                    *</span
+                ></label
+            >
+            <app-control-survey-list
+                (outValue)="selectSurveyAction($event)"
+                [typeSurvey]="[5]"
+            ></app-control-survey-list>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            label="Reset"
+            icon="pi pi-trash"
+            class="p-button-text"
+            (click)="resetInput()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Save"
+            icon="pi pi-check"
+            class="p-button-text"
+            (click)="saveCoaching('create')"
+        ></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog
+    header="List Field"
+    [(visible)]="planModal"
+    [modal]="true"
+    showEffect="fade "
+    [style]="{ width: '60vw' }"
+    [breakpoints]="{ '960px': '75vw' }"
+>
+    <div class="flex flex-row justify-content-end">
+        <button
+            pButton
+            class="p-button-icon p-button-success mb-2"
+            (click)="openModel()"
+        >
+            Thêm mới
+        </button>
+    </div>
+    <p-table
+        [value]="listdetailplan"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        dataKey="id"
+        editMode="row"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 10%">Id</th>
+                <th style="width: 20%">Emp Code</th>
+                <th style="width: 20%">Emp Name</th>
+                <th style="width: 30%">Survey</th>
+                <th style="width: 20%">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template
+            pTemplate="body"
+            let-item
+            let-editing="editing"
+            let-ri="rowIndex"
+        >
+            <tr [pEditableRow]="item">
+                <td>{{ item.id }}</td>
+                <td class="font-bold">
+                    {{ item.employee_code }}
+                </td>
+                <td>{{ item.employee_name }}</td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <app-control-survey-list
+                                (outValue)="selectSurvey($event)"
+                                [typeSurvey]="[5]"
+                            ></app-control-survey-list>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{ item.survey_name }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <button
+                        *ngIf="!editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        pInitEditableRow
+                        icon="pi pi-pencil"
+                        (click)="onRowEditInit(item)"
+                        class="p-button-rounded p-button-text"
+                    ></button>
+                    <button
+                        *ngIf="editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        pSaveEditableRow
+                        icon="pi pi-check"
+                        (click)="onRowEditSave(item, ri)"
+                        class="p-button-rounded p-button-text p-button-success mr-2"
+                    ></button>
+                    <button
+                        *ngIf="editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        pCancelEditableRow
+                        icon="pi pi-times"
+                        (click)="onRowEditCancel(item, ri)"
+                        class="p-button-rounded p-button-text p-button-danger"
+                    ></button>
+                    <button
+                        *ngIf="!editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-trash"
+                        (click)="delete($event, item)"
+                        class="p-button-rounded p-button-text p-button-danger"
+                    ></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+    </ng-template>
+</p-dialog>
+
+<p-dialog
+    header="Notification"
+    [(visible)]="display"
+    [modal]="true"
+    showEffect="fade"
+    [style]="{ width: '30vw' }"
+    [breakpoints]="{ '960px': '75vw' }"
+>
+    <p class="line-height-3 m-1">
+        {{ message }}
+    </p>
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+        <button
+            pButton
+            icon="pi pi-check "
+            (click)="OK()"
+            label="Ok"
+            class="p-button-outlined float-right"
+            style="margin-right: 0%"
+        ></button>
+    </ng-template>
+</p-dialog>
+<p-toast />
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

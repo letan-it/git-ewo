@@ -1,0 +1,274 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:700);
+.set-size.charts-container {
+    display: flex;
+    flex-direction: row;
+}
+#icoico {
+    margin-bottom: 20px;
+}
+.char1 {
+    font-size: 18px;
+    flex: 1;
+}
+.panelleft {
+    display: flex;
+}
+
+.char2 {
+    font-size: 14px;
+    color: #6bb4e5;
+}
+.label.labelleft {
+    font-size: 14px !important;
+    margin-top: 1.7rem;
+    font-weight: bold;
+}
+.card {
+    // border-radius: 10%;
+    padding: 0.1rem;
+}
+body {
+    background-color: gray;
+}
+
+// -- vars
+$bg-color: #34495e;
+$default-size: 0.8em;
+$label-font-size: $default-size / 4;
+$label-font-size-redo: $default-size * 4;
+
+// -- mixins
+@mixin size($width, $height) {
+    height: $height;
+    width: $width;
+}
+
+@mixin draw-progress($progress, $color) {
+    .pie {
+        .half-circle {
+            @if ($color == null) {
+                border-color: rgb(244, 2, 2);
+                $progress: 100;
+            }
+            @if ($progress == 100) {
+                border-color: rgb(244, 2, 2);
+                $progress: 100;
+            }
+            @if ($progress > 80 and $progress < 100) {
+                border-color: rgb(253, 138, 7);
+            }
+            @if ($progress > 0 and $progress < 50 and $color != null) {
+                border-color: rgb(7, 253, 52);
+            }
+            @if ($progress > 100) {
+                border-color: rgb(253, 138, 7);
+                $progress: 100;
+            } @else {
+                border-color: $progress;
+            }
+        }
+
+        .left-side {
+            transform: rotate($progress * 3.6deg);
+        }
+
+        @if $progress <= 50 {
+            .right-side {
+                display: none;
+            }
+        } @else {
+            clip: rect(auto, auto, auto, auto);
+
+            .right-side {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}
+.card {
+    border: 1px solid gray;
+    flex-direction: row;
+    display: flex;
+}
+
+@mixin draw-progress--solid($progress, $color, $bg-color) {
+    background: linear-gradient(to right, $color 50%, $bg-color 50%);
+
+    &:before {
+        @if $progress <= 50 {
+            background: $bg-color;
+            transform: rotate((100 - (50 - $progress)) / 100 * 360deg * -1);
+        } @else {
+            background: $color;
+            transform: rotate((100 - $progress) / 100 * 360deg);
+        }
+    }
+}
+
+// -- selectors
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+html {
+    font-size: 100%;
+}
+html,
+body {
+    background: #ecf0f1;
+    color: #444;
+    font-family: "Lato", Tahoma, Geneva, sans-serif;
+    font-size: 16px;
+}
+
+.set-size {
+    font-size: 10em;
+}
+
+.charts-container {
+    &:after {
+        clear: both;
+        content: "";
+        display: table;
+    }
+}
+
+.pie-wrapper {
+    @include size($default-size, $default-size);
+    float: left;
+    margin: 15px;
+    position: relative;
+
+    &:nth-child(3n + 1) {
+        clear: both;
+    }
+
+    .pie {
+        @include size(100%, 100%);
+        clip: rect(0, $default-size, $default-size, $default-size / 2);
+        left: 0;
+        position: absolute;
+        top: 0;
+
+        .half-circle {
+            @include size(100%, 100%);
+            border: ($default-size / 10) solid #3498db;
+            border-radius: 50%;
+            clip: rect(0, $default-size / 2, $default-size, 0);
+            left: 0;
+            position: absolute;
+            top: 0;
+        }
+    }
+
+    .label {
+        background: $bg-color;
+        border-radius: 50%;
+        bottom: $label-font-size-redo / 10;
+        color: #ecf0f1;
+        cursor: default;
+        display: block;
+        font-size: $label-font-size;
+        left: $label-font-size-redo / 10;
+        // line-height: $label-font-size-redo * 0.7;
+        position: absolute;
+        right: $label-font-size-redo / 10;
+        text-align: center;
+        top: $label-font-size-redo / 10;
+
+        .smaller {
+            color: #161819;
+            font-size: 1.3rem;
+            padding-bottom: 10px;
+            // vertical-align: super;
+        }
+    }
+
+    .shadow {
+        @include size(100%, 100%);
+        border: $default-size / 10 solid #bdc3c7;
+        border-radius: 50%;
+    }
+
+    &.style-2 {
+        .label {
+            background: none;
+            color: #7f8c8d;
+
+            .smaller {
+                color: #bdc3c7;
+            }
+        }
+    }
+}
+
+.pie-wrapper--solid {
+    border-radius: 50%;
+    overflow: hidden;
+
+    &:before {
+        border-radius: 0 100% 100% 0 / 50%;
+        content: "";
+        display: block;
+        height: 100%;
+        margin-left: 50%;
+        transform-origin: left;
+    }
+
+    .label {
+        background: transparent;
+    }
+}
+@for $i from 1 through 1200 {
+    .progress-#{$i} {
+        @include draw-progress($i, #1abc9c);
+    }
+}
+.progress-null {
+    @include draw-progress(1, null); //
+}
+.formService {
+    width: 33.33%;
+    // padding-bottom: 1.3rem;
+    margin-top: 15px;
+}
+
+@media screen and (min-width: 739px) and (max-width: 1300px) {
+    .formService {
+        width: 50% !important;
+    }
+}
+@media screen and (max-width: 738px) {
+    .formService {
+        width: 100% !important;
+    }
+}
+.mint {
+    padding-left: 25px;
+    padding-top: 25px;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Choose a font similar to the image */
+    font-size: 23px;
+    color: #0ce269; /* Similar golden-yellow color */
+    text-shadow: 3px 3px 0 #02b14d, -1px -1px 0 #0ce269, -1px 1px 0 #0ce269, 
+                 1px -1px 0 #0ce269, 1px 1px 0 #0ce269; /* Creates a shadow effect similar to the image */
+  }
+  
+  .grays {
+    padding-left: 25px;
+    padding-top: 25px;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Same font styling */
+    font-size: 25px;
+    color: #cb1818; /* Similar greyish-yellow color */
+    text-shadow: 3px 3px 0 #897768, -1px -1px 0 #cb1818, -1px 1px 0 #cb1818, 
+                 1px -1px 0 #cb1818, 1px 1px 0 #cb1818; /* Same shadow effect */
+  }
+  
+  .second {
+    padding-left: 25px;
+    padding-top: 25px;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Choose a font similar to the image */
+    font-size: 16px;
+    color: #3a0ce2; /* Similar golden-yellow color */
+ 
+  }

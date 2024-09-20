@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PhotoViewer</title>
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../ZoomImage/css/photoviewer.css" rel="stylesheet">
+
+  <style>
+    .photoviewer-inner {
+      background-color: transparent;
+      border-radius: 0;
+      backdrop-filter: unset;
+    }
+
+    .photoviewer-stage {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: white;
+      /* rgba(0, 0, 0, .85); */
+      border: none;
+    }
+
+    .photoviewer-header .photoviewer-toolbar {
+      background-color: rgba(0, 0, 0, .5);
+    }
+
+    .photoviewer-footer {
+      bottom: 10px;
+    }
+
+    .photoviewer-footer .photoviewer-toolbar {
+      background-color: rgba(0, 0, 0, .5);
+      border-radius: 5px;
+    }
+
+    .photoviewer-header,
+    .photoviewer-footer {
+      /* pointer-events: none; */
+    }
+
+    .photoviewer-title {
+      color: #ccc;
+      color: blue;
+      font-size: x-large;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      /* -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: all; */
+
+    }
+
+    .photoviewer-button {
+      color: #ccc;
+      pointer-events: auto;
+    }
+
+    .photoviewer-footer .photoviewer-button:hover {
+      color: white;
+    }
+  </style>
+</head>
+
+<body dir="ltr" onload="loadpage()">
+  <div class="container">
+    <div class="image-set">
+
+    </div>
+  </div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- <script src="..//js/photoviewer.js"></script> -->
+  <script src="../ZoomImage/js/photoviewer.js"></script>
+  <script>
+    function loadpage() {
+
+      items = JSON.parse(localStorage.getItem("listphoto"));
+      // if (items === undefined || items == null || items.length <= 0)
+      //   document.location.href = "tool.html";
+      var changeindex = localStorage.getItem("changeindex");
+
+      options = {
+        index: changeindex - 1,
+        resizable: false,
+        initMaximized: true,
+        headerToolbar: ['close'],
+        footerToolbar: [
+          'prev',
+          'next',
+          'zoomIn',
+          'zoomOut',
+          'fullscreen',
+          'actualSize',
+          'rotateLeft',
+          'rotateRight'
+
+        ],
+        modalWidth: 400,
+        modalHeight: 400,
+        callbacks: {
+          beforeChange: function (context, index) {
+            console.log(context, index)
+          },
+          changed: function (context, index) {
+            console.log(context, index)
+          }
+        }
+      };
+
+      new PhotoViewer(items, options);
+    }
+    // initialize manually with a list of links
+    $('[data-gallery=photoviewer]').click(function (e) {
+
+      e.preventDefault();
+
+      var items = [],
+        options = {
+          index: $(this).index(),
+          resizable: false,
+          initMaximized: true,
+          headerToolbar: ['close'],
+        };
+
+      $('[data-gallery=photoviewer]').each(function () {
+        items.push({
+          src: $(this).attr('href'),
+          title: $(this).attr('data-title')
+        });
+      });
+
+      new PhotoViewer(items, options);
+
+    });
+  </script>
+</body>
+
+</html>

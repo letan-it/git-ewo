@@ -1,0 +1,456 @@
+<div class="grid">
+
+    <div class="col-12" *ngIf="showFiter == 1">
+        <div class="grid">
+            <div class="col-6">
+                <div class="card flex justify-content-center">
+                    <h6 class="font-bold">Bộ lọc dữ liệu</h6>
+                    <p-dropdown class="p-fluid" [options]="times" [(ngModel)]="selectedTimes" optionLabel="name"
+                        [showClear]="true"></p-dropdown>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card flex justify-content-center">
+                    <h6 class="font-bold">Vùng - ASM - SS</h6>
+                    <p-dropdown class="p-fluid" [options]="regions" [(ngModel)]="selectedRegions" optionLabel="name"
+                        [showClear]="true"></p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="grid">
+            <div class="col-12">
+                <p-toolbar>
+                    <div class="p-toolbar-group-left flex flex-wrap ">
+                        <button pButton type="button " label="Filter " icon="pi pi-search " (click)="filter(1) "
+                            class="mr-2 "></button>
+                        <i class="pi pi-bars p-toolbar-separator "></i>
+
+                        <button pButton type="button " pTooltip="Show Filter " *ngIf="showFiter==0 "
+                            (click)="ShowHideFiter() " tooltipPosition="top " icon="pi pi-circle "
+                            class="p-button-success mr-2 "></button>
+                        <button pButton type="button " pTooltip="Hide Filter " *ngIf="showFiter==1 "
+                            (click)="ShowHideFiter() " tooltipPosition="top " icon="pi pi-circle-fill "
+                            class="p-button-warning mr-2 "></button>
+
+                    </div>
+                    <div class="p-toolbar-group-right ">
+                        <div class="field-checkbox ">
+                            <p-checkbox name="group_name" value="1" label="is Data Test "
+                                [(ngModel)]="is_test"></p-checkbox>
+                        </div>
+                    </div>
+
+                </p-toolbar>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-12">
+        <div class="grid card">
+            <h3 class="text-center">Tổng quan <span style="color: mediumturquoise;">Tháng 4</span></h3>
+            <h5 style="color:red">* Dưới đây là dữ liệu demo</h5>
+        </div>
+
+        <div class="grid">
+
+            <div class="col-4" style="background-color: white;">
+                <div class="card">
+                    <h5 class="font-bold">Số ASO thực hiện</h5>
+                    <div class="card p-fluid flex justify-content-center">
+                        <p-chart height="300px" class="p-fluid" type="doughnut" [data]="data"
+                            [options]="options"></p-chart>
+                    </div>
+                </div>
+                <div class="card">
+                    <h5 class="font-bold">Tổng thực hiện</h5>
+                    <div class="card">
+                        <p-chart height="150px" type="bar" [data]="data1" [options]="options1"></p-chart>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-8" style="background-color: white;">
+                <div class="card">
+                    <h5 class="font-bold">Tổng số ASO không thành công</h5>
+
+                    <div class="card">
+                        <p-chart height="300px" type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-4">
+                                <h5 class="font-bold">ASO có mua hàng</h5>
+
+                                <div class="card">
+                                    <p-chart height="150px" type="bar" [data]="basicData2"
+                                        [options]="basicOptions"></p-chart>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <h5 class="font-bold">ASO đạt Hero SKU</h5>
+
+                                <div class="card">
+                                    <p-chart height="150px" type="bar" [data]="basicData3"
+                                        [options]="basicOptions"></p-chart>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <h5 class="font-bold">ASO đúng địa chỉ & SĐT</h5>
+
+                                <div class="card">
+                                    <p-chart height="150px" type="bar" [data]="basicData1"
+                                        [options]="basicOptions"></p-chart>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section *ngIf="false">
+    <div class="row">
+        <div class="col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-center mb-3">
+                    <img width="60%" src="assets/demo/images/chart/chart-logo-nemo.png">
+                </div>
+                <div class="row">
+                    <div class="col-4"> <p-dropdown [options]="months" [(ngModel)]="selectMonth"
+                            placeholder="Select a Month"  optionLabel="name"></p-dropdown></div>
+                    <div class="col-4"><p-dropdown [options]="listWeek" [(ngModel)]="selectWeek"
+                            placeholder="Select a Week"  optionLabel="name"></p-dropdown></div>
+                    <div class="col-4"> <p-dropdown mu [options]="listDate" [(ngModel)]="selectDate"
+                            placeholder="Select a Day"  optionLabel="name"></p-dropdown></div>
+                </div>
+                <div class="row text-center">
+
+                    <p-selectButton [options]="statusCICO" [(ngModel)]="selectStatusCICO" [multiple]="true"
+                        optionLabel="name" optionValue="value"></p-selectButton>
+
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="col-1">
+            <div class="card">
+                <div class="flex justify-content-center">
+                    <div>
+                        <span class="block text-500 font-medium mb-3">TOTAL EMPLOYEE</span>
+                        <div class="flex justify-content-center">
+                            <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                image="assets/demo/images/chart/total_employee.png"></p-avatar>
+                        </div>
+                        <div class="font-medium text-xl flex justify-content-center" style="color:black">3456
+                        </div>
+                        <div class="text-2xl font-medium text-xl flex justify-content-center" style="color:red">
+                            73,000</div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-8">
+            <table style="width: 100%;">
+                <tr>
+                    <td class="text-center " rowspan="3">
+                        <!-- <div class="card">
+                        <div class="flex justify-content-center">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">TOTAL EMPLOYEE</span>
+                                <div class="flex justify-content-center">
+                                    <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                        image="assets/demo/images/chart/total_employee.png"></p-avatar>
+                                </div>
+                                <div class="font-medium text-xl flex justify-content-center" style="color:black">3456
+                                </div>
+                                <div class="text-2xl font-medium text-xl flex justify-content-center" style="color:red">
+                                    73,000</div>
+
+                            </div>
+
+                        </div>
+                    </div> -->
+
+
+
+                    </td>
+                    <td class="text-center">
+                        <div class="card"><b>CHẤM CÔNG THỨC TẾ</b></div>
+                    </td>
+                    <td class="text-center" colspan="5">
+                        <div class="card"><b>THẤT BẠI</b></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center">
+                        <div class="card mb-0">
+                            <div class="flex justify-content-center">
+                                <div>
+                                    <span class="block text-2xl font-medium mb-3 CICO_DungGio">CICO Đúng giờ</span>
+                                    <div class="flex justify-content-center">
+                                        <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                            image="assets/demo/images/chart/CICO_success.png"></p-avatar>
+                                    </div>
+                                    <div class="text-2xl font-medium text-xl flex justify-content-center CICO_DungGio">
+                                        200
+                                    </div>
+                                    <div class="font-medium text-xl flex justify-content-center" style="color:black">
+                                        92.15%
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="text-center">
+                        <div class="card mb-0">
+                            <div class="flex justify-content-center">
+                                <div>
+                                    <span class="block text-2xl font-medium mb-3 BoSungCong">Bổ sung công</span>
+                                    <div class="flex justify-content-center">
+                                        <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                            image="assets/demo/images/chart/BoSungCong.png"></p-avatar>
+                                    </div>
+                                    <div class="text-2xl font-medium text-xl flex justify-content-center BoSungCong">200
+                                    </div>
+                                    <div class="font-medium text-xl flex justify-content-center" style="color:black">
+                                        92.15%
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="card mb-0">
+                            <div class="flex justify-content-center">
+                                <div>
+                                    <span class="block text-2xl font-medium mb-3 CI_Tre">CI Trễ</span>
+                                    <div class="flex justify-content-center">
+                                        <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                            image="assets/demo/images/chart/CI_Tre.png"></p-avatar>
+                                    </div>
+                                    <div class="text-2xl font-medium text-xl flex justify-content-center CI_Tre">200
+                                    </div>
+                                    <div class="font-medium text-xl flex justify-content-center" style="color:black">
+                                        92.15%
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="card mb-0">
+                            <div class="flex justify-content-center">
+                                <div>
+                                    <span class="block text-2xl font-medium mb-3 CO_Som">CO Sớm</span>
+                                    <div class="flex justify-content-center">
+                                        <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                            image="assets/demo/images/chart/CO_SOM.png"></p-avatar>
+                                    </div>
+                                    <div class="text-2xl font-medium text-xl flex justify-content-center CO_Som">200
+                                    </div>
+                                    <div class="font-medium text-xl flex justify-content-center" style="color:black">
+                                        92.15%
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="card mb-0">
+                            <div class="flex justify-content-center">
+                                <div>
+                                    <span class="block text-2xl font-medium mb-3 Chua_CO">Chưa CO</span>
+                                    <div class="flex justify-content-center">
+                                        <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                            image="assets/demo/images/chart/Chua_CICO.png"></p-avatar>
+                                    </div>
+                                    <div class="text-2xl font-medium text-xl flex justify-content-center Chua_CO">200
+                                    </div>
+                                    <div class="font-medium text-xl flex justify-content-center" style="color:black">
+                                        92.15%
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="card mb-0">
+                            <div class="flex justify-content-center">
+                                <div>
+                                    <span class="block text-2xl font-medium mb-3 No_CICO">Không CICO </span>
+                                    <div class="flex justify-content-center">
+                                        <p-avatar styleClass="mr-2" shape="circle" size="xlarge"
+                                            image="assets/demo/images/chart/No_CICO.png"></p-avatar>
+                                    </div>
+                                    <div class="text-2xl font-medium text-xl flex justify-content-center No_CICO">200
+                                    </div>
+                                    <div class="font-medium text-xl flex justify-content-center" style="color:black">
+                                        92.15%
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center" colspan="2">
+                        <div class="card "><b style="color: red;">GHI NHẬN CÔNG</b></div>
+                    </td>
+                    <td class="text-center" colspan="4">
+                        <div class="card "><b style="color: red;">THẤT BẠI: 5%</b></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="200px" [data]="dataRegion" [options]="optionsRegion"></p-chart>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="200px" [data]="dataSouth" [options]="optionsSouth"></p-chart>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="200px" [data]="dataCentral" [options]="optionsCentral"></p-chart>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="200px" [data]="dataNorth" [options]="optionsNorth"></p-chart>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="300px" [data]="dataRegionTop" [options]="optionsRegionTop"></p-chart>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="300px" [data]="dataRegionTop" [options]="optionsRegionTop"></p-chart>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="300px" [data]="dataRegionTop" [options]="optionsRegionTop"></p-chart>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <p-chart type="bar" height="300px" [data]="dataRegionTop" [options]="optionsRegionTop"></p-chart>
+            </div>
+        </div>
+    </div>
+</section>

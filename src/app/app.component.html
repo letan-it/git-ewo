@@ -1,0 +1,75 @@
+<ngx-loading-bar [color]="'red'"></ngx-loading-bar>
+<p-toast></p-toast>
+<style>
+    .to-top {
+        bottom: 0;
+        cursor: pointer;
+        margin: 0 8px 12px 0;
+        position: fixed;
+        right: 0;
+        opacity: 0;
+        z-index: 99999999999;
+    }
+
+    .show-scrollTop {
+        opacity: 1 !important;
+        transition: all 0.2s ease-in-out;
+    }
+    .bottom-right-image{
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 200px;
+        z-index: -1;
+    }
+   
+</style>
+
+<div class="to-top" (click)="scrollToTop()" [ngClass]="{ 'show-scrollTop': windowScrolled }">
+    <img src="assets/demo/images/top.png" style="width: 30px" alt="to-top-icon" />
+</div>
+<p-dialog header="Notification" [(visible)]="visible" [style]="{width: '50vw'}">
+    <p>
+        {{message_signalr}}
+    </p>
+</p-dialog>
+ 
+<router-outlet>
+
+    <img *ngIf="layoutService.config.colorScheme === 'light'" src="https://acacy.com.vn/images/Brand_Awareness/04_Pattern_Acacy_CORNER.png" alt="Bottom Right Image" class="bottom-right-image">
+    <img *ngIf="layoutService.config.colorScheme !== 'light'" src="https://acacy.com.vn/images/Brand_Awareness/04_Pattern_Acacy_CORNER_white.png" alt="Bottom Right Image" class="bottom-right-image">
+
+</router-outlet>
+<div class="layout-footer footer" *ngIf="pageLogin == 0">
+
+    <!-- <section *ngIf="menuMode == 1">
+        <p-dock [model]="items" position="bottom">
+            <ng-template pTemplate="item" let-item>
+                <img [src]="item.icon" [alt]="item.label" width="70%" />
+            </ng-template>
+        </p-dock>
+    </section> -->
+
+
+</div>
+
+
+<style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        z-index: 9999999999999999;
+    }
+</style>
+<!-- <div class="dock-window dock-advanced">
+    <p-dialog [(visible)]="displayFinder" [maximizable]="true" [breakpoints]="{ '960px': '50vw' }"
+        [style]="{ width: '80vw', height: '50rem' }" [draggable]="true" [resizable]="true">
+        <iframe src="/auth/users"
+            style="position:fixed; top:10; left:0; bottom:0; right:0; width:100%; height:90%; border:none; margin:0; padding:0; overflow:hidden; ">
+            Your browser doesn't support iframes
+        </iframe>
+    </p-dialog>
+</div> -->

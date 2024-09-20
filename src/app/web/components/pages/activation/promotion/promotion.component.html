@@ -1,0 +1,271 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box ">
+    <div class="col-12">
+        <div class="card ">
+            <div class="row">
+
+                <!-- [minDate]="minDate" [maxDate]="maxDate" -->
+                <div class="md:col-2 col-12">
+                    <h6>From Date - To Date</h6>
+                    <p-calendar [style]="{'minWidth':'100%'}" inputId="date" [(ngModel)]="date" selectionMode="range"
+                        placeholder="dd/mm/yy - dd/mm/yy" appendTo="body" dateFormat="dd/mm/yy" [readonlyInput]="true"
+                        [showButtonBar]="true"></p-calendar>
+                </div>
+
+                <div class="md:col-3 col-12">
+                    <h6>Code</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="promotion_code"
+                        placeholder="List Code">
+                </div>
+                <div class="md:col-3 col-12">
+                    <h6>Group</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="promotion_group">
+                </div>
+                <div class="md:col-3 col-12">
+                    <h6>Name</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="promotion_name">
+                </div>
+                <div class="md:col-1 col-12">
+                    <h6>Status</h6>
+                    <p-dropdown [style]="{ minWidth: '100%' }" [options]="statuses" (onChange)="selectStatus($event)"
+                        placeholder="Any" optionLabel="title" optionValue="value" [showClear]="true" appendTo="body">
+
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>
+                                    <p-tag [severity]="getSeverity(item.value)" [value]="item.title"></p-tag>
+                                </div>
+                            </div>
+                        </ng-template>
+
+                    </p-dropdown>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- filter -->
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap gap-2 ">
+                <button pButton type="button" (click)="handleFilter()" label="Filter" icon="pi pi-search "
+                    class="p-button-sm"></button>
+                <button type="button" label="Clone" pButton pRipple icon="pi pi-copy" style="float: right"
+                    (click)="clone()" class="p-button-sm"></button>
+
+                <button type="button" label="Raw data" pButton (click)="export()" pRipple icon="pi pi-file-excel"
+                    style="float: right" class="p-button-sm"></button>
+                <button type="button" (click)="ShowHideTemplate(1)" label="Import Excel" pButton pRipple
+                    class="p-button-sm" icon="pi pi-upload"></button>
+
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+                <button type="button" label="Create" pButton pRipple icon="pi pi-plus" style="float: right"
+                    (click)="create()" class="p-button-success p-button-sm mr-2"></button>
+
+                <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" (click)="showFilter()" tooltipPosition="top" icon="pi pi-eye"
+                    class="p-button-success p-button-sm " [ngStyle]="{'display': showFiter ?'none':'flex'}"></button>
+
+                <button pButton type="button" pTooltip="Hide Filter" (click)="showFilter()" tooltipPosition="top"
+                    icon="pi pi-eye-slash" class="p-button-warning p-button-sm" pStyleClass=".box"
+                    leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                    [ngStyle]="{'display': !showFiter?'none':'flex'}"></button>
+
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+<div class="card" *ngIf="showTemplate === 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input class="form-control" type="file" (change)="onChange($event)" #myInputFile />
+            </div>
+
+            <button pButton pRipple label="Get Template Promotion" icon="pi pi-file-export" (click)="getTemplate()"
+                class="p-button-sm p-button-info mr-2"></button>
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" label="Upload File Promotion"
+                icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+        </div>
+    </p-toolbar>
+
+    <hr>
+
+    <div class="card" *ngIf="dataError">
+        <p-table #dt [columns]="cols" [value]="dataError" selectionMode="multiple" [exportHeader]="'customExportHeader'"
+            [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="caption">
+                <div class="flex">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()"
+                        class="p-button-success ml-auto" pTooltip="XLS" tooltipPosition="bottom"></button>
+                    <!-- 'jspdf' - 'jspdf-autotable' -->
+                    <!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf('jspdf', 'jspdf-autotable' )" class="p-button-warning ml-auto" pTooltip="PDF" tooltipPosition="bottom"></button> -->
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{ col.header }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns">
+                        <p *ngIf="col.field !== 'desc_image' && rowData[col.field]">{{ rowData[col.field] }} </p>
+                        <p-image *ngIf="col.field === 'desc_image' && rowData[col.field]" [src]="rowData[col.field]"
+                            alt="Image" width="50" height="50" [preview]="true"></p-image>
+                        <!-- "https://cdn.pixabay.com/photo/2014/06/03/19/38/road-sign-361514_960_720.png" - "desc_image" -->
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+    </div>
+
+    <hr>
+    <div class="card" *ngIf="dataMessError">
+        <div class=" col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">
+                    Error Name :
+                </div>
+                <div class="col-11">
+                    {{dataMessError}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- data -->
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <!-- styleClass="p-datatable-gridlines" -->
+            <p-table dataKey="promotion_id" [rows]="20" *ngIf="dataPromotion && dataPromotion.length > 0"
+                [scrollable]="true" [value]="dataPromotion" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="caption">
+                    Total Item: {{ totalRecords }}
+
+                    <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                        [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center"></th>
+                        <th class="text-center">RowNum</th>
+                        <th class="text-center">Code</th>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Image</th>
+                        <th class="text-center">Group</th>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center" style="width: 15px">Action</th>
+
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-dataPromotion let-expanded="expanded">
+                    <!-- [pTooltip]="Promotion Id : {{tab.promotion_id}}"  -->
+                    <tr>
+                        <td class="text-center" style="width: 5%;"
+                            [pTooltip]="'Promotion ID :' + dataPromotion.promotion_id" TooltipPosition="top">
+                            <button type="button" pButton pRipple [pRowToggler]="dataPromotion"
+                                class="p-button-text p-button-rounded p-button-plain"
+                                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        </td>
+                        <td class="text-center"> {{ dataPromotion.rowNumber }}</td>
+                        <td class="font-bold" style="color: green;">{{ dataPromotion.promotion_code }}</td>
+                        <td>{{ dataPromotion.promotion_name }}</td>
+                        <td class="text-center">
+                            <p-image [src]="dataPromotion.desc_image ? dataPromotion.desc_image : 
+                            'https://files-api.acacy.vn/202310/NOIMAGE/b1a33483-b244-4ac1-bf80-5d32fcbab1c7.png'"
+                                [alt]="dataPromotion.promotion_name" width="50" height="50" class="shadow-4 m-auto"
+                                [preview]="true"></p-image>
+                        </td>
+
+                        <td> {{ dataPromotion.promotion_group}}</td>
+                        <td class="text-center">{{ dataPromotion._from_date}}
+                            <span *ngIf="dataPromotion._to_date !== null">- {{dataPromotion._to_date}}</span>
+                        </td>
+                        <td class="text-center">
+                            <i *ngIf="dataPromotion.status !== 0" class="pi text-green-500 pi-check-circle"></i>
+                            <i *ngIf="dataPromotion.status === 0" class="pi text-red-500 pi-times-circle"></i>
+                        </td>
+                        <td class="text-center">
+                            <button pTooltip="Update info employee" (click)="update(dataPromotion)" pButton pRipple
+                                icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"></button>
+
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="rowexpansion" let-dataPromotion>
+                    <tr style="text-align: center;">
+                        <td colspan="100%">
+                            <div class="p-3 " style="width: 100% !important;">
+                                <p-toolbar>
+                                    <app-promotion-details [data]="dataPromotion"
+                                        (outValue)="readData($event)"></app-promotion-details>
+                                </p-toolbar>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+            <div class="card flex justify-content-center justify-content-between text-center"
+                *ngIf="dataPromotion && dataPromotion.length <= 0" style="float: right">
+                <h5>No data</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [header]="dataOnePromotion === undefined ? 'Create Promotion' : 'Update Promotion'"
+    [(visible)]="PromotionCreate" [modal]="true" [style]="{ width: '50vw' }" [maximizable]="true">
+    <app-promotion-create [dataOnePromotion]="dataOnePromotion"
+        (actionEvent)="actionHiddenShow($event)"></app-promotion-create>
+</p-dialog>
+<p-dialog [header]="'Clone Promotion'" [(visible)]="ShowClone" [modal]="true" [style]="{ width: '50vw' }"
+    [maximizable]="true">
+    <div class="card">
+        <div class="row">
+            <div class="col-12 lg:col-4 ">
+                <h6>Promotion<span style="color: red; font-weight: bold"> *</span></h6>
+                <p-dropdown [options]="listPromotion" [showClear]="true" [filter]="true" filterBy="name"
+                    [style]="{'minWidth':'100%', 'width': '33%'}" [(ngModel)]="selectPromotion"
+                    placeholder="Select a Promotion " optionLabel="name" appendTo="body">
+                </p-dropdown>
+            </div>
+            <div class="lg:col-4 col-12">
+                <h6>Promotion Clone Code<span style="color: red; font-weight: bold"> *</span></h6>
+                <input class="font-bold" [style]="{'minWidth':'100%', 'color' : 'green'}" type="text" pInputText
+                    [(ngModel)]="promotion_clone_code">
+            </div>
+            <div class="lg:col-4 col-12">
+                <h6>Promotion Clone Name<span style="color: red; font-weight: bold"> *</span></h6>
+                <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="promotion_clone_name">
+            </div>
+            <div class="col-12">
+                <button type="button" [style]="{'minWidth':'100%'}" label="Clone" pButton pRipple style="float: right"
+                    (click)="handlerClone()" class="p-button-sm p-button-success"></button>
+            </div>
+        </div>
+    </div>
+</p-dialog>

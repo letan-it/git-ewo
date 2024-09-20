@@ -1,0 +1,432 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-3">
+                    <h6>Project</h6>
+                    <p-dropdown [options]="filterProjects" (onChange)="selectedFilterProject($event)"
+                        optionLabel="Name" [showClear]="true" (onClear)="clearFilterType()" [filter]="true" filterBy="Name"
+                        [style]="{'minWidth':'100%'}" placeholder="Select Project">
+                        <ng-template let-filterProject pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                              <img [src]="filterProject.Image" [class]="'flag flag-ny'" style="width: 18px" />
+                              <div>{{filterProject.Name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="md:col-2">
+                    <h6>Type</h6>
+                    <p-dropdown [options]="filterStatusTypes" (onChange)="selectedFilterReportStatusType($event)"
+                        optionLabel="name" [showClear]="true" (onClear)="clearFilterType()"
+                        [style]="{'minWidth':'100%'}" placeholder="Select Type">
+                        <ng-template let-filterStatusType pTemplate="item">
+                            <div *ngIf="filterStatusType.name === 'Thành công'; else Active">
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                    <div>{{ filterStatusType.name }}</div>
+                                </div>
+                            </div>
+                            <ng-template #Active>
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                    <div>{{ filterStatusType.name }}</div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="md:col-1">
+                    <h6>Status</h6>
+                    <p-dropdown [options]="filterStatuses" (onChange)="selectedFilterStatus($event)" optionLabel="name"
+                        [showClear]="true" (onClear)="clearFilterStatus()" [style]="{'minWidth':'100%'}"
+                        placeholder="Any">
+                        <ng-template let-filterStatus pTemplate="item">
+                            <div *ngIf="filterStatus.name === 'Active'; else Inactive">
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                    <div>{{ filterStatus.name }}</div>
+                                </div>
+                            </div>
+                            <ng-template #Inactive>
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                    <div>{{ filterStatus.name }}</div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>Name</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="filterStatusName"
+                        placeholder="Search by Name" />
+                </div>
+                <div class="md:col-3">
+                    <h6>Description</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="filterStatusDesc"
+                        placeholder="Search by Description" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData(1)" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-sm mr-2 mt-2"
+                        (click)="openNew()"></button>
+
+                    <button type="button" label="Raw data" pButton (click)="export()" pRipple icon="pi pi-file-excel"
+                        style="float: right" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button type="button" label="Clone" pButton (click)="OpenModalClone()" pRipple icon="pi pi-copy"
+                        style="float: right" class="p-button-sm mr-2 mt-2"></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                        class=" p-button-success mr-2 mt-2"
+                        [ngStyle]="{'display' : showFilter === 1 ? 'none' : 'flex'}"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()"
+                        tooltipPosition="top" icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box" leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                        [ngStyle]="{'display' : showFilter === 0 ? 'none' : 'flex'}"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <p-toast></p-toast>
+
+    <p-table #dt [value]="listReportStatus" *ngIf="listReportStatus && listReportStatus.length > 0" [globalFilterFields]="['report_status_id', 'project_id', 'report_status_type', 'order']"
+        [rowHover]="true" [paginator]="true" [first]="first" [rows]="20" [rowsPerPageOptions]="[20, 50, 100]" styleClass="p-datatable-gridlines" [(selection)]="selectedReportStatus" dataKey="report_status_id"
+        paginatorPosition="top" (onPage)="onPageChange($event)"
+    >
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-xl">
+                <th style="width: 4rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th class="text-center md:col-1" pSortableColumn="report_status_id">
+                    Id <p-sortIcon field="report_status_id"></p-sortIcon>
+                </th>
+                <th class="text-start md:col-2" pSortableColumn="project_id">
+                    Project <p-sortIcon field="project_id"></p-sortIcon>
+                </th>
+                <th class="text-center md:col-1" pSortableColumn="report_status_type">
+                    Type <p-sortIcon field="report_status_type"></p-sortIcon>
+                </th>
+                <th class="text-start md:col-2">Name</th>
+                <th class="text-start md:col-2">Description</th>
+                <th class="text-center md:col-1">Status</th>
+                <th class="text-center md:col-1" pSortableColumn="order">
+                    Order <p-sortIcon field="order"></p-sortIcon>
+                </th>
+                <th class="text-center md:col-1">Color</th>
+                <th class="text-center md:col-1">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr [pSelectableRow]="item">
+                <td>
+                    <p-tableCheckbox [value]="item"></p-tableCheckbox>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-bold">{{ item.report_status_id }}</span>
+                </td>
+                <td class="text-start md:col-2">
+                    <span class="text-lg">{{ '[' + item.project_id + ']' + ' - ' + item.project_code + ' - ' + item.project_name }}</span>
+                </td> 
+                <td class="text-center md:col-1">
+                    <div *ngIf="item.report_status_type === 'TC'; else KTC">
+                        <p-tag icon="pi pi-check-circle" value="{{ item.report_status_type_label }}" severity="success">
+                        </p-tag>
+                    </div>
+                    <ng-template #KTC>
+                        <p-tag icon="pi pi-times-circle" value="{{ item.report_status_type_label }}" severity="danger">
+                        </p-tag>
+                    </ng-template>
+                </td>
+                <td class="text-start w-fit md:col-2">
+                    <span class="font-medium">{{ item.report_status_name }}</span>
+                </td>
+                <td class="text-start w-fit md:col-2">
+                    <span class="font-medium">{{ item.report_desc }}</span>
+                </td>
+                <td class="text-center w-fit md:col-1">
+                    <app-control-status-check [status]="item.status"></app-control-status-check>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.order }}</span>
+                </td>
+                <td class="text-center md:col-1 ">
+                    <div class="color border-round m-2 flex align-items-center justify-content-center"
+                        style="min-width: 2rem; min-height: 3rem;"
+                        [style.background-color]="item.color">
+                        <span class="font-medium cursor-pointer" [title]="item.color">{{ item.color }}</span>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <button class="p-button-rounded p-button-text" pButton pRipple type="button" icon="pi pi-pencil"
+                        (click)="openEdit(item.report_status_id, item.project_id, item.status, item.report_status_type, item.report_status_name, item.report_desc, item.order, item.color)">
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center "
+        *ngIf="listReportStatus && listReportStatus.length === 0" style="float: right;">
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog [(visible)]="statusDialog" [style]="{ width: '50rem', height: '38rem' }" header="Create new Status"
+    [modal]="true" styleClass="p-fluid" [closable]="true" (onHide)="resetInput()">
+    <ng-template pTemplate="content">
+        <div class="wrapper-id-type flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+            <div class="field w-6">
+                <label for="status">Status<span class="font-bold" style="color: red;"> *</span></label>
+                <p-dropdown [options]="statuses" (onChange)="selectedStatus($event)" [(ngModel)]="status"
+                    optionLabel="name" id="status" [autofocus]="true" [showClear]="true" (onClear)="clearStatus()"
+                    [style]="{'minWidth':'100%'}" filterBy="name" placeholder="Select Status">
+                    <ng-template let-status pTemplate="item">
+                        <div *ngIf="status.name === 'Active'; else Inactive">
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                <div>{{ status.name }}</div>
+                            </div>
+                        </div>
+                        <ng-template #Inactive>
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                <div>{{ status.name }}</div>
+                            </div>
+                        </ng-template>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field w-6">
+                <label for="type">Status Type<span class="font-bold" style="color: red;"> *</span></label>
+                <p-dropdown [options]="reportStatusTypes" (onChange)="selectedReportStatusType($event)" [(ngModel)]="statusType" 
+                    optionLabel="name" id="reportStatusType" [autofocus]="focusStatusType" [showClear]="true" (onClear)="clearType()" 
+                    [style]="{'minWidth':'100%'}" filterBy="name" placeholder="Select Status Type">
+                    <ng-template let-statusType pTemplate="item">
+                        <div *ngIf="statusType.name === 'Thành công'; else Inactive">
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                <div>{{ statusType.name }}</div>
+                            </div>
+                        </div>
+                        <ng-template #Inactive>
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                <div>{{ statusType.name }}</div>
+                            </div>
+                        </ng-template>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="wrapper-center relative flex flex-row justify-content-between gap-3">
+            <div class="wrapper-name-desc flex flex-column w-7">
+                <div class="field w-full">
+                    <label for="report_status_name">Report Status Name<span class="font-bold" style="color: red;">
+                            *</span></label>
+                    <input type="text" pInputText id="report_status_name" [(ngModel)]="reportStatusName" />
+                </div>
+                <div class="field w-full">
+                    <label for="report_desc">Report Status Desc</label>
+                    <input type="text" pInputText id="report_desc" [(ngModel)]="reportStatusDesc" />
+                </div>
+            </div>
+            <div class="field w-5 h-full relative">
+                <div class="absolute flex flex-column align-items-start justify-content-start w-full h-full">
+                    <label for="color" class="block mb-2">Color</label>
+                    <p-colorPicker [(ngModel)]="color" [inline]="true"></p-colorPicker>
+                    <div class="show-more-color flex flex-row w-full h-fit align-items-center justify-content-between gap-2">
+                        <div class="w-2rem h-2rem border-round-sm" [style]="{'background-color': color}"></div>
+                        <span class="p-input-icon-right">
+                            <input type="text" pInputText [value]="color" placeholder="Please choose colors" />
+                            <i class="pi pi-copy cursor-pointer opacity-70 hover:opacity-100" style="font-size: 1.4rem;"
+                                (click)="handleCopy(color)"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="wrapper-status-order-color flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+            <div class="field w-6">
+                <label for="order">Order</label>
+                <input type="text" pInputText id="order" [value]="0" [(ngModel)]="reportStatusOrder"
+                    [pKeyFilter]="OnlyNumberKeyFilter" />
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Reset all data input" icon="pi pi-times" class="p-button-text"
+            (click)="resetInput()"></button>
+        <p-confirmDialog></p-confirmDialog>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveNewStatus($event)"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="editStatusDialog" [style]="{ width: '50rem', height: '38rem'}"
+    header="Edit Status Id: {{ editReportStatusId }}" [modal]="true" styleClass="p-fluid" [closable]="true">
+    <ng-template pTemplate="content">
+        <div class="wrapper-id-type flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+            <div class="field w-4">
+                <label for="report_status_id">Status Id</label>
+                <input type="number" pInputText id="report_status_id" [value]="editReportStatusId" [disabled]="true" />
+            </div>
+            <div class="field w-4">
+                <label for="status">Status<span class="font-bold" style="color: red;"> *</span></label>
+                <div *ngIf="editReportStatus === 1; else zero">
+                    <p-dropdown [options]="editReportStatuses" (onChange)="selectedEditStatus($event)" [(ngModel)]="editReportStatus"
+                        optionLabel="name" id="statusDropdown" [showClear]="false" 
+                        [style]="{'minWidth':'100%'}" placeholder="Active">
+                        <ng-template let-editReportStatus pTemplate="item">
+                            <div *ngIf="editReportStatus.name === 'Active'; else Inactive">
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                    <div>{{ editReportStatus.name }}</div>
+                                </div>
+                            </div>
+                            <ng-template #Inactive>
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                    <div>{{ editReportStatus.name }}</div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <ng-template #zero>
+                    <p-dropdown [options]="editReportStatuses" (onChange)="selectedEditStatus($event)"
+                        optionLabel="name" [showClear]="false" placeholder="Inactive" [style]="{'minWidth':'100%'}">
+                    </p-dropdown>
+                </ng-template>
+            </div>
+            <div class="field w-4">
+                <label for="type">Status Type<span class="font-bold" style="color: red;"> *</span></label>
+                <div *ngIf="editReportStatusType === 'TC'; else KTC">
+                    <p-dropdown [options]="editReportStatusTypes" (onChange)="selectedEditReportStatusType($event)"
+                    [(ngModel)]="editReportStatusType" optionLabel="name" id="reportStatusType" [showClear]="false"
+                    [style]="{'minWidth':'100%'}" filterBy="name" placeholder="Thành công">
+                    <ng-template let-editReportStatusType pTemplate="item">
+                        <div *ngIf="editReportStatusType.name === 'Thành công'; else Inactive">
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-check-circle" style="font-size: 1.2rem; color: green;"></i>
+                                <div>{{ editReportStatusType.name }}</div>
+                            </div>
+                        </div>
+                        <ng-template #Inactive>
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-times-circle" style="font-size: 1.2rem; color: red;"></i>
+                                <div>{{ editReportStatusType.name }}</div>
+                            </div>
+                        </ng-template>
+                    </ng-template>
+                </p-dropdown>
+                </div>
+                <ng-template #KTC>
+                    <p-dropdown [options]="editReportStatusTypes" (onChange)="selectedEditReportStatusType($event)" placeholder="Không thành công"
+                        optionLabel="name" [(ngModel)]="editReportStatusType" [showClear]="false" [style]="{'minWidth':'100%'}" filterBy="name">
+                    </p-dropdown>
+                </ng-template>
+            </div>
+        </div>
+
+        <div class="wrapper-center relative flex flex-row justify-content-between gap-3">
+            <div class="wrapper-name-desc flex flex-column w-7">
+                <div class="field w-full">
+                    <label for="report_status_name">Report Status Name<span class="font-bold" style="color: red;">
+                            *</span></label>
+                    <input type="text" pInputText id="report_status_name" [(ngModel)]="editReportStatusName"
+                        (ngModelChange)="onChangeInputName($event)" />                
+                </div>
+
+                <div class="field w-full">
+                    <label for="report_desc">Report Status Desc</label>
+                    <input type="text" pInputText id="report_desc" [(ngModel)]="editReportStatusDesc"/>
+                </div>
+            </div>
+            <div class="field w-5 h-full relative">
+                <div class="absolute flex flex-column align-items-start justify-content-start w-full h-full mb-5">
+                    <label for="color" class="block mb-2">Color</label>
+                    <p-colorPicker [(ngModel)]="editReportStatusColor" [inline]="true"></p-colorPicker>
+                    <div class="show-more-color flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+                        <div class="w-2rem h-2rem border-round-sm" [style]="{'background-color': editReportStatusColor}"></div>
+                        <span class="p-input-icon-right">
+                            <input type="text" pInputText [value]="editReportStatusColor" placeholder="Please choose colors" />
+                            <i class="pi pi-copy cursor-pointer opacity-70 hover:opacity-100" style="font-size: 1.4rem;"
+                                (click)="handleCopy(editReportStatusColor)"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="wrapper-status-order-color flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+            <div class="field w-6">
+                <label for="order">Order</label>
+                <input type="text" pInputText id="order" [value]="0" [(ngModel)]="editReportStatusOrder"
+                    [pKeyFilter]="OnlyNumberKeyFilter" />
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Reset all data input" icon="pi pi-times" class="p-button-text"
+            (click)="resetEditInput()"></button>
+        <p-confirmDialog></p-confirmDialog>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveEditStatus($event)"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="cloneDialog" [style]="{ width: '50rem', height: '18rem' }" header="Clone Report Status" [modal]="true"
+    styleClass="p-fluid" [resizable]="true">
+    <ng-template pTemplate="content">
+        <div class="field w-full">
+            <label for="type">To The Project<span class="font-bold" style="color: red;"> *</span></label>
+            <p-dropdown [options]="toProjects" (onChange)="selectedToProjects" [(ngModel)]="toProject" id="to_project_input"
+                optionLabel="Name" [showClear]="true" (onClear)="clearFilterType()" [filter]="true" filterBy="Name"
+                [style]="{'minWidth':'100%'}" placeholder="Select Project" appendTo="body">
+                <ng-template let-toProject pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                    <img [src]="toProject.Image" [class]="'flag flag-ny'" style="width: 18px" />
+                    <div>{{toProject.Name}}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Reset all data input" icon="pi pi-times" class="p-button-text" (click)="resetCloneInput()"></button>
+        <p-confirmDialog></p-confirmDialog>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="cloneStatus($event)"></button>
+    </ng-template>
+</p-dialog>

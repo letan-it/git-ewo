@@ -1,0 +1,479 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div *ngIf="action =='view'" class="">
+
+    <div class="col-12">
+        <div class="">
+
+            <!-- sortField="order" 
+                [scrollable]="true"  -->
+            <p-table selectionMode="single" editMode="row" dataKey="question_id" [filterDelay]="1" aria-sort="ascending"
+                sortField="order" [scrollable]="true" [value]="ListSurveyQuestion" styleClass="p-datatable-gridlines"
+                [tableStyle]="{ 'min-width': '50rem' }">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 5rem">
+                            <button type="button" label="" pButton pRipple icon="pi pi-plus" style="float: right;"
+                                (click)="create()"></button>
+                        </th>
+                        <th class="text-center">Question Name</th>
+                        <th class="text-center"
+                            *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_questiongroup > 0">
+                            Question Group</th>
+                        <th class="text-center"
+                            *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_group > 0">Group
+                        </th>
+                        <th class="text-center"
+                            *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_desc > 0">
+                            Description</th>
+                        <th class="text-center" class="text-center">Question Master</th>
+                        <!-- <th class="text-center">Is Comment</th> -->
+                        <th *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_data > 0"
+                            class="text-center">Data Value</th>
+                        <th *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_image > 0"
+                            class="text-center">Data Image</th>
+                        <th class="text-center">Allow</th>
+                        <th class="text-center">Next Question</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Order</th>
+
+                        <th class="text-center">Action
+                            <i class="pi pi-sync" style="cursor: pointer; margin-left: 2%;" (click)="LoadData()"
+                                pTooltip="Load Data" tooltipPosition="top"></i>
+                        </th>
+
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">
+                            <p-columnFilter type="text" field="stringQuestionName" [showMenu]="false"
+                                [matchMode]="'contains'" [showMenu]="true"></p-columnFilter>
+                        </th>
+
+                        <th class="text-center"
+                            *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_questiongroup > 0">
+                            <p-columnFilter type="text" field="question_group" [showMenu]="false"
+                                [matchMode]="'contains'" [showMenu]="true"></p-columnFilter>
+                        </th>
+                        <th class="text-center"
+                            *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_group > 0">
+                            <p-columnFilter type="text" field="Group" [showMenu]="false" [matchMode]="'contains'"
+                                [showMenu]="true"></p-columnFilter>
+                        </th>
+                        <th class="text-center"
+                            *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_desc > 0">
+                            <p-columnFilter type="text" field="desc" [showMenu]="false" [matchMode]="'contains'"
+                                [showMenu]="true"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter type="text" field="stringQuestionMater" [showMenu]="false"
+                                [matchMode]="'contains'" [showMenu]="true"></p-columnFilter>
+                        </th>
+
+                        <th *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_data > 0"
+                            class="text-center">
+
+                        </th>
+                        <th *ngIf="ListSurveyQuestion.length > 0  &&  ListSurveyQuestion[0].showCol_image > 0"
+                            class="text-center">
+
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter field="is_allow" matchMode="equals" [showMenu]="true"
+                                [matchMode]="'contains'">
+                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                    <p-dropdown [ngModel]="value" [options]="Allow" (onChange)="filter($event.value)"
+                                        placeholder="Any" [showClear]="true" appendTo="body">
+                                    </p-dropdown>
+                                </ng-template>
+                            </p-columnFilter>
+                        </th>
+                        <!-- is_allow next_question status -->
+
+                        <th class="text-center">
+                            <p-columnFilter field="next_question" matchMode="equals" [showMenu]="true"
+                                [matchMode]="'contains'">
+                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                    <p-dropdown [ngModel]="value" [options]="nextQuestion"
+                                        (onChange)="filter($event.value)" placeholder="Any" [showClear]="true"
+                                        appendTo="body">
+                                    </p-dropdown>
+                                </ng-template>
+                            </p-columnFilter>
+
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter field="status" matchMode="equals" [showMenu]="true"
+                                [matchMode]="'contains'">
+                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                    <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                        placeholder="Any" [showClear]="true" appendTo="body">
+                                    </p-dropdown>
+                                </ng-template>
+                            </p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter type="text" field="order" [showMenu]="false" [matchMode]="'contains'"
+                                [showMenu]="true"></p-columnFilter>
+                        </th>
+
+                        <th></th>
+
+                    </tr>
+                </ng-template>
+
+
+                <ng-template pTemplate="body" let-question let-editing="editing" let-ri="rowIndex"
+                    let-expanded="expanded">
+                    <!-- "_question_master": [ { "name": "Chọn nhiều", "question_type": "multi-select", "support_data": null, "typeOf": "int" } ] }
+                    {{question|json}} -->
+
+                    <!-- {{question|json}}  -->
+
+                    <tr [pEditableRow]="question">
+                        <td>
+                            <button *ngIf="question._question_master.length > 0 && ( question._question_master[0].question_type == 'multi-select' ||
+                                question._question_master[0].question_type == 'select')" type="button" pButton pRipple
+                                [pRowToggler]="question" class="p-button-text p-button-rounded p-button-plain"
+                                (click)="viewActionNextQuestion(question)"
+                                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+
+                        </td>
+
+                        <!-- <td>{{question.RowNum}}</td> -->
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="question.question_name">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <b>{{question.question_id}}</b> - {{question.question_name}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td *ngIf="question.showCol_questiongroup > 0">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="question.question_group" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{question.question_group}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td *ngIf="question.showCol_group > 0">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="question.Group" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{question.Group}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td *ngIf="question.showCol_desc > 0">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="question.desc" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{question.desc}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td *ngIf="question._question_master[0]">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="question.question_type" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{question._question_master[0].name}} -
+                                    {{question._question_master[0].question_type}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td *ngIf="question.showCol_data > 0">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p><b>Min: </b> <input pInputText type="number" [min]="0"
+                                            [(ngModel)]="question.min_value" required></p>
+                                    <p><b>Max: </b> <input pInputText type="number" [min]="0"
+                                            [(ngModel)]="question.max_value" required></p>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <p><b *ngIf="question.min_value != null">Min: </b> {{question.min_value}}</p>
+                                    <p><b *ngIf="question.max_value != null">Max: </b> {{question.max_value}}</p>
+                                    <p *ngIf="question._is_comment == 1"><b>Note: </b>
+                                        <i class="pi"
+                                            [ngClass]="{'true-icon pi-check-circle text-green-500': question._is_comment == 1, 'false-icon pi-times-circle text-pink-500': question._is_comment == 0}"></i>
+                                    </p>
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <!-- <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="number" [min]="0" [(ngModel)]="question.min_image" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{question.min_image}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td> -->
+                        <td *ngIf="question.showCol_image > 0">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="number" [min]="0" [(ngModel)]="question.max_image" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <p><b *ngIf="question.min_image != null">Min: </b> {{question.min_image}}</p>
+                                    <p><b *ngIf="question.max_image != null">Max: </b> {{question.max_image}}</p>
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td class="text-center">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="number" [min]="0" [(ngModel)]="question.is_allow" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <!-- {{question.is_allow}} -->
+                                    <!-- <p-checkbox name="_is_comment" [disabled]="true" [binary]="true"
+                                        [(ngModel)]="question._is_allow">
+                                    </p-checkbox> -->
+                                    <i class="pi"
+                                        [ngClass]="{'true-icon pi-check-circle text-green-500': question._is_allow == 1, 'false-icon pi-times-circle text-pink-500': question._is_allow == 0}"></i>
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td class="text-center">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="number" [min]="0" [(ngModel)]="question.next_question"
+                                        required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <i class="pi"
+                                        [ngClass]="{'true-icon pi-check-circle text-green-500': question._next_question == 1, 'false-icon pi-times-circle text-pink-500': question._next_question == 0}"></i>
+                                    <!-- <p-checkbox name="_is_comment" [disabled]="true" [binary]="true"
+                                        [(ngModel)]="question._next_question">
+                                    </p-checkbox> -->
+
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td class="text-center">
+                            <p-cellEditor>
+
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="number" [min]="0" [(ngModel)]="question.status" required>
+
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <i class="pi"
+                                        [ngClass]="{'true-icon pi-check-circle text-green-500': question._status == 1, 'false-icon pi-times-circle text-pink-500': question._status == 0}"></i>
+                                    <!-- <p-checkbox name="_status" [disabled]="true" [binary]="true"
+                                        [(ngModel)]="question._status">
+                                    </p-checkbox> -->
+                                </ng-template>
+
+                            </p-cellEditor>
+                        </td>
+                        <td class="text-center">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="number" [min]="0" [(ngModel)]="question.order" required>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <b> {{question.order}}</b>
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td>
+
+                            <div class="flex align-items-center justify-content-center gap-2">
+                                <p-button pTooltip="Update Infor Question" (click)="update(question)"
+                                    tooltipPosition="left" dataKey="question_id" icon="pi pi-file-edit "
+                                    styleClass="p-button-rounded p-button-text p-button-raised "></p-button>
+
+                                <p-button pTooltip="Clone Infor Question" (click)="clone(question)"
+                                    tooltipPosition="left" dataKey="question_id" icon="pi pi-clone"
+                                    styleClass="p-button-rounded p-button-text p-button-raised "></p-button>
+
+                                <p-button pTooltip="Condition Show/Hide" (click)="ConditionShow(question)"
+                                    tooltipPosition="left" dataKey="question_id" icon="pi pi-eye"
+                                    styleClass="p-button-rounded p-button-text p-button-raised "></p-button>
+
+                                <p-confirmPopup></p-confirmPopup>
+                                <button
+                                    *ngIf="currentUser.employee_type_id == 1 || currentUser.employee_type_id == 2 || currentUser.employee_type_id == 3"
+                                    (click)="confirm($event,question)" pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-danger p-button-text"></button>
+                            </div>
+
+                        </td>
+                    </tr>
+                </ng-template>
+
+
+
+                <ng-template pTemplate="rowexpansion" let-question>
+                    <tr>
+                        <td colspan="100% ">
+                            <!-- {{question.show_detail}} -->
+                            <div class="p-3" *ngIf="question.show_detail == 1">
+                                <app-answers [inValue]="ListSurveyQuestion" [question_id]="question.question_id"
+                                    [question]="question" [action]="actionNextQuestion"
+                                    [survey_item]="inValue"></app-answers>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+
+                <ng-template pTemplate="summary ">
+                    <p-paginator (onPageChange)="onPageChange($event) " [first]="first " [rows]="rows "
+                        [totalRecords]="totalRecords " [rowsPerPageOptions]="[10, 20, 30] "></p-paginator>
+                </ng-template>
+
+
+            </p-table>
+            <div class="card flex justify-content-center text-center "
+                *ngIf="ListSurveyQuestion && ListSurveyQuestion.length==0 " style="width: 100%;">
+                <h5>No data</h5>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<!-- <p-dialog header="Update Survey Details" [(visible)]="SurveyDetailsUpdate" [style]="{width: '50vw'} " [maximizable]="true ">
+
+    <app-add-survey [inValue]="" [action]="'update'"></app-add-survey>
+
+</p-dialog> -->
+
+<p-dialog header="Create Question" [modal]="true" [(visible)]="QuestionCreate" [style]="{width: '50vw'}"
+    [maximizable]="true">
+
+    <app-question-details (newItemEventCreate)="addItemCreate($event)" [clearMessCreate]="clearMessCreate"
+        [clearMessUpdate]="clearMessUpdate" [inValue]="inValue" [action]="'create'"></app-question-details>
+
+</p-dialog>
+
+<p-dialog header="Update Question" [modal]="true" [(visible)]="QuestionUpdate" [style]="{width: '50vw'}"
+    [maximizable]="true ">
+
+    <app-question-details (newItemEvent)="addItem($event)" [clearMessUpdate]="clearMessUpdate"
+        [clearMessCreate]="clearMessCreate" [inValue]="questionDetail" [action]="'update'"></app-question-details>
+
+</p-dialog>
+
+<p-dialog header="Clone Question" [modal]="true" [(visible)]="QuestionClone" [style]="{width: '50vw'}"
+    [maximizable]="true">
+
+    <app-question-details (newItemEventClone)="addItemClone($event)" [clearMessUpdate]="clearMessUpdate"
+        [clearMessCreate]="clearMessCreate" [inValue]="questionDetailClone" [action]="'clone'"></app-question-details>
+
+</p-dialog>
+
+
+<p-dialog [header]="questionDetailShow_header" [modal]="true" [(visible)]="QuestionConditionModal"
+    [style]="{width: '50vw', height: '50vw'}" [maximizable]="true">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+                <div class="card flex justify-content-center"
+                    *ngIf="questionDetailShow && questionDetailShow.option && questionDetailShow.option.length > 0">
+                    <h4>Option select show question</h4>
+                    <div class="field">
+                        <p-multiSelect [style]="{'minWidth':'100%'}" [options]="questionDetailShow.option"
+                            [group]="true" [(ngModel)]="questionDetailShow.option_select" defaultLabel="Select a item"
+                            scrollHeight="250px" display="chip">
+                            <ng-template let-group pTemplate="group">
+                                <div class="flex align-items-center">
+                                    <span>{{ group.label }}</span>
+                                </div>
+                            </ng-template>
+                        </p-multiSelect>
+                    </div>
+                    <div class="field p-fluid">
+                        <p-button label="Save" (click)="updateCondition(questionDetailShow)"
+                            styleClass="p-button-success p-button-sm"></p-button>
+                    </div>
+                </div>
+
+
+            </div>
+            <hr>
+            <div class="row gutters-sm">
+
+                <div class="card p-fluid">
+                    <h4>Condition question show</h4>
+                    <div class="field" *ngIf="questionConditionList != undefined">
+
+                        <div class="formgroup-inline">
+                            <div class="field">
+
+                                <p-dropdown [style]="{'minWidth':'100%'}" [options]="questionConditionList"
+                                    appendTo="body" [(ngModel)]="questionConditionList_select" optionLabel="name"
+                                    [showClear]="true" placeholder="Select a condition question"></p-dropdown>
+                            </div>
+                            <div class="field">
+
+                                <p-dropdown [style]="{'width':'150px'}" [options]="ConditionList"
+                                    [style]="{'minWidth':'100%'}" appendTo="body" [(ngModel)]="selectcondition"
+                                    optionLabel="name" [showClear]="true" placeholder="Select a condition"></p-dropdown>
+                            </div>
+
+                            <div class="field">
+                                <label class="p-sr-only">value</label>
+                                <input pInputText [style]="{'width':'150px'}" type="text" placeholder="value"
+                                    [style]="{'minWidth':'100%'}" [(ngModel)]="condition_value" />
+                            </div>
+                            <button pButton style="width: 15rem;" label="Add"
+                                *ngIf="questionConditionList_select != undefined && selectcondition != undefined && condition_value!= undefined && condition_value!= ''"
+                                (click)="AddCondition(questionDetailShow.question_id)"></button>
+                        </div>
+
+                    </div>
+                    <div class="field" *ngIf="dataCondition != undefined && dataCondition.length > 0">
+                        <p-table [value]="dataCondition" [tableStyle]="{ 'max-width': '50rem' }">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>question name</th>
+                                    <th class="text-center">condition</th>
+                                    <th class="text-center">value</th>
+                                    <th class="text-center">#</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>[{{item.question_condition_id}}] - {{ item.question_name }}</td>
+                                    <td class="text-center">{{ item.condition }}</td>
+                                    <td class="text-center">{{ item.value }}</td>
+                                    <td class="text-center">
+                                        <i (click)="DeleteCondition(questionDetailShow.question_id,item.id)"
+                                            class="pi pi-trash" style="cursor: pointer;color:red"
+                                            pTooltip="delete condition" tooltipPosition="top"></i>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</p-dialog>

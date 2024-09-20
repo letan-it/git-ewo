@@ -1,0 +1,94 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="grid">
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <div class="row flex-column">
+                <div class="md:col-12">
+                    <h6>From Date - To Date</h6>
+                    <p-calendar [style]="{'minWidth':'100%'}" inputId="date" [(ngModel)]="date" selectionMode="range"
+                        placeholder="dd/mm/yy - dd/mm/yy" appendTo="body" dateFormat="dd/mm/yy" [readonlyInput]="true"
+                        [showButtonBar]="true" [minDate]="minDate" [maxDate]="maxDate"></p-calendar>
+                </div>
+
+                <div class="md:col-12">
+                    <h6>Form Name<span style="color: red; font-weight: bold"> *</span></h6>
+                    <input [style]="{'minWidth':'100%' }" type="text" pInputText [(ngModel)]="form_name">
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="md:col-6 col-12">
+        <div class="card">
+            <div class="row  flex-wrap ">
+
+                <div class=" col-12 ">
+                    <h6>Status</h6>
+                    <p-dropdown [style]="{ minWidth: '100%' }" [options]="statuses" (onChange)="selectStatus($event)"
+                        [placeholder]="status === 0 ? 'In Active' : 'Active' " optionLabel="title" optionValue="value"
+                        [showClear]="true" appendTo="body">
+
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>
+                                    <p-tag [severity]="getSeverity(item.value)" [value]="item.title"></p-tag>
+                                </div>
+                            </div>
+                        </ng-template>
+
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card  flex-col gap-4">
+            <div class="row flex-row">
+                <div class="col-6">
+
+                    <ace-editor [(text)]="configuration" mode="json" style="height:300px;"></ace-editor>
+
+                    <label style="color:red" *ngIf="checksomeObject(configuration) == 1">JSON format error
+                        config</label>
+
+                </div>
+                <div class="col-6">
+                    <ngx-json-viewer [json]="someObject(configuration)" [depth]="3"></ngx-json-viewer>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class=" col-12">
+        <div class="card  flex-col gap-4">
+            <div class="flex align-items-center gap-4">
+                <p-chip class="font-bold " label="Description"></p-chip>
+                <button pButton type="button" pTooltip="Hide Filter" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" (click)="showDescript()" tooltipPosition="top" icon="pi pi-eye-slash"
+                    class=" p-button-success p-button-sm"
+                    [ngStyle]="{ 'display': !showDescription ? 'none' : 'flex' }"></button>
+
+                <button pButton type="button" pTooltip="Show Filter" (click)="showDescript()" tooltipPosition="top"
+                    icon="pi pi-eye" class="p-button-warning p-button-sm" pStyleClass=".box"
+                    leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                    [ngStyle]="{'display': showDescription?'none':'flex'}">
+                </button>
+            </div>
+
+            <div *ngIf="showDescription" class="animation-duration-500 box">
+                <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="form_decription"
+                    [config]='editorConfig'></angular-editor>
+            </div>
+
+        </div>
+        <div class=" col-12">
+            <button pButton pRipple [label]="dataOneForm === undefined ? 'CREATE' : 'UPDATE'" (click)="create()"
+                class="p-button-success w-full"></button>
+        </div>
+    </div>
+
+
+
+</div>

@@ -1,0 +1,66 @@
+<!-- <div class="grid" *ngIf="showFiter == 1">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="col-3">
+                    <h6>ShopType</h6>
+                    <app-control-shop-type (outValue)="selectShopType($event)"></app-control-shop-type>
+                </div>
+                <div class="col-3">
+                    <h6>Channel</h6>
+                    <app-control-channel (outValue)="selectedChannel($event)"></app-control-channel>
+
+                </div>
+                <div class="col-3">
+                    <h6>Router</h6>
+                    <app-control-shop-router (outValue)="selectShopRouter($event)"></app-control-shop-router>
+                </div>
+                <div class="col-3">
+                    <h6>Manager </h6>
+                    <app-control-employee-list (outValue)="selectASM($event)" [placeholder]="'Select a Manager '"
+                        [employee_type_id]="14"></app-control-employee-list>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <h6>Status</h6>
+                    <p-dropdown [options]="ListStatus" [showClear]="true" [filter]="true" filterBy="name"
+                        [style]="{'minWidth':'100%'}" [(ngModel)]="selectStatus" placeholder="Select a Status"
+                         optionLabel="name"></p-dropdown>
+                </div>
+                <div class="col-3">
+                    <h6>Province</h6>
+                    <app-control-province (outValue)="selectProvince($event)"></app-control-province>
+
+                </div>
+                <div class="col-3">
+                    <h6>District</h6>
+                    <app-control-district [inValue]="item_Province"
+                        (outValue)="selectDistrict($event)"></app-control-district>
+
+                </div>
+                <div class="col-3">
+                    <h6>Ward</h6>
+                    <app-control-ward [inValue]="item_District" (outValue)="selectWard($event)"></app-control-ward>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-6">
+                    <h6>Outletcode</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="shop_code"
+                        placeholder="List Outletcode">
+                </div>
+                <div class="col-6">
+                    <h6>DisCode</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="customer_code"
+                        placeholder="List DisCode">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div> -->

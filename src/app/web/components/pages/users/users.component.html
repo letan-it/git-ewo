@@ -1,0 +1,497 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<!-- <div class="mb-2">
+    <p-breadcrumb class="max-w-full" [model]="items_menu" [home]="home"></p-breadcrumb>
+</div> -->
+
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+<!-- <div class="grid" *ngIf="showFiter == 1"> -->
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="row" *ngIf="project_id == 2">
+
+                <div class="md:col-2">
+                    <h6>Employee Type</h6>
+                    <app-control-employee-type (outValue)="selectEmployeeType($event)"></app-control-employee-type>
+                </div>
+                <div class="md:col-2">
+                    <h6>Manager </h6>
+                    <app-control-employee-list (outValue)="selectASM($event)" [placeholder]="'Select a Manager '"
+                        [project_id]="item_Project"
+                        [employee_type_id]="parent_employee_type"></app-control-employee-list>
+                </div>
+                <div [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>Employee Code</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="employee_code"
+                        placeholder="Enter employee code" />
+                </div>
+                <div [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>Employee Name</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="employee_name"
+                        placeholder="Enter employee name" />
+                </div>
+
+                <div [class]="listPosition.length > 0 ? 'md:col-1' : 'md:col-2'">
+                    <h6>Login Name</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="login_name"
+                        placeholder="Enter login name" />
+                </div>
+
+                <div class="md:col-2" *ngIf="listPosition.length > 0">
+                    <h6>Email</h6>
+                    <input [style]="{ minWidth: '100%' }" type="email " pInputText [(ngModel)]="email"
+                        placeholder="Enter email" />
+                </div>
+
+            </div>
+
+            <div class="row" *ngIf="project_id != 2">
+
+                <div class="md:col-3">
+                    <h6>Employee Type</h6>
+                    <app-control-employee-type (outValue)="selectEmployeeType($event)"></app-control-employee-type>
+                </div>
+                <div class="md:col-3">
+                    <h6>Manager </h6>
+                    <app-control-employee-list (outValue)="selectASM($event)" [placeholder]="'Select a Manager '"
+                        [project_id]="item_Project"
+                        [employee_type_id]="parent_employee_type"></app-control-employee-list>
+                </div>
+                <div [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>Employee Code</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="employee_code"
+                        placeholder="Enter employee code" />
+                </div>
+                <div *ngIf="project_id == 2" [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>Employee Name</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="employee_name"
+                        placeholder="Enter employee name" />
+                </div>
+
+                <div [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>Login Name</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="login_name"
+                        placeholder="Enter login name" />
+                </div>
+
+                <div class="md:col-2" *ngIf="listPosition.length > 0">
+                    <h6>Email</h6>
+                    <input [style]="{ minWidth: '100%' }" type="email " pInputText [(ngModel)]="email"
+                        placeholder="Enter email" />
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="md:col-3" *ngIf="listPosition.length == 0">
+                    <h6>Email</h6>
+                    <input [style]="{ minWidth: '100%' }" type="email " pInputText [(ngModel)]="email"
+                        placeholder="Enter email" />
+                </div>
+
+                <div class="md:col-3" *ngIf="listPosition.length > 0">
+                    <h6>Position</h6>
+                    <app-control-position (outValue)="selectPosition($event)"> </app-control-position>
+                </div>
+
+                <div class="md:col-3" *ngIf="listPosition.length > 0">
+                    <h6>Category</h6>
+                    <app-control-employee-category (outValue)="selectCategory($event)"> </app-control-employee-category>
+                </div>
+
+                <div [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>CCCD</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text " pInputText [(ngModel)]="card_number"
+                        placeholder="Enter CCCD" />
+                </div>
+                <div [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>Mobile</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="mobile"
+                        placeholder="Enter mobile" />
+                </div>
+                <div [class]="listPosition.length > 0 ? 'md:col-2' : 'md:col-3'">
+                    <h6>Status</h6>
+                    <p-dropdown [style]="{ minWidth: '100%' }" [options]="statuses" (onChange)="selectStatus($event)"
+                        placeholder="Any" [showClear]="true">
+                    </p-dropdown>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+                <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search "
+                    (click)="filter(1)" class="p-button-sm mr-2 mt-2"></button>
+                <!-- <button *ngIf="userProfile && userProfile.employee_type_id == 1 || userProfile.employee_type_id == 3 "
+                    type="button" label="Create" pButton pRipple icon="pi pi-plus" style="float: right"
+                    (click)="addUser()" class="p-button-sm mr-2 mt-2"></button> -->
+
+                <p-splitButton 
+                    label="Action" icon="pi pi-file-export" styleClass="p-button-sm mr-2 mt-2"
+                    [model]="itemsAction"></p-splitButton>
+                <!-- <p-splitButton *ngIf="totalRecords > 0 && checkUserCUS() == false && itemsData.length > 0"
+                    label="Action" icon="pi pi-file-export" styleClass="p-button-sm mr-2"
+                    [model]="itemsData"></p-splitButton> -->
+
+                <!-- <button type="button" (click)="export(1)" label="Raw data" pButton pRipple icon="pi pi-file-excel"
+                    style="float: right" class="p-button-sm mr-2 mt-2"></button> -->
+                <!-- *ngIf="userProfile.employee_type_id == 1 || userProfile.employee_type_id == 3" -->
+
+                <button type="button" label="Project"
+                    *ngIf=" totalRecords > 0 && ( userProfile && userProfile.employee_type_id == 1 ) " pButton pRipple
+                    icon="pi pi-file-edit" style="float: right" (click)="viewAddRemoveProject()"
+                    class=" p-button-sm mr-2 mt-2"></button>
+
+                <p-splitButton label="Raw data" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2"
+                    [model]="itemsRawData"></p-splitButton>
+
+
+                <div>
+                    <p-splitButton label="Import Data" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2" *ngIf="userProfile && userProfile.employee_type_id == 1 
+                || userProfile.employee_type_id == 2  || userProfile.employee_type_id == 3"
+                        [model]="items"></p-splitButton>
+
+                </div>
+
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+
+                <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" (click)="ShowHideFiter()" tooltipPosition="top" icon="pi pi-eye"
+                    class="p-button-success mr-2 mt-2" [ngStyle]="{'display': showFiter == 1?'none':'flex'}"></button>
+
+                <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFiter()" tooltipPosition="top"
+                    icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2" pStyleClass=".box"
+                    leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                    [ngStyle]="{'display': showFiter == 0?'none':'flex'}"></button>
+
+            </div>
+
+            <div class="p-toolbar-group-right">
+
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+<div class="card" *ngIf="showTemplate == 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input class="form-control btn-info" type="file" (change)="onChange($event)" #myInputFile />
+            </div>
+
+            <button *ngIf="typeImport == 0" pButton pRipple (click)="exportTemplate()" label="Get Template User"
+                icon="pi pi-file-export" class="p-button-sm p-button-info mr-2"></button>
+
+
+            <a [href]="typeImport == 1 ? template_position : template_category">
+                <button *ngIf="typeImport == 1 || typeImport == 2" pButton pRipple
+                    [label]="typeImport == 1 ? 'Get Template Position' : 'Get Template Category'"
+                    icon="pi pi-file-export" class="p-button-sm p-button-info mr-2"></button>
+            </a>
+
+            <button *ngIf="typeImport == 3" pButton pRipple label="Get Template Date" icon="pi pi-file-export"
+                class="p-button-sm p-button-info mr-2" (click)="getTemplateEmpDate()"></button>
+
+            <button pButton pRipple (click)="importTemplate()" [label]="returnLabel(typeImport)" icon="pi pi-upload"
+                class="p-button-sm p-button-success mr-2"></button>
+
+        </div>
+    </p-toolbar>
+
+
+    <hr>
+
+    <div class="card" *ngIf="dataError">
+        <p-table [value]="dataError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Employee Code</th>
+                    <th>Error Name</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.employee_code }}</td>
+                    <td>{{ error.error_name }}</td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="card" *ngIf="dataErrorPosition">
+        <p-table [value]="dataErrorPosition" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Employee Code</th>
+                    <th>Position</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.employee_code }}</td>
+                    <td>{{ error.position }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="card" *ngIf="dataErrorCategory">
+        <p-table [value]="dataErrorCategory" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Employee Code</th>
+                    <th>Category</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.employee_code }}</td>
+                    <td>{{ error.category }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="card" *ngIf="dataErrorDate">
+        <p-table [value]="dataErrorDate" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <hr>
+    <div class="card" *ngIf="dataMessError">
+        <div class=" col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">
+                    Error Name :
+                </div>
+                <div class="col-11">
+                    {{dataMessError}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="grid" *ngIf="showAddRemoveProject == 1">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap ">
+                <app-control-employee-project [itemEmployeeProject]="_itemProject"
+                    (outValue)="selectProject($event)"></app-control-employee-project>
+            </div>
+
+            <div class="p-toolbar-group-right">
+                <!-- <button pButton type="button" label="Add" icon="pi pi-angle-right" 
+                    (click)="addProject()" class="p-button-sm p-button-success m-2 mt-2"></button> -->
+
+                <p-splitButton label="Action" icon="pi pi-angle-right" styleClass="p-button-sm p-button-success mr-2"
+                    [model]="itemsDataProject"></p-splitButton>
+
+                <p-confirmPopup></p-confirmPopup>
+                <button pButton type="button" label="Remove" icon="pi pi-angle-left" (click)="removeProject($event)"
+                    class="p-button-sm p-button-danger m-2 mt-2"></button>
+
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+<hr />
+
+<!-- TABLE -->
+<!-- {{selectedEmployee|json}} -->
+<div class="card" *ngIf="is_loadForm == 1">
+    <div class="border-round border-1 surface-border p-4">
+        <div class="flex mb-3">
+            <div>
+                <p-skeleton width="10rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton width="5rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton height=".5rem"></p-skeleton>
+            </div>
+        </div>
+        <p-skeleton width="100%" height="500px"></p-skeleton>
+    </div>
+</div>
+<div class="card" *ngIf="is_loadForm == 0">
+    <p-table selectionMode="single" dataKey="id" *ngIf="ListEmployee && ListEmployee.length > 0" [scrollable]="true"
+        [value]="ListEmployee" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }"
+        [(selection)]="selectedEmployee">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center" style="width: 4rem">
+                    <!-- {{checkAllTest}} -->
+                    <p-tableHeaderCheckbox (click)="onChoose()"></p-tableHeaderCheckbox>
+                </th>
+                <th style="width: 5rem"></th>
+                <th class="text-center">RowNum</th>
+                <th class="text-center">Employee Code</th>
+                <th class="text-center">Employee Name</th>
+                <th class="text-center">Mobile</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">Employee Type Name</th>
+                <th class="text-center">Manager</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Verify</th>
+                <th class="text-center" style="width: 15px">Action</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-employee let-expanded="expanded">
+            <tr>
+
+                <td>
+                    <!-- <p-checkbox *ngIf="employee.role > 0"
+                    [value]="employee"
+                    name="group1"
+                    [binary]="true"
+                    [(ngModel)]="employee._test"
+                    [inputId]="employee.employee_id"
+                >
+                </p-checkbox> -->
+
+                    <p-tableCheckbox (click)="onChoose()" *ngIf="employee.role > 0"
+                        [value]="employee"></p-tableCheckbox>
+
+                </td>
+                <td>
+                    <button type="button" pButton pRipple [pRowToggler]="employee"
+                        class="p-button-text p-button-rounded p-button-plain" [icon]="
+                            expanded
+                                ? 'pi pi-chevron-down'
+                                : 'pi pi-chevron-right'
+                        "></button>
+                </td>
+
+                <td>{{ employee.RowNum }}</td>
+                <td>{{ employee.employee_code }}</td>
+                <td>{{ employee.employee_name }}</td>
+                <td>{{ employee.mobile }}</td>
+                <td>{{ employee.email }}</td>
+
+                <td> {{ employee.employee_type_name }} </td>
+                <td>
+                    <label *ngIf="employee.manager_code != null && employee.manager_name != null ">
+                        {{ employee.manager_code }} - {{ employee.manager_name }}
+                    </label>
+                </td>
+                <td> <i class="pi"
+                        [ngClass]="{'true-icon pi-check-circle text-green-500': employee.status == 1, 'false-icon pi-times-circle text-pink-500': employee.status == 0}"></i>
+                </td>
+                <td> <i class="pi"
+                        [ngClass]="{'true-icon pi-check-circle text-green-500': employee.verify == 1, 'false-icon pi-times-circle text-pink-500': employee.verify == 0}"></i>
+                </td>
+                <td>
+                    <p-button pTooltip="Update info employee" (click)="update(employee)" tooltipPosition="left"
+                        icon="pi pi-file-edit " styleClass="p-button-rounded p-button-text p-button-raised "></p-button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-employee>
+            <tr>
+                <td colspan="100% ">
+                    <div class="p-3">
+                        <app-user-detail (newItemEventProject)="itemProject($event)" [inValue]="employee"
+                            [action]="'view'"></app-user-detail>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="summary ">
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="ListEmployee && ListEmployee.length == 0" style="float: right">
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog header="Notification" [(visible)]="display" [modal]="true" showEffect="fade" [style]="{ width: '30vw' }"
+    [breakpoints]="{ '960px': '75vw' }">
+    <p class="line-height-3 m-0">
+        {{ message }}
+    </p>
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+        <button pButton icon="pi pi-check" (click)="OK()" label="Ok" class="p-button-outlined float-right"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Employee Info" [modal]="true" [(visible)]="EmployeeEdit" [modal]="true" [style]="{ width: '50vw' }"
+    [maximizable]="true">
+    <app-user-detail (newItemEvent)="addItem($event)" [inValue]="employeeDetail" [action]="'edit'"></app-user-detail>
+</p-dialog>
+
+<p-dialog header="Reset Password" [(visible)]="showResetPass" [modal]="true" showEffect="fade" [style]="{ width: 'fit-content' }"
+    [breakpoints]="{ '960px': 'fit-content' }">
+    <div class="flex flex-column align-items-start gap-2">
+        <label for="listCode" class="font-bold">Users<span class="font-bold" style="color: red;"> *</span></label>
+        <p-table dataKey="id" *ngIf="selectedEmployee && selectedEmployee.length > 0" [scrollable]="true"
+            [value]="selectedEmployee" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '33rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-center">RowNum</th>
+                    <th class="text-center">Employee Code</th>
+                    <th class="text-center">Employee Name</th>
+                </tr>
+            </ng-template>
+    
+            <ng-template pTemplate="body" let-employee>
+                <tr>
+                    <td>{{ employee.RowNum }}</td>
+                    <td>{{ employee.employee_code }}</td>
+                    <td>{{ employee.employee_name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <br />
+    <div class="flex flex-column align-items-start gap-2 w-full">
+        <label for="listCode" class="font-bold">New Password<span class="font-bold" style="color: red;"> *</span></label>
+        <!-- <input class="w-full" type="text" pInputText id="listCode" [(ngModel)]="passwordCode" placeholder="Please fill in New Password"
+            (ngModelChange)="onChangeInputPasswordCode($event)" /> -->
+        <p-password [styleClass]="'width: 100%'" appendTo="body" [(ngModel)]="passwordCode" placeholder="Please fill in password" [toggleMask]="true" />
+    </div>
+
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+        <button pButton icon="pi pi-check" (click)="confirmResetPass()" label="Confirm" class="p-button-outlined float-right"></button>
+    </ng-template>
+</p-dialog>

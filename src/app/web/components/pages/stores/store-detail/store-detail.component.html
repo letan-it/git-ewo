@@ -1,0 +1,1159 @@
+<div *ngIf="action =='view'" class="grid">
+    <!-- {{inValue|json}} -->
+
+    <div class="col-12">
+        <div class="card">
+            <div class="grid">
+                <div class="col-6">
+                    
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="province_name">Province</h6>
+
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="province_name" type="text" [(ngModel)]="inValue.province_name" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="district_name">District</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="province_name" type="text" [(ngModel)]="inValue.district_name" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="ward_name">Ward</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="ward_name" type="text" [(ngModel)]="inValue.ward_name" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="contact_name">Contact name</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="contact_name" type="text" [(ngModel)]="inValue.contact_name" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="contact_mobile">Contact mobile</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="contact_mobile" type="text"
+                                    [(ngModel)]="inValue.contact_mobile" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="contact_latitude">Latitude</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="contact_name" type="number" [(ngModel)]="inValue.latitude" />
+                            </div>
+                        </div>
+                    </div> 
+                    
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="contact_longitude">Longitude</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="contact_mobile" type="number" [(ngModel)]="inValue.longitude" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-6">
+                     
+                    <div class="col-12" *ngIf="inValue.supplier_code != null && inValue.supplier_name != null">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="areas">Supplier</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="supplier" type="text" ngModel="{{inValue.supplier_code}} - {{inValue.supplier_name}}" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12" *ngIf="inValue.areas != null">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="areas">Areas</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="areas" type="text" [(ngModel)]="inValue.areas" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="radius">Radius</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="radius" type="number" [(ngModel)]="inValue.radius" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="created_date">Created Date</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="created_date" type="text" [(ngModel)]="inValue.created_date" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="created_from">Created From</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input pInputText id="created_from" type="text" [(ngModel)]="inValue.created_from" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="image">Image Shop</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <p-image [src]="inValue.image" [preview]="true" alt="Image" width="100" height="100"
+                                    (onImageError)="onImageErrorImage($event,'image')">
+                                </p-image>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6 htmlFor="image_logo">Image Logo</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <p-image [src]="inValue.image_logo" [preview]="true" alt="Image" width="100"
+                                    height="100" (onImageError)="onImageErrorImage($event,'image_logo')">
+                                </p-image>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card" *ngIf="inValue.shopinfo &&  ( userProfile &&  (userProfile.employee_type_id == 1 ||userProfile.employee_type_id == 2||userProfile.employee_type_id == 3 ) ) ">
+                <div class="col-12">
+
+                    <div class="field">
+
+                        <p-table [value]="inValue.shopinfo" dataKey="id" editMode="row"
+                            [tableStyle]="{'min-width': '50rem'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th >Project Shop Code</th>
+                                    <th >Customer Shop Code</th>
+                                    <th >Project</th>
+                                    <th >Manager</th>
+                                    <th>Sign Name</th>
+                                    <th>Tax code</th>
+                                    <th class="text-center" style="width:10%">Status</th>
+                                    <th style="width:10%" class="text-center">Action</th>
+                                </tr>
+                            </ng-template> 
+
+                            <ng-template pTemplate="body" let-info let-editing="editing" let-ri="rowIndex">
+                                <tr [pEditableRow]="info">
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <!-- <input class="p-fluid" pInputText type="text" [(ngModel)]="info.shop_code" > -->
+                                                {{info.shop_code}}
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{info.shop_code}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input" class="p-fluid">
+                                                <!-- <input   pInputText type="text" [(ngModel)]="info.customer_code" required  > -->
+                                                {{info.customer_code}}
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{info.customer_code}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <!-- <app-control-employee-project [itemEmployeeProject] ="info.project_id"  
+                                        (outValue)="selectProject($event)"  ></app-control-employee-project> -->
+
+                                                <img [src]="info.image" style="width: 18px" /> [{{ info.project_id }}]
+                                                - {{info.project_code }} - {{info.project_name }}
+
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <img [src]="info.image" style="width: 18px" /> [{{ info.project_id }}]
+                                                - {{info.project_code }} - {{info.project_name }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <app-control-employee-list (outValue)="selectManager($event)"
+                                                    [project_id]="project_id" [itemManagerCode]="info.manager_id"
+                                                    [placeholder]="'Select a Manager '"></app-control-employee-list>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                [{{ info.manager_id }}] - {{ info.manager_code }} - {{ info.manager_name }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+
+                                     <!-- "sign_name": "sign_name",
+                            "tax_code": "tax_code",  -->
+  
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="text" class="p-fluid" [(ngModel)]="info.sign_name">
+                                            </ng-template>
+                                            <ng-template pTemplate="output" class="p-fluid">
+                                                {{info.sign_name}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="text" class="p-fluid" [(ngModel)]="info.tax_code">
+                                            </ng-template>
+                                            <ng-template pTemplate="output" class="p-fluid">
+                                                {{info.tax_code}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <!-- <p-checkbox [(ngModel)]="info._status" [binary]="true" inputId="binary" ></p-checkbox>  -->
+                                                <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500': info.status == 1, 
+                                        'false-icon pi-times-circle text-pink-500': info.status == 0}"></i>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+
+                                                <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500': info.status == 1, 
+                                                'false-icon pi-times-circle text-pink-500': info.status == 0}"></i>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <div class="flex align-items-center justify-content-center gap-2">
+                                            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
+                                                icon="pi pi-pencil" class="p-button-rounded p-button-text"></button>
+                                            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
+                                                icon="pi pi-check" (click)="onRowEditSave(info)"
+                                                class="p-button-rounded p-button-text p-button-success mr-2"></button>
+
+                                            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
+                                                icon="pi pi-times"
+                                                class="p-button-rounded p-button-text p-button-danger"></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card" *ngIf="inValue.shopinfobymonth">
+                <div class="col-12">
+
+                    <div class="field">
+
+
+                        <!-- <button
+                type="button"
+                pButton
+                pRipple
+                icon="pi pi-plus"
+                class="p-2"
+                (click)="createShopInfoProject()"
+                ></button> -->
+
+                        <p></p>
+                        <!-- (newEventCreate)="displayShopForm($event)" -->
+
+                        <p-table [value]="inValue.shopinfobymonth" dataKey="id" editMode="row"
+                            [tableStyle]="{'min-width': '50rem'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width:20%">Report Date</th>
+                                    <th style="width:20%">Chu Kì</th>
+                                    <th style="width:20%">Report Status Name</th>
+                                    <!-- <th style="width:20%">Action</th>  -->
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-info let-editing="editing" let-ri="rowIndex">
+
+                                <tr [pEditableRow]="info">
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input class="p-fluid" pInputText type="text"
+                                                    [(ngModel)]="info.reposrt_date_string">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{info.reposrt_date_string}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input class="p-fluid" pInputText type="text"
+                                                    [(ngModel)]="info._year_month">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{info._year_month}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input class="p-fluid" pInputText type="text"
+                                                    [(ngModel)]="info.report_status_name">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <p-tag [value]="info.report_status_name"
+                                                    [severity]="getStatusReport(info.report_status_name)"></p-tag>
+                                                <!-- {{info.report_status_name}} -->
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+
+                                    <!-- <td>
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" class="p-button-rounded p-button-text"></button>
+                                    <button *ngIf="editing" pButton pRipple type="button" 
+                                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(info)" class="p-button-rounded p-button-text p-button-success mr-2"></button>  
+
+                                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"  class="p-button-rounded p-button-text p-button-danger"></button>
+                                </div>
+                            </td>  -->
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!--------------------------------------- ManagerShop ------------------------------------------------>
+
+
+            <div class="card">
+
+                <p-toast></p-toast>
+                <p-toolbar styleClass="mb-4 gap-2" *ngIf="checkActionMS == true">
+                    <ng-template pTemplate="left">
+                        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()"></button>
+                        <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedEmployeeShop()"
+                 [disabled]="!selectedEmployeeShops || !selectedEmployeeShops.length"></button> -->
+                    </ng-template>
+
+                    <ng-template pTemplate="right">
+                    </ng-template>
+                </p-toolbar>
+
+                <p-table #dt [value]="inValue.employeeShops" [rows]="5" [paginator]="true"
+                    [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedEmployeeShops" [rowHover]="true"
+                    dataKey="Id" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [showCurrentPageReport]="true">
+                    <ng-template pTemplate="caption" *ngIf="checkActionMS == true">
+                        <div class="flex align-items-center justify-content-between">
+                            <h5 class="m-0">Manage Shops</h5>
+                            <span class="p-input-icon-left">
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <!-- <th style="width: 4rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th> -->
+                            <th class="text-center">RowNum</th>
+                            <th>Manager Code </th>
+                            <th>Manager Name </th>
+                            <th class="text-center">FromDate </th>
+                            <th class="text-center">ToDate </th>
+                            <th class="text-center">Status </th>
+                            <th class="text-center" *ngIf="checkActionMS == true">Action</th>
+                        </tr>
+                        <tr>
+                            <!-- <th></th> -->
+                            <th></th>
+                            <th><p-columnFilter type="text"  [matchMode]="'contains'" field="employee_code"></p-columnFilter></th>
+                            <th><p-columnFilter type="text"  [matchMode]="'contains'" field="employee_name"></p-columnFilter></th>
+                            <th class="text-center"><p-columnFilter type="text" [matchMode]="'contains'"  field="FromDate"></p-columnFilter></th>
+                            <th class="text-center"><p-columnFilter type="text" [matchMode]="'contains'"  field="ToDate"></p-columnFilter></th>
+                            <th class="text-center">
+                                <p-columnFilter field="IsActive" matchMode="equals" [showMenu]="false">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-dropdown [ngModel]="value" [options]="isActives"
+                                            (onChange)="filter($event.value)" placeholder="Any" [showClear]="true"
+                                            appendTo="body">
+                                        </p-dropdown>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </th>
+                            <th *ngIf="checkActionMS == true"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-EmployeeShop>
+                        <tr>
+                            <!-- <td>
+                    <p-tableCheckbox [value]="EmployeeShop"></p-tableCheckbox>
+                </td> -->
+                            <td class="text-center">{{EmployeeShop.RowNum}}</td>
+                            <td>{{ EmployeeShop.employee_code }}</td>
+                            <td>{{ EmployeeShop.employee_name }}</td>
+                            <td class="text-center">{{EmployeeShop.FromDate}}</td>
+                            <td class="text-center">{{ EmployeeShop.ToDate }}</td>
+                            <td class="text-center">
+                                <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500': EmployeeShop.IsActive == 1, 
+                                        'false-icon pi-times-circle text-pink-500': EmployeeShop.IsActive == 0}"></i>
+                            </td>
+                            <td *ngIf="checkActionMS == true">
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="editEmployeeShop(EmployeeShop)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                        (click)="deleteEmployeeShop(EmployeeShop)"></button>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="flex align-items-center justify-content-between">In total there are {{
+                            inValue.employeeShops ? inValue.employeeShops.length : 0 }} manage shops.</div>
+                    </ng-template>
+                </p-table>
+            </div>
+            <p-dialog [(visible)]="employeeShopDialog" [style]="{ width: '750px' }" header="Manager Shop" [modal]="true"
+                styleClass="p-fluid">
+                <ng-template pTemplate="content">
+
+                    <!-- {{EmployeeShop|json}} -->
+
+                    <div class="field">
+                        <h6 for="Employee">Manager<span style="color: red;"> *</span></h6>
+                        <app-control-employee-list (outValue)="selectEmployee($event)"
+                            [placeholder]="'Select a Manager'" [inputStyle]="{'minWidth':'200px','maxWidth':'708px'}"
+                            [employee_type_id]="'8'" [project_id]="project_id"
+                            [itemManagerCode]="EmployeeShop.EmployeeId"></app-control-employee-list>
+                    </div>
+                    <div class="field">
+                        <h6 for="FromDate">From Date<span style="color: red;"> *</span></h6>
+                        <input pInputText id="FromDate" class="text-center font-bold mr-2" type="date"
+                            [(ngModel)]="EmployeeShop.FromDate" />
+                    </div>
+                    <div class="field">
+                        <h6 for="ToDate">To Date</h6>
+                        <input pInputText id="ToDate" class="text-center font-bold mr-2" type="date"
+                            [(ngModel)]="EmployeeShop.ToDate" />
+                    </div>
+                    <div class="field">
+                        <h6 for="IsActive">Status</h6>
+                        <p>
+                            <p-checkbox [(ngModel)]="EmployeeShop._IsActive" [binary]="true"
+                                inputId="binary"></p-checkbox>
+                        </p>
+                    </div>
+
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                        (click)="saveEmployeeShop()"></button>
+                </ng-template>
+
+            </p-dialog>
+
+            <p-toast></p-toast>
+            <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+        </div>
+
+
+    </div>
+
+    <p-dialog header="Create Shop Infor" [(visible)]="ShopInfoCreate" [modal]="true"
+        [style]="{ height: '150vw' , width: '50vw'}" [maximizable]="true">
+        <app-store-project-detail (newItemEvent)="addItem($event)" (Outprojectlist)="dataOut($event)"
+            [action]="'create'" [inValue]="inValue"></app-store-project-detail>
+    </p-dialog>
+
+</div>
+
+<div *ngIf="action =='edit'">
+
+    <div class="container" *ngIf="inValue && inValue.shopinfoProject"> 
+
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-5 mb-3">
+
+                    <div class="card mt-3">
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="shop_code">Shop Code<span style="color: red; font-weight: bold;" > *</span></h6>
+                            <!-- [disabled]="true" -->
+                            <p>
+                                <input class="font-bold" pInputText id="shop_code" [(ngModel)]="inValue.shop_code"
+                                    type="text" [disabled]="true" />
+                            </p>
+                        </div>
+
+                    
+
+                         <div class="field p-fluid">
+                            <h6 htmlFor="project_shop_code">Project Shop Code<span style="color: red; font-weight: bold;"> *</span></h6> 
+                            <p>
+                                <input [disabled]="true" class="font-bold" pInputText id="project_shop_code " [(ngModel)]="inValue.shopinfoProject[0].shop_code" type="text" />
+                            </p>
+                        </div>
+
+                         <div class="field p-fluid">
+                            <h6 htmlFor="customer_shop_code">Customer Shop Code</h6>
+                            <p>
+                                <input pInputText  [disabled]="true" class="font-bold" id="customer_shop_code " [(ngModel)]="inValue.shopinfoProject[0].customer_code" type="text" />
+                            </p>
+                        </div>  
+
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="shop_name">Shop Name<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                            <p>
+                                <input pInputText id="shop_name " [(ngModel)]="inValue.shop_name" [disabled]="false"
+                                    type="text" />
+                            </p>
+
+                        </div>
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="shop_address">Shop Address<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                            <p>
+                                <input pInputText id="shop_address " [(ngModel)]="inValue.shop_address"
+                                    [disabled]="false" type="text" />
+                            </p>
+
+                        </div> 
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="latitude">Latitude<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                            <p>
+                                <input pInputText id="latitude" [(ngModel)]="inValue.latitude" [disabled]="false"
+                                    type="number" />
+                            </p>
+
+                        </div>
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="longitude">Longitude<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                            <p>
+                                <input pInputText id="longitude" [(ngModel)]="inValue.longitude" [disabled]="false"
+                                    type="number" />
+                            </p>
+
+                        </div>
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="contact_name">Contact Name</h6>
+                            <p>
+                                <input pInputText id="contact_name " [(ngModel)]="inValue.contact_name"
+                                    [disabled]="false" type="text" />
+                            </p>
+
+                        </div>
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="contact_mobile">Contact Infor</h6>
+                            <p>
+                                <input pInputText id="contact_mobile" [(ngModel)]="inValue.contact_mobile"
+                                    [disabled]="false" type="text" />
+                            </p>
+
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="sign_name" >Sign Name</h6>
+                            <p>
+                                <input pInputText id="sign_name" [(ngModel)]="inValue.shopinfoProject[0].sign_name"   type="text" />
+                            </p>
+
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="tax_code" >Tax Code</h6>
+                            <p>
+                                <input pInputText id="tax_code" [(ngModel)]="inValue.shopinfoProject[0].tax_code"   type="text" />
+                            </p>
+
+                        </div>
+
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="radius">Radius<span style="color: red; font-weight: bold;"  *ngIf="inValue._check_location == true" > *</span> </h6>
+                            <p>
+                                <input pInputText id="radius" [(ngModel)]="inValue.radius" [disabled]="false"
+                                    type="number" min="0" />
+                            </p>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="grid">
+                                <div class="col-4 field  p-fluid">
+                                    <h6 htmlFor="name1 ">Status</h6>
+                                    <div class="field-checkbox ">
+
+                                        <p-checkbox name="group_name" [binary]="true" [(ngModel)]="inValue._status"
+                                            [inputId]="inValue.shop_id"></p-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 field  p-fluid">
+                                    <h6 htmlFor="name1 ">Verify</h6>
+                                    <div class="field-checkbox ">
+
+                                        <p-checkbox name="group_name" [binary]="true" [(ngModel)]="inValue._verify"
+                                            [inputId]="inValue.shop_id"></p-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 field  p-fluid">
+                                    <h6 htmlFor="check_location">Check Location</h6>
+                                    <div class="field-checkbox ">
+                                        <p-checkbox name="group_name" [binary]="true"
+                                            [(ngModel)]="inValue._check_location"
+                                            [inputId]="inValue.shop_id"></p-checkbox>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-7 ">
+                    <div class="card mb-3 ">
+                        <div class="card-body ">
+
+                            <div class=" p-fluid ">
+
+                                <div class="field">
+                                    <h6 htmlFor="shop_type">ShopType<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-shop-type (outValue)="selectShopType($event)"
+                                        [itemShopType]="inValue.shop_type_id"></app-control-shop-type>
+                                </div>
+
+                                <div class=" field ">
+                                    <h6 htmlFor="channel ">Channel<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-channel (outValue)="selectedChannel($event) "
+                                        [itemChannel]="inValue.channel_id"></app-control-channel>
+                                </div>
+                                <div class=" field ">
+                                    <h6 htmlFor="router ">Router<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-shop-router (outValue)="selectShopRouter($event) "
+                                        [itemRouterId]="inValue.router_id"></app-control-shop-router>
+                                </div>
+                               
+
+                                <div class="field">
+                                    <h6>Province<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-province (outValue)="selectProvince($event)"  [itemProvinceId]="item_Province"></app-control-province>
+
+                                </div>
+                                <div class="field">
+                                    <h6>District<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-district [inValue]="item_Province" [inValueProvince]="item_Province" 
+                                    [itemDistrictId]="item_District"  (outValue)="selectDistrict($event)"></app-control-district>
+
+                                </div>
+                                <div class="field">
+                                    <h6>Ward<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-ward [inValue]="item_District" [inValueProvince]="item_Province"
+                                        [inValueDistrict]="item_District" [itemWardId]="item_Ward"
+                                        [itemDistrictId]="item_District" (outValue)="selectWard($event)"></app-control-ward>
+
+                                </div> 
+
+                                <div class="field">
+                                    <h6 htmlFor="manager">Manager</h6> 
+                                    <app-control-employee-list (outValue)="selectASM($event)" [placeholder]="'Select a Manager '"
+                                        [project_id]="project_id" [itemManagerCode] = "inValue.shopinfoProject[0].manager_id" ></app-control-employee-list>
+                                </div>
+
+
+                                <div class="grid">
+                                    <div class="col-3">
+                                    </div>
+                                    <div class="col-9">
+                                        <p-image  [src]="image" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50"
+                                        (onImageError)="onImageErrorImage($event,'image')"> </p-image>
+                                    </div>
+                                </div>
+    
+                                <div class="grid">
+                                    <div class="col-3">
+                                        <h6 htmlFor="image">Image</h6>
+                                    </div>
+                                    <div class="col-9"> 
+                                        <!-- #myInputBefore -->
+                                        <input  pInputText id="image"  #myInputImage type="file" (change)="onChangeImage($event, 'edit')" accept=".png, .jpeg , .jpg">
+                                    </div>
+                                </div> 
+    
+    
+                                <div class="grid">
+                                    <div class="col-3">
+                                    </div>
+                                    <div class="col-9">
+                                        <p-image [src]="image_logo" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50"
+                                        (onImageError)="onImageErrorImage($event,'image_logo')"> </p-image>
+                                    </div>
+                                </div>
+    
+                                <div class="grid">
+                                    <div class="col-3">
+                                        <h6 htmlFor="image_logo">Image Logo</h6>
+                                    </div>
+                                    <div class="col-9"> 
+                                        <!-- #myInputAfter  -->
+                                        <input  pInputText id="image_logo"  #myInputLogo type="file"
+                                         (change)="onChangeImageLogo($event, 'edit')" accept=".png, .jpeg , .jpg">
+                                    </div>
+                                </div> 
+
+
+
+                                <div class="field p-fluid">
+                                    <h6 htmlFor="areas">Areas</h6>
+                                    <div class="col-12">
+                                        <div class="grid">
+                                            <div class="col-10 p-fluid">
+                                                <app-control-shop-areas [itemAreas]="itemAreas"
+                                                    (outValue)="selectAreas($event)"> </app-control-shop-areas>
+                                            </div>
+                                            <div class="col-2">
+                                                <button pButton (click)="updateAreas()" type="button"
+                                                    icon="pi pi-file-edit" class="p-button-sm mr-2 p-fluid"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="field p-fluid">
+                                    <h6 htmlFor="supplier">Supplier</h6>
+                                    <div class="col-12">
+                                        <div class="grid">
+                                            <div class="col-10 p-fluid">
+
+                                                <app-control-shop-suppliers [itemSupplier]="itemSupplier"
+                                                    (outValue)="selectSupplier($event)"> </app-control-shop-suppliers>
+
+                                            </div>
+                                            <div class="col-2">
+                                                <button pButton (click)="updateSupplier()" type="button"
+                                                    icon="pi pi-file-edit" class="p-button-sm mr-2 p-fluid"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field ">
+                                    <p-button label="Update" (click)="update_info()"
+                                    *ngIf="(userProfile && userProfile.employee_type_id == 1 ||  userProfile.employee_type_id == 2|| userProfile.employee_type_id == 3)"
+                                        styleClass="p-button-success p-button-sm"></p-button>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<div *ngIf="action =='create'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-5 mb-3">
+
+                    <div class="card mt-3">
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="shop_code">Shop Code<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                            <!-- [disabled]="true" -->
+
+                            <p>
+                                <input pInputText id="shop_code " [(ngModel)]="shop_code" type="text" />
+                            </p>
+
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="project_shop_code">Project Shop Code<span style="color: red; font-weight: bold;"> *</span></h6> 
+                            <p>
+                                <input pInputText id="project_shop_code " [(ngModel)]="project_shop_code" type="text" />
+                            </p>
+                        </div>
+
+                         <div class="field p-fluid">
+                            <h6 htmlFor="customer_shop_code">Customer Shop Code</h6>
+                            <p>
+                                <input pInputText id="customer_shop_code " [(ngModel)]="customer_shop_code" type="text" />
+                            </p>
+                        </div> 
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="shop_name">Shop Name<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                            <p>
+                                <input pInputText id="shop_name " [(ngModel)]="shop_name" [disabled]="false"
+                                    type="text" />
+                            </p>
+
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="shop_address">Shop Address<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                            <p>
+                                <input pInputText id="shop_address " [(ngModel)]="shop_address" [disabled]="false"
+                                    type="text" />
+                            </p>
+
+                        </div>
+ 
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="latitude">Latitude<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>
+                                <!-- [min]="-90" [max]="90"  -->
+                                <input pInputText id="latitude" [(ngModel)]="latitude"   [disabled]="false" type="number"
+                                 />
+                            </p>
+
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="longitude">Longitude<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>
+                                <!-- [min]="-180" [max]="180"  -->
+                                <input pInputText id="longitude" [(ngModel)]="longitude"  [disabled]="false"
+                                    type="number"  />
+                            </p>
+
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="contact_name">Contact Name</h6>
+                            <p>
+                                <input pInputText id="contact_name " [(ngModel)]="contact_name" [disabled]="false"
+                                    type="text" />
+                            </p>
+
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="contact_mobile">Contact Info</h6>
+                            <p>
+                                <input pInputText id="contact_mobile" placeholder="1234567892 hoặc 08666721"
+                                    [(ngModel)]="contact_mobile" [disabled]="false" type="text" />
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="field  p-fluid">
+                            <h6 htmlFor="radius">Radius<span *ngIf="_check_location == true" style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>
+                                <input pInputText id="radius" [(ngModel)]="radius" [disabled]="false" type="number"
+                                    min="0" />
+                            </p>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="grid">
+                                <div class="col-4 field  p-fluid">
+                                    <h6 htmlFor="name1 ">Status</h6>
+                                    <div class="field-checkbox ">  
+                                        <p-checkbox name="group_name" [binary]="true"
+                                            [(ngModel)]="_status"></p-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 field  p-fluid">
+                                    <h6 htmlFor="name1">Verify</h6>
+                                    <div class="field-checkbox ">  
+                                        <p-checkbox name="group_name" [binary]="true"
+                                            [(ngModel)]="_verify"></p-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 field  p-fluid">
+                                    <h6 htmlFor="check_location">Check Location</h6>
+                                    <div class="field-checkbox ">
+                                        <p-checkbox name="group_name" [binary]="true"
+                                            [(ngModel)]="_check_location"></p-checkbox>
+                                    </div>
+                                </div>
+ 
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="col-md-7 ">
+                    <div class="card mb-3 ">
+                        <div class="card-body ">
+
+                            <div class=" p-fluid ">
+
+                                <div class="field">
+                                    <h6 htmlFor="shop_type">ShopType<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-shop-type [itemShopType]="item_ShopTypeCreate" (outValue)="selectShopType($event)"></app-control-shop-type>
+                                </div>
+                                <div class=" field ">
+                                    <h6 htmlFor="channel ">Channel<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-channel [itemChannel]="item_channelCreate" (outValue)="selectedChannel($event) "></app-control-channel>
+                                </div>
+                                <!-- [itemChannel]="item_channel" -->
+                                <div class=" field ">
+                                    <h6 htmlFor="router ">Router<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-shop-router [itemRouterId]="item_ShopRouterCreate" (outValue)="selectShopRouter($event) "></app-control-shop-router> 
+                                </div>
+                                <!-- [itemRouterId]="item_ShopRouter" --> 
+                                <div class="field ">
+                                    <h6 htmlFor="province ">Province<span style="color: red; font-weight: bold;">
+                                            *</span></h6> 
+                                    <app-control-province  [itemProvinceId]="item_Province"
+                                    (outValue)="selectProvince($event)"></app-control-province>
+                                </div>
+
+                                <div class=" field ">
+                                    <h6 htmlFor="district ">District<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-district [inValue]="item_Province" [itemDistrictId]="item_District" [itemProvinceId]="item_Province"
+                                        (outValue)="selectDistrict($event) "></app-control-district>
+                                </div>
+
+                                <div class="field ">
+                                    <h6 htmlFor="ward ">Ward<span style="color: red; font-weight: bold;">
+                                            *</span></h6>
+                                    <app-control-ward [inValue]="item_District" [itemDistrictId]="item_District" [itemWardId]="item_Ward"
+                                        (outValue)="selectWard($event) " [inValueDistrict]="item_District" ></app-control-ward>
+                                </div>
+
+                                <div class="field">
+                                    <h6 htmlFor="manager">Manager</h6> 
+                                    <app-control-employee-list  (outValue)="selectASM($event)" [placeholder]="'Select a Manager '"
+                                        [project_id]="project_id" [itemManagerCode] = "item_ASM"  ></app-control-employee-list>
+                                </div>
+
+                                <div class="field p-fluid">
+                                    <h6 htmlFor="sign_name" >Sign Name</h6>
+                                    <p>
+                                        <input pInputText id="sign_name" [(ngModel)]="sign_name"   type="text" />
+                                    </p>
+        
+                                </div>
+        
+                                <div class="field p-fluid">
+                                    <h6 htmlFor="tax_code" >Tax Code</h6>
+                                    <p>
+                                        <input pInputText id="tax_code" [(ngModel)]="tax_code"   type="text" />
+                                    </p>
+        
+                                </div>
+
+                                <div class="grid">
+                                    <div class="col-3">
+                                    </div>
+                                    <div class="col-9">
+                                        <p-image *ngIf="image" [src]="image" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50"
+                                        (onImageError)="onImageErrorImageCreate($event,'image')"
+                                        > </p-image>
+                                    </div>
+                                </div>
+    
+                                <div class="grid">
+                                    <div class="col-3">
+                                        <h6 htmlFor="image">Image</h6>
+                                    </div>
+                                    <div class="col-9"> 
+                                        <input  pInputText id="image"  #myInputImage type="file" (change)="onChangeImage($event, 'create')" accept=".png, .jpeg, .jpg" >
+                                    </div>
+                                </div> 
+    
+    
+    
+                                <div class="grid">
+                                    <div class="col-3">
+                                    </div>
+                                    <div class="col-9">
+                                        <p-image *ngIf="image_logo" [src]="image_logo" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50"
+                                        (onImageError)="onImageErrorImageCreate($event,'image_logo')"
+                                        > </p-image>
+                                    </div>
+                                </div>
+    
+                                <div class="grid">
+                                    <div class="col-3">
+                                        <h6 htmlFor="image_logo">Image Logo</h6>
+                                    </div>
+                                    <div class="col-9"> 
+                                        <input  pInputText id="image_logo" #myInputLogo type="file" (change)="onChangeImageLogo($event, 'create')" accept=".png, .jpeg, .jpg" >
+                                    </div>
+                                </div> 
+
+
+                                <!-- <div class="field p-fluid">
+                                    <label htmlFor="areas">Areas</label>
+                                    <div class="col-12">
+                                        <div class="grid">
+                                            <div class="col-10 p-fluid">
+                                                <app-control-shop-areas [itemAreas]="itemAreas"
+                                                    (outValue)="selectAreas($event)"> </app-control-shop-areas>
+                                            </div>
+                                            <div class="col-2">
+                                                <button pButton (click)="updateAreas()" type="button"
+                                                    icon="pi pi-file-edit" class="p-button-sm mr-2 p-fluid"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="field p-fluid">
+                                    <label htmlFor="supplier">Supplier</label>
+                                    <div class="col-12">
+                                        <div class="grid">
+                                            <div class="col-10 p-fluid">
+
+                                                <app-control-shop-suppliers [itemSupplier]="itemSupplier"
+                                                    (outValue)="selectSupplier($event)"> </app-control-shop-suppliers>
+
+                                            </div>
+                                            <div class="col-2">
+                                                <button pButton (click)="updateSupplier()" type="button"
+                                                    icon="pi pi-file-edit" class="p-button-sm mr-2 p-fluid"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+
+                                <div class="field ">
+                                    <p-button label="Save" (click)="createShops()"
+                                        styleClass="p-button-success p-button-sm"></p-button>
+                                    <!-- <p-messages [value]="msgsInfo"></p-messages> -->
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div> 

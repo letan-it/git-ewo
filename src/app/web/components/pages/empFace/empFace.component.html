@@ -1,0 +1,233 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-2 p-fluid">
+                    <h6>Source app</h6>
+                    <input
+                        pInputText
+                        type="text"
+                        [(ngModel)]="source_app"
+                        placeholder="Please fill in source app"
+                    />
+                </div>
+                <div class="md:col-2 p-fluid">
+                    <h6>System source</h6>
+                    <input
+                        pInputText
+                        type="text"
+                        [(ngModel)]="system_source"
+                        placeholder="Please fill in system source"
+                    />
+                </div>
+                <div class="md:col-2 p-fluid">
+                    <h6>Project Id</h6>
+                    <input
+                        pInputText
+                        type="text"
+                        [(ngModel)]="item_Project"
+                        placeholder="Please fill in project Id"
+                    />
+                </div>
+                <div class="md:col-2 p-fluid">
+                    <h6>Employee Id</h6>
+                    <input
+                        pInputText
+                        type="text"
+                        [(ngModel)]="employee_id"
+                        placeholder="Please fill in employee Id"
+                    />
+                </div>
+
+                <div class="md:col-2 p-fluid">
+                    <h6>Employee Code</h6>
+                    <input
+                        pInputText
+                        type="text"
+                        [(ngModel)]="employee_code"
+                        placeholder="Please fill in Employee Code"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button
+                        pButton
+                        type="button"
+                        label="Filter"
+                        [loading]="isLoading_Filter"
+                        icon="pi pi-search"
+                        (click)="loadData(1)"
+                        class="p-button-sm mr-2 mt-2"
+                    ></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Show Filter"
+                        pStyleClass=".box"
+                        enterClass="hidden"
+                        enterActiveClass="fadeinup"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye"
+                        class="p-button-success mr-2 mt-2"
+                        [ngStyle]="{
+                            display: showFilter === 1 ? 'none' : 'flex'
+                        }"
+                    ></button>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Hide Filter"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye-slash"
+                        class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box"
+                        leaveActiveClass="fadeoutup"
+                        leaveToClass="hidden"
+                        [ngStyle]="{
+                            display: showFilter === 0 ? 'none' : 'flex'
+                        }"
+                    ></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <p-toast></p-toast>
+
+    <p-table
+        #dt
+        [rows]="20"
+        [rowsPerPageOptions]="[20, 50, 100]"
+        [paginator]="true"
+        [value]="empFaceLists"
+        paginatorPosition="top"
+        sortField="id"
+        [sortOrder]="1"
+        *ngIf="empFaceLists && empFaceLists.length > 0"
+        styleClass="p-datatable-gridlines"
+        [globalFilterFields]="[
+            'id',
+            'project_id',
+            'employee_code',
+            'employee_id'
+        ]"
+    >
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th class="text-center md:col-1" pSortableColumn="id">
+                    Id
+                    <p-sortIcon field="id"> </p-sortIcon>
+                </th>
+                <th class="text-center md:col-1">Face left</th>
+                <th class="text-center md:col-1">Face</th>
+                <th class="text-center md:col-1">Face right</th>
+                <th class="text-center md:col-1">Source app</th>
+                <th class="text-center md:col-1">System source</th>
+                <th class="text-center md:col-1" pSortableColumn="project_id">
+                    Project id <p-sortIcon field="project_id"> </p-sortIcon>
+                </th>
+                <th class="text-center md:col-1">Project name</th>
+                <th
+                    class="text-center md:col-2"
+                    pSortableColumn="employee_code"
+                >
+                    Employee code
+                    <p-sortIcon field="employee_code"> </p-sortIcon>
+                </th>
+                <th class="text-center md:col-1" pSortableColumn="employee_id">
+                    Employee id<p-sortIcon field="employee_id"> </p-sortIcon>
+                </th>
+                <th class="text-center md:col-2">Created date</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr [pSelectableRow]="item">
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.id }}</span>
+                </td>
+
+                <td class="text-center md:col-1">
+                    <p-image
+                        src="{{ item.face_left }}"
+                        alt="Image"
+                        width="50"
+                        height="50"
+                        [preview]="true"
+                    />
+                </td>
+                <td class="text-center md:col-1">
+                    <p-image
+                        src="{{ item.face }}"
+                        alt="Image"
+                        width="50"
+                        height="50"
+                        [preview]="true"
+                    />
+                </td>
+                <td class="text-center md:col-1">
+                    <p-image
+                        src="{{ item.face_right }}"
+                        alt="Image"
+                        width="50"
+                        height="50"
+                        [preview]="true"
+                    />
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.source_app }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.system_source }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.project_id }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.project_name }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.employee_code }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.employee_id }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.created_date }}</span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div
+        class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="empFaceLists && empFaceLists.length === 0"
+        style="float: right"
+    >
+        <h5>No data</h5>
+    </div>
+</div>
+<!-- dialog -->
+
+<p-confirmDialog></p-confirmDialog>

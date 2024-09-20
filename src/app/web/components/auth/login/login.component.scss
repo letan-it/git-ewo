@@ -1,0 +1,41 @@
+divider:after,
+.divider:before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    // background: #eee;
+}
+.h-custom {
+    height: calc(100% - 73px);
+}
+
+@media (max-width: 450px) {
+    .h-custom {
+        height: 100%;
+    }
+}
+.bg-trungthu {
+    /* The image used */
+    background-image: url("https://img3.thuthuatphanmem.vn/uploads/2019/09/11/anh-background-de-tai-trung-thu_105458853.jpg");
+
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.bg-noel {
+    /* The image used */
+    background-image: url("https://inlayngay.vn/media/data/blog/2021/noel_2021/vector_noel1.jpg");
+
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+ 

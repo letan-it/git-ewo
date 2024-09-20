@@ -1,0 +1,74 @@
+<div *ngIf="action == 'create'">
+    <div class="container">
+        <div class="main-body"> 
+
+            <div class="row gutters-sm">
+                <div class="col-md-12 mb-3">
+                    <div class="card mt-3">
+                        <div class="field p-fluid">
+                            <label htmlFor="shop_type_code"
+                                >Type code<span
+                                    style="color: red; font-weight: bold"
+                                >
+                                    *</span
+                                ></label
+                            >
+                            <p>
+                                <input
+                                    pInputText
+                                    id="shop_type_code"
+                                    [(ngModel)]="shop_type_code"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <label htmlFor="shop_type_name"
+                                >Type name<span
+                                    style="color: red; font-weight: bold"
+                                >
+                                    *</span
+                                ></label
+                            >
+                            <p>
+                                <input
+                                    pInputText
+                                    id="shop_type_name "
+                                    [(ngModel)]="shop_type_name"
+                                    [disabled]="false"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+ 
+                        <div class="field p-fluid">
+                            <label htmlFor="_status">Status</label>
+                            <p>
+                                <p-checkbox
+                                    name="group1"
+                                    [binary]="true"
+                                    [(ngModel)]="_status"
+                                    (onclick)="clickStatus()"
+                                ></p-checkbox>
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <p-button
+                                label="Save"
+                                (click)="createStoreType()"
+                                styleClass="p-button-success p-button-sm"
+                            ></p-button>
+                            <!-- {{clearMess}} -->
+                            <p-messages
+                                *ngIf="clearMess == true"
+                                [value]="msgsInfo"
+                            ></p-messages>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

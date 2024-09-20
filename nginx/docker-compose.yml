@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+    api:
+        image: tiennv1510/web_aso:1.0
+        working_dir: /app
+        command: dotnet run --urls=http://0.0.0.0:5003
+        ports:
+            - "5003:5003"
+        restart: always
+        depends_on:
+            - reverseproxy
+    reverseproxy:
+        image: nginx:alpine
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./certs/acacy.com.vn.crt:/etc/ssl/certs/acacy.com.vn.crt
+            - ./certs/acacy.com.vn.key:/etc/ssl/private/acacy.com.vn.key
+        ports:
+            - 10446:10446
+        restart: always

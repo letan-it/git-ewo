@@ -1,0 +1,549 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+<div class="grid ">
+    <div class="col-12 ">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap ">
+
+                <button type="button" class="p-button-sm p-button-info mr-2" *ngIf="ListSurvey.length>0"
+                    (click)="export()" label="Raw data" pButton pRipple icon="pi pi-file-excel"
+                    style="float: right;"></button>
+
+                <a [href]="template_clone">
+                    <button pButton pRipple label="Get Template Clone Question" icon="pi pi-file-export"
+                        class="p-button-sm p-button-info mr-2"></button>
+                </a>
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+
+<div class="card">
+
+    <!-- <p><label for="total_item">Total Item: {{ListSurvey.length}}</label></p> -->
+    <p-table selectionMode="single" editMode="row" [rows]="10" [rowHover]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [paginator]="true"
+        [scrollable]="true" dataKey="survey_id" aria-sort="ascending" sortField="order" [scrollable]="true"
+        [value]="ListSurvey" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
+
+        <!-- <ng-template pTemplate="caption"> Total Item: {{totalRecords}}
+
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalRecords" [rowsPerPageOptions]="[20,50,100]"></p-paginator>
+        </ng-template> -->
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 5rem">
+                    <button type="button" label="" pButton pRipple icon="pi pi-plus" style="float: right;"
+                        (click)="create()"></button>
+
+                </th>
+                <!-- <th>RowNum</th> -->
+                <th class="text-center">Survey id</th>
+                <th class="text-center">Survey Name</th>
+                <th class="text-center">Order</th>
+                <th class="text-center">Status</th>
+                <!-- <th>Created Date</th> -->
+                <th class="text-center">Survey Type</th>
+                <th class="text-center" *ngIf="currentUser.employee_type_id <=3 ">Model Edit</th>
+                <th class="text-center" style="width: 15px">Action
+                    <i class="pi pi-sync" style="cursor: pointer; margin-left: 2%;" (click)="LoadData()"
+                        pTooltip="Load Data" tooltipPosition="top"></i>
+                </th>
+            </tr>
+
+            <tr>
+                <th></th>
+                <th class="text-center">
+                    <p-columnFilter [style]="{'minWidth':'30%'}" type="text" field="survey_id" [showMenu]="true"
+                        [matchMode]="'contains'"></p-columnFilter>
+                </th>
+                <th class="text-center">
+
+                    <p-columnFilter [style]="{'minWidth':'70%'}" type="text" field="survey_name" [showMenu]="true"
+                        [matchMode]="'contains'"></p-columnFilter>
+                </th>
+                <th class="text-center">
+                    <p-columnFilter type="text" field="order" [showMenu]="true"
+                        [matchMode]="'contains'"></p-columnFilter>
+                </th>
+                <th class="text-center">
+                    <p-columnFilter field="status" matchMode="equals" [showMenu]="true" [matchMode]="'contains'">
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                placeholder="Any" [showClear]="true" appendTo="body">
+                            </p-dropdown>
+                        </ng-template>
+                    </p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="survey_type_name" [showMenu]="true"
+                        [matchMode]="'contains'"></p-columnFilter>
+                </th>
+                <th *ngIf="currentUser.employee_type_id <=3">
+                    <p-columnFilter type="text" field="model_edit" [showMenu]="true"
+                        [matchMode]="'contains'"></p-columnFilter>
+                </th>
+                <th>
+                    <!-- <button type="button" pButton pRipple icon="pi pi-plus" 
+                        (click)="createStoreRouter()"></button> -->
+                </th>
+
+            </tr>
+
+        </ng-template>
+
+
+        <ng-template pTemplate="body" let-survey let-editing="editing" let-ri="rowIndex" let-expanded="expanded">
+            <tr [pEditableRow]="survey">
+                <td [pTooltip]="survey.created_date + ' - ' + survey.last_update">
+
+                    <button type="button" dataKey="survey_id" pButton pRipple [pRowToggler]="survey"
+                        class="p-button-text p-button-rounded p-button-plain" (click)="onDisplay()"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+
+                </td>
+                <td class="text-center">
+                    {{survey.survey_id}}
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" class="p-fluid" [(ngModel)]="survey.survey_name">
+                        </ng-template>
+                        <ng-template pTemplate="output" class="p-fluid">
+                            {{survey.survey_name}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td class="text-center">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="number" class="p-fluid text-center" [min]="0"
+                                [(ngModel)]="survey.order" required>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{survey.order}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td class="text-center">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <!-- <input pInputText type="text" [(ngModel)]="survey.status" required> -->
+                            <p-checkbox name="group1" [binary]="true" [(ngModel)]="survey._status"
+                                [inputId]="survey.survey_id">
+                            </p-checkbox>
+
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500': survey.status == 1,
+                                 'false-icon pi-times-circle text-pink-500': survey.status == 0}"></i>
+
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <app-control-survey-type class="p-fluid" (outValue)="selectSurveyType($event)"
+                                [ListMaster]="ListMaster"
+                                [itemSurveyType]="survey.survey_type"></app-control-survey-type>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{survey.survey_type_name}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td class="text-center" *ngIf="currentUser.employee_type_id <= 3">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <app-control-survey-model-edit class="p-fluid" (outValue)="selectSurveyModelEdit($event)"
+                                [ListMaster]="ListSurvey"
+                                [itemSurveyModelEdit]="survey.model_edit"></app-control-survey-model-edit>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{survey.model_edit === 2 ? "Được điều chỉnh kết quả làm việc" : "Không chỉnh sửa kết quả làm việc"}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td>
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button *ngIf="survey.survey_type == 3" (click)="showQuickTestModal(survey)" pButton pRipple
+                            type="button" icon="pi pi-check-square" class="p-button-rounded p-button-text"></button>
+
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            (click)="onRowEditInit(survey)" class="p-button-rounded p-button-text"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(survey)"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            (click)="onRowEditCancel(survey, ri)"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+
+                        <button (click)="showDialogTime(survey)" pButton pRipple type="button" icon="pi pi-cog"
+                            class="p-button-rounded p-button-text"></button>
+                        <button *ngIf="currentUser.employee_type_id <=3" (click)="showDialogconfig_model(survey)"
+                            pButton pRipple type="button" icon="pi pi-sitemap"
+                            class="p-button-rounded p-button-text"></button>
+                        <p-confirmPopup></p-confirmPopup>
+                        <button *ngIf="currentUser.employee_type_id <=3 " (click)="confirm($event,survey)" pButton
+                            pRipple type="button" icon="pi pi-trash" class="p-button-danger p-button-text"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+
+        <ng-template pTemplate="rowexpansion" let-survey>
+
+            <tr>
+                <td colspan="100%">
+                    <div class="col-12">
+                        <app-question [inValue]="survey" [action]="'view'"></app-question>
+                    </div>
+                </td>
+            </tr>
+
+        </ng-template>
+
+
+        <!-- <ng-template pTemplate="summary">
+            <p-paginator (onPageChange)="onPageChange($event) " [first]="first " [rows]="rows "
+                [totalRecords]="totalRecords " [rowsPerPageOptions]="[10, 20, 30] "></p-paginator>
+        </ng-template> -->
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">In total there are {{ ListSurvey ?
+                ListSurvey.length : 0 }} list survey.</div>
+        </ng-template>
+
+    </p-table>
+    <!-- <div class="card flex justify-content-center justify-content-between text-center "
+        *ngIf="ListSurvey && ListSurvey.length==0 " style="width: 100%;">
+        <h5>No data</h5>
+    </div> -->
+
+</div>
+
+
+
+<p-dialog header="Create Survey" [modal]="true" [(visible)]="SurveyCreate" [style]="{width: '50vw'} "
+    [maximizable]="true ">
+
+    <app-add-survey (newItemEvent)="addItem($event)" (newItemListSurvey)="addListSurvey($event)" [clearMess]="clearMess"
+        [inValue]="ListSurvey" [action]="'create'"></app-add-survey>
+
+</p-dialog>
+
+<p-dialog header="Update Survey" [modal]="true" [(visible)]="SurveyUpdate" [style]="{width: '50vw'} "
+    [maximizable]="true ">
+
+    <app-add-survey [inValue]="ListSurvey" [action]="'update'"></app-add-survey>
+
+</p-dialog>
+
+<p-dialog header="Task Scheduler" [(visible)]="visible" [modal]="true" [style]="{width: '50vw'}" [maximizable]="true">
+    <div class="card flex justify-content-center">
+        <div class="flex flex-wrap gap-3">
+            <div class="flex align-items-center">
+                <p-radioButton name="pizza" value="daily" [(ngModel)]="ingredient"
+                    inputId="ingredient1"></p-radioButton>
+                <h6 for="ingredient1" class="ml-2">daily</h6>
+            </div>
+
+            <div class="flex align-items-center">
+                <p-radioButton name="pizza" value="weekly" [(ngModel)]="ingredient"
+                    inputId="ingredient2"></p-radioButton>
+                <h6 for="ingredient2" class="ml-2">weekly</h6>
+            </div>
+
+            <div class="flex align-items-center">
+                <p-radioButton name="pizza" value="monthly" [(ngModel)]="ingredient"
+                    inputId="ingredient3"></p-radioButton>
+                <h6 for="ingredient3" class="ml-2">monthly</h6>
+            </div>
+        </div>
+    </div>
+    <div class="card" *ngIf="ingredient == 'weekly'">
+        <div class="p-toolbar-group-right flex flex-wrap">
+            <div class="flex align-items-center gap-1" style="color: red !important">
+                <p-checkbox name="group1" value="Sunday" [(ngModel)]="selectedweek" inputId="Sunday"></p-checkbox>
+                <h6 for="Sunday">Sunday</h6>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="flex align-items-center gap-1">
+                <p-checkbox name="group1" value="Monday" [(ngModel)]="selectedweek" inputId="Monday"></p-checkbox>
+                <h6 for="Monday">Monday</h6>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+
+            <div class="flex align-items-center gap-1">
+                <p-checkbox name="group1" value="Tuesday" [(ngModel)]="selectedweek" inputId="Tuesday"></p-checkbox>
+                <h6 for="Tuesday">Tuesday</h6>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="flex align-items-center gap-1">
+                <p-checkbox name="group1" value="Wednesday" [(ngModel)]="selectedweek" inputId="Wednesday"></p-checkbox>
+                <h6 for="Wednesday">Wednesday</h6>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="flex align-items-center gap-1">
+                <p-checkbox name="group1" value="Thursday" [(ngModel)]="selectedweek" inputId="Thursday"></p-checkbox>
+                <h6 for="Thursday">Thursday</h6>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="flex align-items-center gap-1">
+                <p-checkbox name="group1" value="Friday" [(ngModel)]="selectedweek" inputId="Friday"></p-checkbox>
+                <h6 for="Friday">Friday</h6>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="flex align-items-center gap-1" style="color: orangered !important">
+                <p-checkbox name="group1" value="Saturday" [(ngModel)]="selectedweek" inputId="Saturday"></p-checkbox>
+                <h6 for="Saturday">Saturday</h6>
+            </div>
+        </div>
+    </div>
+    <div class="card" *ngIf="ingredient == 'monthly'">
+        <table class="table">
+            <tr>
+                <td *ngFor="let item of listmonth">
+                    <p-checkbox name="group2" [value]="item" [(ngModel)]="selectedmonth" [inputId]="item"></p-checkbox>
+                    <label [for]="item">{{item}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td *ngFor="let item of listmonth1">
+                    <p-checkbox name="group2" [value]="item" [(ngModel)]="selectedmonth" [inputId]="item"></p-checkbox>
+                    <label [for]="item">{{item}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td *ngFor="let item of listmonth2">
+                    <p-checkbox name="group2" [value]="item" [(ngModel)]="selectedmonth" [inputId]="item"></p-checkbox>
+                    <label [for]="item">{{item}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p-checkbox name="group2" value="31" [(ngModel)]="selectedmonth" inputId="31"></p-checkbox>
+                    <label for="31">31</label>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="card" *ngIf="master.length>0">
+        <h5 style="color:red">Note: No installation, default not check</h5>
+        <table class="table">
+            <tr>
+                <td *ngFor="let item of master_position">
+                    <p-checkbox name="group3" [value]="item.Code" [(ngModel)]="select_position"
+                        [inputId]="item.Code"></p-checkbox>
+                    <label [for]="item.code">{{item.Code}}</label>
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <table class="table">
+            <tr>
+
+                <td *ngFor="let item of master_category">
+                    <p-checkbox name="group3" [value]="item.Code" [(ngModel)]="select_category"
+                        [inputId]="item.Code"></p-checkbox>
+                    <label [for]="item.code">{{item.Code}}</label>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card flex justify-content-center">
+        <div class="flex flex-wrap gap-3">
+            <button type="button" (click)="update_task()" class="p-button-sm p-button-success mr-2" label="Update"
+                pButton pRipple icon="pi pi-check"></button>
+        </div>
+    </div>
+
+</p-dialog>
+<p-dialog *ngIf="config_model==true" header="Configuration" [(visible)]="config_model" [modal]="true"
+    [style]="{width: '50vw'}" [maximizable]="true">
+    <div class="row">
+        <div class="col-6">
+
+            <!-- <textarea style="width: 100%;" rows="10" pInputTextarea [autoResize]="true"
+                [(ngModel)]="config_item.configuration"></textarea> -->
+
+
+            <ace-editor [(text)]="config_item.configuration" mode="json" style="height:300px;"></ace-editor>
+
+            <label style="color:red" *ngIf="checksomeObject(config_item.configuration) == 1">JSON format error
+                config</label>
+
+        </div>
+        <div class="col-6">
+            <ngx-json-viewer [json]="someObject(config_item.configuration)" [depth]="3"></ngx-json-viewer>
+        </div>
+    </div>
+
+    <div class="card flex justify-content-center" *ngIf="checkAction === true && config_item.survey_type === 5">
+        <div class="flex flex-column align-items-start justify-content-start gap-2">
+            <h6>Formula File JS</h6>
+            <a [href]="formula_file_js" target="_blank" ngDefaultControl [(ngModel)]="formula_file_js">{{formula_file_js || config_item.formula_file_js}}</a>
+            <div class="flex flex-row align-items-center justify-content-start gap-3">
+                <input
+                    id="formulaFile"
+                    #myInputFormulaFile
+                    type="file"
+                    (change)="onUploadFormulaFile($event, config_item.survey_id)"
+                    accept=".js"
+                />
+                
+                <button class="p-button-rounded p-button-danger p-button-text" style="font-size: 2.5rem" title="Delete" *ngIf="formula_file_js !== null || config_item.formula_file_js !== null"
+                    (click)="openDelete(config_item.formula_file_js, $event)" pButton pRipple type="button" icon="pi pi-trash">
+                </button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="card flex w-full justify-content-center">
+        <button type="button" (click)="update_config()" *ngIf="checksomeObject(config_item.configuration) == 0"
+            class="p-button-sm p-button-success mr-2 w-12rem" label="Update" pButton pRipple icon="pi pi-check"></button>
+    </div>
+    <hr>
+    <!-- <div class="row">
+        <div class="col-6">
+
+            <textarea style="width: 100%;" rows="10" pInputTextarea [autoResize]="true"
+                [(ngModel)]="config_item.nextquestion_configuration"></textarea>
+
+            <label style="color:red" *ngIf="checksomeObject(config_item.nextquestion_configuration) == 1">JSON format
+                error
+                config</label>
+
+        </div>
+        <div class="col-6">
+            <ngx-json-viewer [json]="someObject(config_item.nextquestion_configuration)" [depth]="3"></ngx-json-viewer>
+        </div>
+    </div> -->
+    <div class="row">
+        <div class="col-12">
+            <p-table [value]="config_item.nextquestion_configuration" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>order</th>
+                        <th>question_id</th>
+                        <th>Sub Rule</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product>
+                    <tr>
+                        <td>{{ product.order }}</td>
+                        <td>{{ product.question_id }}</td>
+                        <td>
+                            <table class="p-datatable-table ng-star-inserted">
+                                <tr class="ng-star-inserted" style="background-color: gray;color: white;">
+                                    <th>Order</th>
+                                    <th *ngFor="let item of product.sub_rule">
+                                        {{item.order}}
+                                    </th>
+                                </tr>
+                                <tr class="ng-star-inserted">
+                                    <td>Question</td>
+                                    <td *ngFor="let item of product.sub_rule">
+                                        {{item.question_id}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="card flex justify-content-center">
+        <div class="flex flex-wrap gap-3">
+            <button type="button" class="p-button-sm p-button-success mr-2" (click)="updateRule()"
+                label="Calculate the formula" pButton pRipple icon="pi pi-check"></button>
+        </div>
+    </div>
+</p-dialog>
+
+
+<p-dialog *ngIf="config_model_quicktest ==true" header="Configuration" [(visible)]="config_model_quicktest"
+    [modal]="true" [style]="{width: '50vw'}" [maximizable]="true">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-3">
+                <div class="field p-fluid">
+                    <h6>Employee Code List<span style="color: red; font-weight: bold;"> *</span></h6>
+                    <p>
+                        <input pInputText id="survey_name " placeholder="EMP1 EMP2 ..." [(ngModel)]="employee_list"
+                            type="text" />
+                    </p>
+                </div>
+                <div class="field p-fluid">
+                    <h6>Số lượng câu hỏi<span style="color: red; font-weight: bold;"> *</span></h6>
+                    <p>
+                        <input pInputText id="order" [(ngModel)]="count_question" [disabled]="false" type="number"
+                            [min]="0" />
+                    </p>
+                </div>
+
+                <div class="field p-fluid">
+                    <p-button label="Update" (click)="UpdateEmployeeQuickTest()"
+                        styleClass="p-button-success p-button-sm"></p-button>
+                    <!-- <p-messages *ngIf="clearMess == true" [value]="msgsInfo"></p-messages> -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <p-table [value]="employeeListQuickTest" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center">Mã Nhân viên</th>
+                        <th class="text-center">Nhân viên</th>
+                        <th class="text-center">Số lượng câu hỏi</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{'minWidth':'30%'}" type="text" field="employee_code"
+                                [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{'minWidth':'30%'}" type="text" field="employee_name"
+                                [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{'minWidth':'30%'}" type="text" field="count_question"
+                                [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{ item.employee_code }}</td>
+                        <td>{{ item.employee_name }}</td>
+                        <td class="text-center">{{ item.count_question }}</td>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary" *ngIf="employeeListQuickTest">
+                    <div class="flex align-items-center justify-content-between">In total there are {{
+                        employeeListQuickTest ?
+                        employeeListQuickTest.length : 0 }} list.</div>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+</p-dialog>

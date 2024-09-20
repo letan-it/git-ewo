@@ -1,0 +1,647 @@
+<p-toast></p-toast>
+
+<div class="grid" *ngIf="showFilter === 1">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-3 col-12">
+                    <h6>Month</h6>
+                    <!-- <p-multiSelect [options]="ListMonth"   filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectMonth" placeholder="Select a Month" optionLabel="name"></p-multiSelect> -->
+                    <p-multiSelect [options]="ListMonth" [showToggleAll]="false" [showClear]="true" [filter]="true"
+                        filterBy="name" [virtualScroll]="true" display="chip" [filter]="true"
+                        [virtualScrollItemSize]="43" class="multiselect-custom-virtual-scroll p-fluid"
+                        [(ngModel)]="selectMonth" optionLabel="name" placeholder="Select a month" appendTo="body">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ item.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                </div>
+
+                <div class="md:col-3 col-12">
+                    <h6>User</h6>
+                    <app-employee-task (outValue)="selectItem_user($event)" [employee_id]="0"></app-employee-task>
+                </div>
+
+                <div class="md:col-3 col-12">
+                    <h6>Tag</h6>
+                    <input [style]="{ minWidth: '100%' }" [(ngModel)]="data.tag"
+                        placeholder="BackEnd, UXUI, FontEnd,..." type="text" pInputText />
+                </div>
+                <div class="md:col-3 col-12">
+                    <h6>Task ID</h6>
+                    <input [style]="{ minWidth: '100%' }" placeholder="Task ID" [(ngModel)]="data.task_Id" type="text"
+                        pInputText />
+                </div>
+            </div>
+            <div class="row">
+                <div class="md:col-3 col-12">
+                    <h6>Status</h6>
+                    <app-task-status (outValue)="selectItem_Status($event)" [control]="'status'"></app-task-status>
+                </div>
+                <div class="md:col-3 col-12">
+                    <h6>Testing Status</h6>
+                    <app-task-status (outValue)="selectItem_TesingStatus($event)"
+                        [control]="'testing-status'"></app-task-status>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex flex-warp mb-3 gap-4">
+    <div class="flex-1 ">
+        <div class="card">
+            <div class="flex flex-column gap-2 ">
+                <h5 class="font-semibold text-xl m-0 flex gap-2 align-items-center"><i class="pi pi-bookmark"></i>
+                    Task</h5>
+                <div class="flex justify-content-end ">
+                    <h5
+                        class="text-4xl border align-items-center flex justify-content-center w-4rem h-4rem font-bold border-circle m-0">
+                        {{dataSummary?.task}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 ">
+        <div class="card bg-primary-300">
+            <div class="flex flex-column gap-2  ">
+                <h5 class="font-semibold text-xl m-0 flex gap-2 align-items-center"><i class="pi pi-flag"></i>
+                    Task_inprocess</h5>
+                <div class="flex justify-content-end ">
+                    <h5
+                        class="text-4xl border align-items-center flex justify-content-center w-4rem h-4rem font-bold border-circle m-0 cursor-pointer"
+                        pTooltip="Click to see details" 
+                        (click)="opTI.toggle($event)" 
+                        tooltipPosition="right">
+                        {{dataSummary?.task_inprocess}}
+                        <p-overlayPanel #opTI [style]="{ width: 'fit-content' }" [showCloseIcon]="true">
+                            <div class="flex flex-column gap-3 w-25rem">
+                                <span class="font-medium text-900 block mb-2">Task_inprocess</span>
+                                <ul class="list-none p-0 m-0 flex flex-column gap-3">
+                                    <li *ngFor="let task of taskInprocess" class="flex align-items-center gap-2">
+                                        <img [src]="task.image" style="width: 32px; border-radius: 50%;" />
+                                        <div>
+                                            <span class="font-medium tex-9xl">{{ task.name }}</span>
+                                        </div>
+                                        <div class="flex align-items-center gap-2 text-color-secondary ml-auto text-sm cursor-pointer"
+                                            pTooltip="Task Id: {{ task.task_id }}">
+                                            <span>Task_inprocess</span>
+                                            <p>{{ task.count }}</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </p-overlayPanel>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 ">
+        <div class="card bg-yellow-400">
+            <div class="flex flex-column gap-2 ">
+                <h5 class="font-semibold text-xl m-0 flex gap-2 align-items-center"><i class="pi pi-info-circle"></i> SL
+                    Bug</h5>
+                <div class="flex justify-content-end ">
+                    <h5
+                        class="text-4xl border align-items-center flex justify-content-center w-4rem h-4rem font-bold border-circle m-0 cursor-pointer"
+                        pTooltip="Click to see details" 
+                        (click)="opB.toggle($event)" 
+                        tooltipPosition="right">
+                        {{dataSummary?.bug}}</h5>
+                        <p-overlayPanel #opB [style]="{ width: 'fit-content' }" [showCloseIcon]="true">
+                            <div class="flex flex-column gap-3 w-25rem">
+                                <span class="font-medium text-900 block mb-2">Bug</span>
+                                <ul class="list-none p-0 m-0 flex flex-column gap-3">
+                                    <li *ngFor="let member of bug" class="flex align-items-center gap-2">
+                                        <img [src]="member.image" style="width: 32px; border-radius: 50%;" />
+                                        <div>
+                                            <span class="font-medium tex-9xl">{{ member.name }}</span>
+                                        </div>
+                                        <div class="flex align-items-center gap-2 text-color-secondary ml-auto text-sm cursor-pointer"
+                                            pTooltip="Task Id: {{ member.task_id }}">
+                                            <span>SL Bug</span>
+                                            <p>{{ member.count }}</p>
+                                            <!-- <p-tag value="{{ member.status }}" /> -->
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </p-overlayPanel>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="flex-1 ">
+        <div class="card bg-red-500">
+            <div class="flex flex-column gap-2 ">
+                <h5 class="font-semibold text-xl m-0 flex gap-2 align-items-center "><i class="pi pi-sitemap"></i> SL
+                    Task Late</h5>
+                <div class="flex justify-content-end ">
+                    <h5
+                        class="text-4xl border align-items-center flex justify-content-center w-4rem h-4rem font-bold border-circle m-0 cursor-pointer"
+                        pTooltip="Click to see details" 
+                        (click)="opTL.toggle($event)" 
+                        tooltipPosition="right">
+                        {{dataSummary?.late}}
+                        <p-overlayPanel #opTL [style]="{ width: 'fit-content' }" [showCloseIcon]="true">
+                            <div class="flex flex-column gap-3 w-25rem">
+                                <span class="font-medium text-900 block mb-2">Employees Late</span>
+                                <ul class="list-none p-0 m-0 flex flex-column gap-3">
+                                    <li *ngFor="let member of resultDataLate" class="flex align-items-center gap-2">
+                                        <img [src]="member.image" style="width: 32px; border-radius: 50%;" />
+                                        <div>
+                                            <span class="font-medium tex-9xl">{{ member.employee_name }}</span>
+                                        </div>
+                                        <div class="flex align-items-center gap-2 text-color-secondary ml-auto text-sm cursor-pointer"
+                                            pTooltip="Task Id: {{ member.task_id }}">
+                                            <span>SL Tasks Late</span>
+                                            <p>{{ member.count }}</p>
+                                            <!-- <p-tag value="{{ member.status }}" /> -->
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </p-overlayPanel>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 ">
+        <div class="card">
+            <div class="flex flex-column gap-2 ">
+                <h5 class="font-semibold text-xl m-0  flex gap-2 align-items-center"> 
+                    <i class="pi pi-slack"></i>Employee_inprocess
+                </h5>
+                <div class="flex justify-content-end ">
+                    <h5
+                        class="text-4xl border align-items-center flex justify-content-center w-4rem h-4rem font-bold border-circle m-0 cursor-pointer" 
+                        pTooltip="Click to see details" 
+                        (click)="opEI.toggle($event)" 
+                        tooltipPosition="left">
+                        {{dataSummary?.employee}}</h5>
+                        <p-overlayPanel #opEI [style]="{ width: 'fit-content' }" [showCloseIcon]="true">
+                            <div class="flex flex-column gap-3">
+                                <span class="font-medium text-900 block mb-2">Employee_inprocess</span>
+                                <ul class="list-none p-0 m-0 flex flex-column gap-3">
+                                    <li *ngFor="let task of taskInprocess" class="flex align-items-center gap-2">
+                                        <img [src]="task.image" style="width: 32px; border-radius: 50%;" />
+                                        <div>
+                                            <span class="font-medium tex-9xl">{{ task.name }}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </p-overlayPanel>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<section class="layout-content">
+    <div class="ng-star-inserted">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-5" #targetEl>
+                <span class="text-900 text-xl font-semibold">
+                    <h1>Task List</h1>
+                </span>
+
+                <div>
+                    <button (click)="showDialog('Create Task')" pbutton="" pripple="" icon="pi pi-plus"
+                        label="Create Task"
+                        class="p-element p-ripple p-button-outlined font-semibold p-button p-component mr-2">
+                        <span class="p-button-icon p-button-icon-left pi pi-plus" aria-hidden="true"></span><span
+                            class="p-button-label">Create Task</span><span class="p-ink"></span>
+                    </button>
+
+                    <button pbutton="" pripple="" (click)="handleRefresh()" icon="pi pi-refresh" label="Create Task"
+                        class="p-element p-ripple p-button-outlined font-semibold p-button p-component mr-2">
+                        <span class="p-button-icon p-button-icon-left pi pi-refresh" aria-hidden="true"></span><span
+                            class="p-button-label">Refresh</span><span class="p-ink"></span>
+                    </button>
+
+                    <button (click)="rawData()" pbutton="" pripple="" icon="pi pi-file-excel" label="Raw Data"
+                        class="p-element p-ripple p-button-outlined font-semibold p-button p-component">
+                        <span class="p-button-icon p-button-icon-left pi pi-file-excel" aria-hidden="true"></span><span
+                            class="p-button-label">Raw Data</span><span class="p-ink"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- todo -->
+
+            <div class="todo" *ngIf="listStatus.todo?.length > 0">
+                <div class=" bg-bluegray-50 font-semibold text-lg  my-3 border-bottom-1 surface-border py-3">
+                    <span class="px-4  py-2 text-xl font-bold">ToDo</span>
+                </div>
+
+                <ul class="list-none p-0 m-0">
+                    <li *ngFor="let item of listStatus.todo"
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted ">
+                        <div class="lg:col-5 flex align-items-center gap-2 ">
+                            <p-tag [value]="item.task_id"
+                                [severity]="dataCheckLate.includes(item.task_id)? 'danger' : dataCheckLate.includes(item.task_id)? 'warning': ''"
+                                pTooltip="Copy task" (click)="copyText(item.task_id, item.task_name)"
+                                class="cursor_pointer " icon="pi pi-hashtag">
+                            </p-tag>
+
+                            <span *ngIf="item.prioritize"><p-badge [value]="item.prioritize" severity="warning"
+                                    pTooltip="Work priority" class="cursor_pointer"
+                                    tooltipPosition="top"></p-badge></span>
+
+                            <p-tag *ngIf="item.testing_status"
+                                [severity]="item.testing_status === 'Error' ? 'danger': item.testing_status === 'Wait Dev'? 'info':item.testing_status === 'Pass'||item.testing_status === 'Testing'?'success':item.testing_status === 'Re-open' ||item.testing_status === 'No-Test'?  'warning':''"
+                                [value]="item.testing_status">
+                            </p-tag>
+                            <h6 for="task.id" class="font-medium m-0 ml-2" style="word-break: break-word">
+                                {{ item.task_name }}
+                            </h6>
+
+                        </div>
+                        <div class="lg:col-7 flex gap-3 flex-column sm:flex-row sm:justify-content-between">
+                            <div class="flex align-items-center active justify-content-between w-full">
+                                <span class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted">
+                                    <h6 class="pi pi-clock mr-2 mb-0"></h6>
+                                    <b class="flex gap-2 align-items-center">🚩
+                                        <h6 class="m-0">
+                                            {{ item.start_date }}
+                                        </h6>
+                                        ➡️
+                                        <h6 class="m-0">{{ item.end_date }}</h6>
+                                        <h6 class="m-0">
+                                            | <p-tag severity="success" value="{{item.main_day}} Day"></p-tag>
+                                        </h6>
+                                        <h6 class="m-0">| Create By : {{item.created_by_name}}</h6>
+                                    </b>
+
+                                </span>
+
+                                <div class="flex align-items-center" *ngIf="item.tag">
+                                    <span *ngFor="
+                                                let item of item.tag
+                                                    .split(',')
+                                                    .slice(0, -1)
+                                            " class="ml-2"><p-chip label="{{ item }}"></p-chip></span>
+                                </div>
+                            </div>
+
+
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img pTooltip="{{ item.assignees_name }}" src="{{ item.image }}"
+                                            class="ng-star-inserted" />
+                                    </div>
+                                </p-avatar>
+
+                                <button pButton pRipple (click)="
+                                        detailWork('Detail Work', item.task_id)
+                                    " type="button" icon="pi pi-eye"
+                                    class="p-button-rounded p-button-text ml-4"></button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- develop -->
+            <div class="Close" *ngIf="listStatus.develop?.length > 0">
+
+                <div class="text-900 bg-bluegray-50 font-semibold text-lg my-3 border-bottom-1 surface-border py-3">
+                    <span class="px-4  py-2 text-xl font-bold">Develop</span>
+                </div>
+                <ul class="list-none p-0 m-0">
+                    <li *ngFor="let item of listStatus.develop"
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted "
+                        [ngClass]="dataCheckLate.includes(item.task_id)? 'bg-red-500' : dataCheckLate.includes(item.task_id)? 'bg-yellow-400': ''">
+                        <div class="flex align-items-center gap-2 lg:col-5">
+                            <p-tag [value]="item.task_id"
+                                [severity]="dataCheckLate.includes(item.task_id)? 'danger' : dataCheckLate.includes(item.task_id)? 'warning': ''"
+                                pTooltip="Copy task" (click)="copyText(item.task_id, item.task_name)"
+                                class="cursor_pointer " icon="pi pi-hashtag">
+                            </p-tag>
+
+                            <span *ngIf="item.prioritize"><p-badge [value]="item.prioritize" severity="warning"
+                                    pTooltip="Work priority" class="cursor_pointer"
+                                    tooltipPosition="top"></p-badge></span>
+
+                            <p-tag *ngIf="item.testing_status"
+                                [severity]="item.testing_status === 'Error' ? 'danger': item.testing_status === 'Wait Dev'? 'info':item.testing_status === 'Pass'||item.testing_status === 'Testing'?'success':item.testing_status === 'Re-open' ||item.testing_status === 'No-Test'?  'warning':''"
+                                [value]="item.testing_status">
+                            </p-tag>
+                            <h6 for="task.id" class="font-medium m-0 ml-2" style="word-break: break-word">
+                                {{ item.task_name }}
+                            </h6>
+                        </div>
+                        <div class="flex lg:col-7 gap-3 flex-column sm:flex-row sm:justify-content-between">
+
+                            <div class="flex align-items-center active justify-content-between w-full">
+                                <span class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted">
+                                    <h6 class="pi pi-clock mr-2 mb-0"></h6>
+                                    <b class="flex gap-2 align-items-center">🚩
+                                        <h6 class="m-0">
+                                            {{ item.start_date }}
+                                        </h6>
+                                        ➡️
+                                        <h6 class="m-0">{{ item.end_date }}</h6>
+                                        <h6 class="m-0">
+                                            | <p-tag severity="success" value="{{item.main_day}} Day"></p-tag>
+                                        </h6>
+                                        <h6 class="m-0">| Create By : {{item.created_by_name}}</h6>
+                                    </b>
+                                </span>
+
+                                <div class="flex align-items-center">
+                                    <span *ngFor="
+                                                let item of item.tag
+                                                    .split(',')
+                                                    .slice(0, -1)
+                                            " class="ml-2"><p-chip label="{{ item }}"></p-chip></span>
+                                </div>
+                            </div>
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img src="{{ item.image }}" class="ng-star-inserted"
+                                            pTooltip="{{ item.assignees_name }}" />
+                                    </div>
+                                </p-avatar>
+                                <button pButton pRipple (click)="
+                                        detailWork('Detail Work', item.task_id)
+                                    " type="button" icon="pi pi-eye"
+                                    class="p-button-rounded p-button-text ml-4"></button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Deploy Testing -->
+
+            <div class="Deploy-Testing" *ngIf="listStatus.deploy?.length > 0">
+                <div class="text-900 bg-bluegray-50 font-semibold text-lg  my-3 border-bottom-1 surface-border py-3">
+                    <span class="px-4  py-2 text-xl font-bold">Deploy Testing</span>
+                </div>
+                <ul class="list-none p-0 m-0">
+                    <li *ngFor="let item of listStatus.deploy"
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted"
+                        [ngClass]="dataCheckLate.includes(item.task_id)? 'bg-red-500' : dataCheckLate.includes(item.task_id)? 'bg-yellow-400': ''">
+                        <div class="lg:col-5 flex align-items-center gap-2">
+                            <p-tag [value]="item.task_id"
+                                [severity]="dataCheckLate.includes(item.task_id)? 'danger' : dataCheckLate.includes(item.task_id)? 'warning': ''"
+                                pTooltip="Copy task" (click)="copyText(item.task_id, item.task_name)"
+                                class="cursor_pointer " icon="pi pi-hashtag">
+                            </p-tag>
+
+                            <span *ngIf="item.prioritize"><p-badge [value]="item.prioritize" severity="warning"
+                                    pTooltip="Work priority" class="cursor_pointer"
+                                    tooltipPosition="top"></p-badge></span>
+
+                            <p-tag *ngIf="item.testing_status"
+                                [severity]="item.testing_status === 'Error' ? 'danger': item.testing_status === 'Wait Dev'? 'info':item.testing_status === 'Pass'||item.testing_status === 'Testing'?'success':item.testing_status === 'Re-open' ||item.testing_status === 'No-Test'?  'warning':''"
+                                [value]="item.testing_status">
+                            </p-tag>
+
+                            <h6 for="task.id" class="font-medium m-0 ml-2" style="word-break: break-word">
+                                {{ item.task_name }}
+                            </h6>
+                        </div>
+                        <div class="flex lg:col-7 gap-3 flex-column sm:flex-row sm:justify-content-between">
+                            <div class="flex align-items-center active justify-content-between w-full">
+                                <span class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted">
+                                    <h6 class="pi pi-clock mr-2 mb-0"></h6>
+                                    <b class="flex gap-2 align-items-center">🚩
+                                        <h6 class="m-0">
+                                            {{ item.start_date }}
+                                        </h6>
+                                        ➡️
+                                        <h6 class="m-0">{{ item.end_date }}</h6>
+                                        <h6 class="m-0">
+                                            | <p-tag severity="success" value="{{item.main_day}} Day"></p-tag>
+                                        </h6>
+                                        <h6 class="m-0">| Create By : {{item.created_by_name}}</h6>
+                                    </b>
+                                </span>
+
+                                <div class="flex align-items-center">
+                                    <span *ngFor="
+                                                let item of item.tag
+                                                    .split(',')
+                                                    .slice(0, -1)
+                                            " class="ml-2"><p-chip label="{{ item }}"></p-chip></span>
+                                </div>
+                            </div>
+
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img src="{{ item.image }}" pTooltip="{{ item.assignees_name }}"
+                                            class="ng-star-inserted" />
+                                    </div>
+                                </p-avatar>
+                                <button pButton pRipple type="button" (click)="
+                                        detailWork('Detail Work', item.task_id)
+                                    " icon="pi pi-eye" class="p-button-rounded p-button-text ml-4"></button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- Completed -->
+            <div class="Completed" *ngIf="listStatus.completed?.length > 0">
+                <div class="text-900 bg-bluegray-50 font-semibold text-lg my-3 border-bottom-1 surface-border py-3">
+                    <span class="px-4  py-2 text-xl font-bold">Completed</span>
+                </div>
+                <ul class="list-none p-0 m-0">
+                    <li *ngFor="let item of listStatus.completed"
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted"
+                        [ngClass]="dataCheckLate.includes(item.task_id)? 'bg-red-500' : dataCheckLate.includes(item.task_id)? 'bg-yellow-400': ''">
+                        <div class="flex align-items-center gap-2 lg:col-5">
+                            <p-tag [value]="item.task_id"
+                                [severity]="dataCheckLate.includes(item.task_id)? 'danger' : dataCheckLate.includes(item.task_id)? 'warning': ''"
+                                pTooltip="Copy task" (click)="copyText(item.task_id, item.task_name)"
+                                class="cursor_pointer " icon="pi pi-hashtag">
+                            </p-tag>
+
+                            <span *ngIf="item.prioritize"><p-badge [value]="item.prioritize" severity="warning"
+                                    pTooltip="Work priority" class="cursor_pointer"
+                                    tooltipPosition="top"></p-badge></span>
+
+                            <p-tag *ngIf="item.testing_status"
+                                [severity]="item.testing_status === 'Error' ? 'danger': item.testing_status === 'Wait Dev'? 'info':item.testing_status === 'Pass'||item.testing_status === 'Testing'?'success':item.testing_status === 'Re-open' ||item.testing_status === 'No-Test'?  'warning':''"
+                                [value]="item.testing_status">
+                            </p-tag>
+                            <h6 for="task.id" class="font-medium m-0 ml-2" style="word-break: break-word">
+                                {{ item.task_name }}
+                            </h6>
+                        </div>
+                        <div class="flex lg:col-7 gap-3 flex-column sm:flex-row sm:justify-content-between">
+                            <div class="flex align-items-center active justify-content-between w-full">
+                                <span class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted">
+                                    <h6 class="pi pi-clock mr-2 mb-0"></h6>
+                                    <b class="flex gap-2 align-items-center">🚩
+                                        <h6 class="m-0">
+                                            {{ item.start_date }}
+                                        </h6>
+                                        ➡️
+                                        <h6 class="m-0">{{ item.end_date }}</h6>
+                                        <h6 class="m-0">
+                                            | <p-tag severity="success" value="{{item.main_day}} Day"></p-tag>
+                                        </h6>
+                                        <h6 class="m-0">| Create By : {{item.created_by_name}}</h6>
+                                    </b>
+                                </span>
+
+                                <div class="flex align-items-center">
+                                    <span *ngFor="
+                                                let item of item.tag
+                                                    .split(',')
+                                                    .slice(0, -1)
+                                            " class="ml-2"><p-chip label="{{ item }}"></p-chip></span>
+                                </div>
+                            </div>
+
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img pTooltip="{{ item.assignees_name }}" src="{{ item.image }}"
+                                            class="ng-star-inserted" />
+                                    </div>
+                                </p-avatar>
+                                <button pButton pRipple (click)="
+                                        detailWork('Detail Work', item.task_id)
+                                    " type="button" icon="pi pi-eye"
+                                    class="p-button-rounded p-button-text ml-4"></button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- close -->
+            <div class="Close" *ngIf="listStatus.close?.length > 0">
+                <div class="text-900 bg-bluegray-50 font-semibold text-lg  y-3 border-bottom-1 surface-border py-3">
+                    <span class="px-4  py-2 text-xl font-bold">Close</span>
+                </div>
+                <ul class="list-none p-0 m-0">
+                    <li *ngFor="let item of listStatus.close"
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted">
+                        <div class="flex align-items-center lg:col-5">
+                            <p-tag [value]="item.task_id"
+                                [severity]="dataCheckLate.includes(item.task_id)? 'danger' : dataCheckLate.includes(item.task_id)? 'warning': ''"
+                                pTooltip="Copy task" (click)="copyText(item.task_id, item.task_name)"
+                                class="cursor_pointer " icon="pi pi-hashtag">
+                            </p-tag>
+                            <span *ngIf="item.prioritize"><p-badge [value]="item.prioritize" severity="warning"
+                                    pTooltip="Work priority" class="cursor_pointer ml-2"
+                                    tooltipPosition="top"></p-badge></span>
+
+                            <p-tag severity="danger" value="Close" class="ml-2"></p-tag>
+                            <h6 for="task.id" class="font-medium line-through m-0 ml-2" style="word-break: break-word">
+                                {{ item.task_name }}
+                            </h6>
+                        </div>
+                        <div class="flex lg:col-7 gap-3 flex-column sm:flex-row sm:justify-content-between">
+                            <div class="flex align-items-center active justify-content-between w-full">
+                                <span class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted">
+                                    <h6 class="pi pi-clock mr-2 mb-0"></h6>
+                                    <b class="flex gap-2 align-items-center">🚩
+                                        <h6 class="m-0">{{ item.end_date }}</h6>
+                                        <h6 class="m-0">| Create By : {{item.created_by_name}}</h6>
+                                    </b>
+                                </span>
+
+                                <div class="flex align-items-center">
+                                    <span *ngFor="
+                                                let item of item.tag
+                                                    .split(',')
+                                                    .slice(0, -1)
+                                            " class="ml-2"><p-chip label="{{ item }}"></p-chip></span>
+                                </div>
+                            </div>
+
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img src="{{ item.image }}" class="ng-star-inserted"
+                                            pTooltip="{{ item.assignees_name }}" />
+                                    </div>
+                                </p-avatar>
+                                <button pButton pRipple (click)="
+                                        detailWork('Detail Work', item.task_id)
+                                    " type="button" icon="pi pi-eye"
+                                    class="p-button-rounded p-button-text ml-4"></button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Reject -->
+            <div class="Close" *ngIf="listStatus.reject?.length > 0">
+                <div class="text-900 bg-bluegray-50 font-semibold text-lg mb-3 border-bottom-1 surface-border py-3">
+                    <span class="px-4  py-2 text-lg font-semibold">Reject</span>
+                </div>
+                <ul class="list-none p-0 m-0">
+                    <li *ngFor="let item of listStatus.reject"
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted">
+                        <div class="flex align-items-center lg:col-4">
+                            <p-tag severity="danger" value="Reject"></p-tag>
+                            <h6 for="task.id" class="font-medium m-0 ml-2" style="word-break: break-word">
+                                {{ item.task_name }}
+                            </h6>
+                        </div>
+                        <span *ngIf="item.prioritize"><p-badge [value]="item.prioritize" severity="warning"
+                                pTooltip="Work priority" class="cursor_pointer" tooltipPosition="top"></p-badge></span>
+
+                        <div class="flex lg:col-8 gap-3 flex-column sm:flex-row sm:justify-content-between">
+                            <div class="flex align-items-center active justify-content-between w-full">
+                                <span class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted">
+                                    <h6 class="pi pi-clock mr-2 mb-0"></h6>
+                                    <b class="flex gap-2 align-items-center">🚩
+                                        <h6 class="m-0">{{ item.end_date }}</h6>
+                                    </b>
+                                </span>
+
+                                <div class="flex align-items-center">
+                                    <span *ngFor="
+                                                let item of item.tag
+                                                    .split(',')
+                                                    .slice(0, -1)
+                                            " class="ml-2"><p-chip label="{{ item }}"></p-chip></span>
+                                </div>
+                            </div>
+
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img src="{{ item.image }}" class="ng-star-inserted"
+                                            pTooltip="{{ item.assignees_name }}" />
+                                    </div>
+                                </p-avatar>
+                                <button pButton pRipple (click)="
+                                        detailWork('Detail Work', item.task_id)
+                                    " type="button" icon="pi pi-eye"
+                                    class="p-button-rounded p-button-text ml-4"></button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="modal-page">
+    <app-task-item [info_modal]="info_modal" (reset)="handleModel($event)"></app-task-item>
+</section>
+
+<section class="modal-item">
+    <app-task-detail [item_work]="item_work" (closeDetail)="handleModel($event)"></app-task-detail>
+</section>

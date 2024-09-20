@@ -1,0 +1,102 @@
+<div class="flex flex-wrap justify-content-center w-full h-fit p-1">
+    <div class="flex flex-wrap gap-3 w-full">
+        <ng-container *ngFor="let item of listRawDataManager">
+            <div class="flex flex-row w-full h-fit p-3 bg-white shadow-4 border-round">
+                <div pRipple class="flex flex-column justify-content-between w-full">
+                    <p [ngStyle]="{ 'color': project?.color}" class="text-xl font-semibold">{{item.name_vn}}</p>
+                    <div class="flex flex-row align-items-center justify-content-start gap-3">
+                        <i class="{{item.icon}}" style="font-size: 2rem"></i>
+                        <p [ngStyle]="{ 'color': project?.color}" class="font-bold text-3xl m-0">{{item.Values}}</p>
+
+                        <!-- <div class="flex flex-row w-fit align-items-end justify-content-center align-self-end gap-2"
+                            *ngIf="item.name_vn === 'Số lượng NV đang quản lý' && nowTotalEmployees > previousTotalEmployees">
+                            <div pRipple 
+                                class="flex flex-row align-items-center justify-content-start gap-2 border-round-3xl px-2 py-1 bg-green-200">
+                                <i class="pi pi-user-plus"
+                                    style="color: green; font-size: 1.2rem; font-weight: 700;"></i>
+                                <span class="text-lg font-semibold" style="color: green">{{differenceCount}}</span>
+                            </div>
+                            <span class="text-base font-medium text-gray-500">so với tháng trước</span>
+                        </div>
+                        <div class="flex flex-row w-fit align-items-end justify-content-center align-self-end gap-2"
+                            *ngIf="item.name_vn === 'Số lượng NV đang quản lý' && previousTotalEmployees > nowTotalEmployees">
+                            <div pRipple (click)="openEmployeesList()"
+                                class="flex flex-row align-items-center justify-content-start gap-2 border-round-3xl px-2 py-1 bg-red-200">
+                                <i class="pi pi-user-minus"
+                                    style="color: red; font-size: 1.2rem; font-weight: 700;"></i>
+                                <span class="text-lg font-semibold" style="color: red">{{differenceCount}}</span>
+                            </div>
+                            <span class="text-base font-medium text-gray-500">so với tháng trước</span>
+                        </div>
+                        <div class="flex flex-row w-fit align-items-end justify-content-center align-self-end gap-2"
+                            *ngIf="item.name_vn === 'Số lượng NV đang quản lý' && differenceCount === 0">
+                            <div pRipple (click)="openEmployeesList()"
+                                class="flex flex-row align-items-center justify-content-start gap-2 border-round-3xl px-2 py-1 bg-blue-200">
+                                <i class="pi pi-user-plus"
+                                    style="color: blue; font-size: 1.2rem; font-weight: 700;"></i>
+                                <span class="text-lg font-semibold" style="color: blue">{{differenceCount}}</span>
+                            </div>
+                            <span class="text-base font-medium text-gray-500">so với tháng trước</span>
+                        </div> -->
+                        <div class="flex flex-row w-fit align-items-end align-self-end justify-content-center align-self-end gap-2"
+                            *ngIf="item.name_vn === 'Số lượng NV đang quản lý'">
+                            <div pRipple
+                                class="flex flex-row align-items-end justify-content-start gap-2 border-round-3xl px-3 py-1 bg-gray-200"
+                                (click)="openDetail(item.name_vn)">
+                                <i class="pi pi-chevron-down mb-1"
+                                    style="color: gray; font-size: 1rem; font-weight: 700;"></i>
+                                <span class="text-base font-semibold text-gray-500">Xem chi tiết</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-row w-fit align-items-end align-self-end justify-content-center align-self-end gap-2"
+                            *ngIf="item.name_vn !== 'Số lượng NV đang quản lý'">
+                            <div pRipple
+                                class="flex flex-row align-items-end justify-content-start gap-2 border-round-3xl px-3 py-1 bg-gray-200"
+                                (click)="openDetail(item.name_vn)">
+                                <i class="pi pi-chevron-down mb-1"
+                                    style="color: gray; font-size: 1rem; font-weight: 700;"></i>
+                                <span class="text-base font-semibold text-gray-500">Xem chi tiết</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="w-full h-full" *ngIf="listRawDataManager.length === 0">
+            <p-skeleton styleClass="my-3 w-full h-7rem border-round" />
+            <p-skeleton styleClass="my-3 w-full h-7rem border-round" />
+            <p-skeleton styleClass="my-3 w-full h-7rem border-round" />
+        </div>
+    </div>
+</div>
+
+<!-- Employee working today -->
+<p-sidebar [(visible)]="dialogEmployeeWorking" [fullScreen]="true" [showCloseIcon]="false" appendTo="body"
+    [style]="{ width: '100vw', height: '100vh', padding: '0px', margin: '0px', backgroundColor: '#F1F5FF' }">
+    <ng-template pTemplate="header">
+        <div class="flex flex-row w-full h-fit align-items-start justify-content-between mt-5">
+            <i class="pi pi-angle-left" style="font-size: 2rem" (click)="closeEmployeeWorking()"></i>
+            <p class="text-center text-2xl font-bold">Nhân viên làm việc hôm nay</p>
+            <i class="pi pi-pencil" style="font-size: 1.5rem; color: transparent;"></i>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="headless" class="w-full">
+        <app-employee-working></app-employee-working>
+    </ng-template>
+</p-sidebar>
+
+<!-- Employee quit today -->
+<p-sidebar [(visible)]="dialogEmployeeQuit" [fullScreen]="true" [showCloseIcon]="false" appendTo="body"
+    [style]="{ width: '100vw', height: '100vh', padding: '0px', margin: '0px', backgroundColor: '#F1F5FF' }">
+    <ng-template pTemplate="header">
+        <div class="flex flex-row w-full h-fit align-items-start justify-content-between mt-5">
+            <i class="pi pi-angle-left" style="font-size: 2rem" (click)="closeEmployeeQuit()"></i>
+            <p class="text-center text-2xl font-bold">Employee Quit Today</p>
+            <i class="pi pi-pencil" style="font-size: 1.5rem; color: transparent;"></i>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="headless" class="w-full">
+        <app-employee-quit></app-employee-quit>
+    </ng-template>
+</p-sidebar>

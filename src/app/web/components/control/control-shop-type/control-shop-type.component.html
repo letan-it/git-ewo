@@ -1,0 +1,16 @@
+
+
+<ng-container *ngIf="listShopType && isLoadForm==0 && multiSelect === false">
+    <p-dropdown [options]="listShopType" [showClear]="true" (onChange)="returnValue(selectedShopType)" [filter]="true"
+        filterBy="name" [style]="inputStyle" [(ngModel)]="selectedShopType" [placeholder]="nameShopType"
+        optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+
+
+<ng-container *ngIf="listShopType && isLoadForm==0 && multiSelect === true">
+    <p-multiSelect [options]="listShopType" [showClear]="true" (onChange)="returnValue(selectedShopType)" [filter]="true"
+        filterBy="name" [style]="inputStyle" [(ngModel)]="selectedShopType" [placeholder]="nameShopType" (onClear)="resetSelection()"
+        optionLabel="name" appendTo="body"></p-multiSelect>
+</ng-container>
+
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

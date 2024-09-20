@@ -1,0 +1,160 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="card mb-3" *ngIf="listConfig && listConfig.length > 0">
+    <div class="card grid">
+        <p class="text-3xl font-bold">Activation Config</p>  
+        <div class="flex flex-column w-full" *ngFor="let item of listConfig">
+            <div class="flex flex-row align-items-center justify-content-between gap-5">
+                <div class="col-md-3">
+                    <p htmlFor="id" class="mt-3 font-bold">ID</p>
+                    <input pInputText id="id" class="w-full" [(ngModel)]="item.id" type="text" [disabled]="true" />
+                </div>
+                <div class="col-md-2">
+                    <p htmlFor="check_inventory" class="mt-3 font-bold">Check Inventory</p>
+                    <p-checkbox id="check_inventory" [binary]="true" [value]="checkInventory" [(ngModel)]="checkInventory"></p-checkbox>
+                </div>
+                <div class="col-md-2">
+                    <p htmlFor="authorization font-bold">Created Date</p>
+                    <input class="font-bold" pInputText id="authorization" [(ngModel)]="item.created_date"
+                        type="text" class="w-full" [disabled]="true" />
+                </div>
+                <div class="col-md-2">
+                    <p htmlFor="authorization font-bold">Created By</p>
+                    <input class="font-bold" pInputText id="authorization" [(ngModel)]="item.created_name"
+                        type="text" class="w-full" [disabled]="true" />
+                </div>
+            </div>
+            
+            <div class="field mt-5">
+                <p-button label="Update" (click)="saveNewConfig($event)" styleClass="p-button-success p-button-sm px-6 py-3">
+                </p-button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ------------------------------------------------------------------------------------------------------------------------- -->
+<div class="card mb-3" *ngIf="listGotIT && listGotIT.length > 0">
+    <div class="card grid">
+        <p class="text-3xl font-bold">GOTIT Config</p>  
+        <div class="flex flex-column w-full" *ngFor="let item of listGotIT">
+            <div class="flex flex-row align-items-center justify-content-between gap-5">
+                <div class="col-md-2">
+                    <p htmlFor="id" class="mt-3 font-bold">ID</p>
+                    <input pInputText id="id" class="w-full" [(ngModel)]="item.id" type="text" [disabled]="true" />
+                </div>
+                <!-- <div class="col-md-3">
+                    <p htmlFor="project_name" class="mt-3 font-bold">Project Name</p>
+                    <input pInputText id="project_name" class="w-full" [(ngModel)]="item.project_name" type="text"
+                        [disabled]="true" />
+                </div> -->
+                <div class="col-md-4">
+                    <p htmlFor="prefix" class="mt-3 font-bold">Prefix</p>
+                    <input pInputText id="prefix" class="w-full" [(ngModel)]="prefix" type="text" />
+                </div>
+                <div class="col-md-5">
+                    <p htmlFor="url" class="mt-3 font-bold">URL</p>
+                    <input pInputText id="url" class="w-full" [(ngModel)]="url" type="text" />
+                </div>
+            </div>
+            <br /><br />
+            <div class="flex flex-row align-items-center justify-content-between gap-5">
+                <div class="col-md-6">
+                    <div class="flex flex-column col-md-12">
+                        <p htmlFor="authorization" class="font-bold">X-GI-Authorization</p>
+                        <p-password styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{'width':'100%'}"
+                            [inputStyle]="{'width':'100%'}" id="authorization" [(ngModel)]="authorization" [toggleMask]="true" />
+                    </div>
+                </div>
+                <div class="col-md-5 flex flex-row align-items-center justify-content-between gap-5">
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Created Date</p>
+                        <input class="font-bold" pInputText id="authorization" [(ngModel)]="item.created_date"
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Updated Date</p>
+                        <input class="font-bold" pInputText id="authorization" [(ngModel)]="item.update_date"
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Created By</p>
+                        <input class="font-bold" pInputText id="authorization" [(ngModel)]="item.created_name"
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Updated By</p>
+                        <input class="font-bold" pInputText id="authorization" [(ngModel)]='item["update_name "]'
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="field mt-5">
+                <p-button label="Update" (click)="saveNewConfigGotit($event)" styleClass="p-button-success p-button-sm px-6 py-3">
+                </p-button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3" *ngIf="listGotIT && listGotIT.length === 0">
+    <div class="card grid">
+        <p class="text-3xl font-bold">GOTIT Config</p>  
+        <div class="flex flex-column w-full">
+            <div class="flex flex-row align-items-center justify-content-between gap-5">
+                <div class="col-md-2">
+                    <p htmlFor="id" class="mt-3 font-bold">ID</p>
+                    <input pInputText id="id" class="w-full" [(ngModel)]="id" type="text" [disabled]="true" />
+                </div>
+                <div class="col-md-4">
+                    <p htmlFor="prefix" class="mt-3 font-bold">Prefix</p>
+                    <input pInputText id="prefix" class="w-full" [(ngModel)]="prefix" placeholder="Please fill in Prefix" type="text" />
+                </div>
+                <div class="col-md-5">
+                    <p htmlFor="url" class="mt-3 font-bold">URL</p>
+                    <input pInputText id="url" class="w-full" [(ngModel)]="url" placeholder="Please fill in URL" type="text" />
+                </div>
+            </div>
+            <br /><br />
+            <div class="flex flex-row align-items-center justify-content-between gap-5">
+                <div class="col-md-6">
+                    <div class="flex flex-column col-md-12">
+                        <p htmlFor="authorization" class="font-bold">X-GI-Authorization</p>
+                        <p-password styleClass="p-password p-component p-inputwrapper p-input-icon-right" 
+                            [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" id="authorization" 
+                            [(ngModel)]="authorization" [toggleMask]="true" placeholder="Please fill in X-GI-Authorization" />
+                    </div>
+                </div>
+                <div class="col-md-5 flex flex-row align-items-center justify-content-between gap-5">
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Created Date</p>
+                        <input class="font-bold" pInputText id="authorization" 
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Updated Date</p>
+                        <input class="font-bold" pInputText id="authorization" 
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Created By</p>
+                        <input class="font-bold" pInputText id="authorization" 
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                    <div class="flex flex-column">
+                        <p htmlFor="authorization font-bold">Updated By</p>
+                        <input class="font-bold" pInputText id="authorization"
+                            type="text" class="w-full" [disabled]="true" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="field mt-5">
+                <p-button label="Create" (click)="saveNewConfigGotit($event)" styleClass="p-button-success p-button-sm px-6 py-3">
+                </p-button>
+            </div>
+        </div>
+    </div>
+</div>
+

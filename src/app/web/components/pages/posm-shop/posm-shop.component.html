@@ -1,0 +1,221 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+<div class="grid" *ngIf="showFiter == 1">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-4">
+                    <h6>Month </h6>
+                    <p-dropdown [options]="ListMonth" [showClear]="true" [filter]="true" filterBy="name"
+                        [style]="{'minWidth':'100%'}"  [placeholder]="selectMonth ? selectMonth.name : 'Select a Month'" [(ngModel)]="selectMonth" placeholder="Select a Month"
+                        optionLabel="name"></p-dropdown>
+                </div>
+                <div class="md:col-4">
+                    <h6>POSM</h6>
+                    <app-control-posm-list (outValue)="selectPOSM($event)"></app-control-posm-list>
+                </div>
+
+                <div class="md:col-4">
+                    <h6>Shop Code</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="shop_code"
+                        placeholder="List Shop Code">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search "
+                        (click)="filter(1)" class="p-button-sm mr-2 mt-2"></button>
+                    <p-splitButton label="Master" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2"
+                        [model]="items"></p-splitButton>
+
+                    <button type="button" (click)="export()" *ngIf="totalRecords > 0" label="Raw data" pButton pRipple
+                        icon="pi pi-file-excel" style="float: right" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button type="button" (click)="ShowHideTemplate()" label="Import Excel" pButton pRipple
+                        class="p-button-sm mr-2 mt-2" icon="pi pi-upload"></button>
+                        <i class="p-toolbar-separator pi pi-bars mr-2 mt-2" style="vertical-align: middle"></i>
+                       
+                    <button type="button"  (click)="showDialog()" label="Action" pButton pRipple
+                            icon="pi pi-sitemap" style="float: right" class="p-button-sm mr-2 mt-2"></button>
+    
+
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+
+<div class="card" *ngIf="showTemplate == 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+
+            <!-- <div class="mr-2 mt-2">
+                <p-dropdown [options]="ListMonth" [showClear]="true" [filter]="true" filterBy="name"
+                [style]="{'minWidth':'100%'}" [(ngModel)]="selectMonth" placeholder="Select a Month"
+                 optionLabel="name"></p-dropdown>
+            </div>  -->
+
+            <div class="text-center" class="mr-2 mt-2">
+                <input class="form-control" type="file" #myInput (change)="onChangeFile($event)" />
+            </div>
+
+            <button pButton pRipple (click)="exportTemplate()" label="Get Template" icon="pi pi-file-export"
+                class="p-button-sm p-button-info mr-2 mt-2"></button>
+
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" label="Upload" icon="pi pi-upload"
+                class="p-button-sm p-button-success mt-2"></button>
+
+
+        </div>
+    </p-toolbar>
+
+    <hr>
+    <div class="card" *ngIf="dataError">
+       
+        <p-table #dt [columns]="cols" [value]="dataError" selectionMode="multiple" [exportHeader]="'customExportHeader'"
+            [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="caption">
+                <div class="flex">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()"
+                        class="p-button-success ml-auto" pTooltip="XLS" tooltipPosition="bottom"></button> 
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{ col.header }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns">
+                        <p >{{ rowData[col.field] }} </p> 
+                    </td>
+                </tr>
+            </ng-template>
+ 
+        </p-table>
+
+
+    </div>
+
+    <hr>
+    <div class="card" *ngIf="dataMessError">
+        <div class=" col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">
+                    Error Name :
+                </div>
+                <div class="col-11">
+                    {{dataMessError}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<hr>
+<div class="card">
+    <p-table selectionMode="single" dataKey="id" *ngIf="ListPosmShop && ListPosmShop.length > 0" [scrollable]="true"
+        [value]="ListPosmShop" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <!-- <th style="width: 5rem"></th>  -->
+                <th style="width: 5%" class="text-center">RowNum</th>
+                <th class="text-center">Shop Code</th>
+                <th class="text-center">Shop Name</th>
+                <th class="text-center">POSM Code</th>
+                <th class="text-center">POSM Name</th>
+                <th class="text-center">POSM Image</th>
+                <th style="width: 10%" class="text-center">Target Install</th>
+                <!-- <th class="text-center" style="width: 5%">#</th> -->
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-posm let-expanded="expanded">
+            <tr>
+                <!-- <td>
+                    <button type="button" pButton pRipple  [pRowToggler]="posm"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]=" expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right' ></button>
+                </td> -->
+
+                <td class="text-center"> {{ posm.RowNum }}</td>
+                <td>{{ posm.shop_code }}</td>
+                <td>{{ posm.shop_name }}</td>
+                <td>{{ posm.posm_code }}</td>
+                <td>{{ posm.posm_name }}</td>
+                <td>
+                    <p-image [src]="posm.posm_image" alt="Image" width="50" [preview]="true"></p-image>
+                </td>
+                <td class="text-center" style="color: green; font-weight: bold;"> {{ posm.target_install }}</td>
+                <!-- <td>
+                    <p-button
+                        pTooltip="Update info posm"
+                        (click)="update(posm)"
+                        tooltipPosition="left"
+                        icon="pi pi-file-edit "
+                        styleClass="p-button-rounded p-button-text p-button-raised "
+                    ></p-button>
+                </td> -->
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-posm>
+            <tr>
+                <td colspan="100% ">
+                    <div class="p-3">
+                        <!-- <app-user-detail 
+                            (newItemEventProject)="itemProject($event)"
+                            [inValue]="posm"
+                            [action]="'view'"
+                        ></app-user-detail> -->
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="summary ">
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="ListPosmShop && ListPosmShop.length == 0" style="float: right">
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog header="Update POSM Shop" [(visible)]="visible" [modal]="true" [style]="{ width: '20vw' }" [draggable]="false" [resizable]="false">
+    <p class="m-0" style="color:red">
+       * input = 0: remove
+    </p>
+    <p class="m-0" style="color:red">
+       * input > 0: Add
+    </p>
+    <input style="width: 100%;" pInputText pKeyFilter="int"   [(ngModel)]="value_target" />
+    
+    <button type="button" (click)="Update()"   label="Submit" pButton pRipple
+    icon="pi pi-sitemap" style="float: right" class="p-button-sm mt-2"></button>
+
+</p-dialog>

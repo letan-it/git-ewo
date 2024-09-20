@@ -1,0 +1,72 @@
+<ng-container *ngIf="survey_data.item_data">
+    {{survey_data.item_data.update_time}}
+
+    <b *ngIf="survey_data.item_data.updateby != null">The last repairer: </b>{{survey_data.item_data.updateby}}
+
+</ng-container>
+<ng-container *ngIf="survey_data.item_data">
+    <div class="p-inputgroup"
+        *ngIf="survey_data.item_data.typeOf =='int' && survey_data.item_data.question_type =='number'&& survey_data.item_data.support_data =='int'  ">
+        <span class="p-inputgroup-addon">Result</span>
+        <input type="text" pInputText placeholder="Result" [(ngModel)]="survey_data.item_data.value_string" />
+        <button type="button" pButton icon="pi pi-check" (click)="updateDateInt(survey_data.item_data)"
+            styleClass="p-button-success"></button>
+    </div>
+
+
+</ng-container>
+<ng-container *ngIf="survey_data.item_data">
+    <div class="p-inputgroup"
+        *ngIf="survey_data.item_data.typeOf =='string' && survey_data.item_data.question_type =='text'&& survey_data.item_data.support_data =='string'  ">
+        <span class="p-inputgroup-addon">Result</span>
+        <input type="text" pInputText placeholder="Result" [(ngModel)]="survey_data.item_data.value_string" />
+        <button type="button" pButton icon="pi pi-check" (click)="updateDateString(survey_data.item_data)"
+            styleClass="p-button-success"></button>
+    </div>
+
+</ng-container>
+<ng-container *ngIf="survey_data.item_data">
+    <div class="p-inputgroup"
+        *ngIf="survey_data.item_data.typeOf =='decimal' && survey_data.item_data.question_type =='number'&& survey_data.item_data.support_data =='decimal'  ">
+        <span class="p-inputgroup-addon">Result</span>
+        <input type="text" pInputText placeholder="Result" [(ngModel)]="survey_data.item_data.value_string" />
+        <button type="button" pButton icon="pi pi-check" (click)="updateDateDecimal(survey_data.item_data)"
+            styleClass="p-button-success"></button>
+    </div>
+
+</ng-container>
+<ng-container *ngIf="survey_data.item_data">
+    <div class="p-inputgroup" *ngIf="survey_data.item_data.question_type =='select'">
+        <span class="p-inputgroup-addon">Result</span>
+        <p-dropdown [style]="{'minWidth':'100%'}" [(ngModel)]="tempModel"
+            [options]="survey_data.item_data.answer_option" optionLabel="value"></p-dropdown>
+        <button type="button" pButton icon="pi pi-check" (click)="updateDateSelect(survey_data.item_data)"
+            styleClass="p-button-success"></button>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="survey_data.item_data">
+    <div class="p-inputgroup" *ngIf="survey_data.item_data.question_type =='check'">
+        <span class="p-inputgroup-addon">Result</span>
+        <span class="p-inputgroup-addon">
+            <p-checkbox name="cb_yesno" [binary]="true" (onChange)="changeYesNo(survey_data.item_data)"
+                [(ngModel)]="survey_data.item_data.value_int_cb" inputId="yesno"></p-checkbox>
+        </span>
+        <input type="text" pInputText disabled="true" [(ngModel)]="survey_data.item_data.value_string" />
+        <button type="button" pButton icon="pi pi-check" (click)="updateDateYesNo(survey_data.item_data)"
+            styleClass="p-button-success"></button>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="survey_data.item_data">
+    <div class="p-inputgroup" *ngIf="survey_data.item_data.question_type =='multi-select'">
+        <span class="p-inputgroup-addon">Result</span>
+        <p-multiSelect [style]="{'minWidth':'100%'}" [options]="survey_data.item_data.answer_option"
+            [(ngModel)]="selectedMulti" optionLabel="value" display="chip"></p-multiSelect>
+        <button type="button" pButton icon="pi pi-check" (click)="updateDateMulti(survey_data.item_data)"
+            styleClass="p-button-success"></button>
+
+    </div>
+    <label *ngIf="survey_data.item_data.question_type =='multi-select'" style="color:red">Option multi-select cần load
+        lại form để hiểu thị data mới</label>
+</ng-container>

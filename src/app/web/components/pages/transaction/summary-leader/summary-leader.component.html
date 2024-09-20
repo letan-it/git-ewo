@@ -1,0 +1,709 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<p-toast></p-toast>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <app-confirm-transaction></app-confirm-transaction>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <p-dataView #dv [value]="ListLeader" *ngIf="ListLeader && ListLeader.length > 0">
+                    <ng-template let-item pTemplate="listItem">
+                        <div class="col-4 hover-div" (click)="openDetail(item)">
+                            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                <p-image [src]="item.image" [alt]="item.item_type" width="100"></p-image>
+                                <div
+                                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                    <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                        <b>{{ item.employee_code }}</b>
+                                        <div class="text-2xl font-bold text-900">
+                                            {{ item.employee_name }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dataView>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- #dialog (onShow)="dialog.maximize()"  [style]="{ width: '50rem'  }"-->
+<p-dialog header="Header" [maximizable]="true" [style]="{ width: '1200px' }" [(visible)]="sidebarVisible" [modal]="true"
+    [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <div class="inline-flex align-items-center justify-content-center gap-2">
+            <span class="font-bold white-space-nowrap">{{ model_info.employee_id }} -
+                {{ model_info.employee_name }}</span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="body">
+        <section *ngIf="div_section == 1">
+            <h4>SUMMARY</h4>
+            <p-panel header="SẢN PHẨM">
+                <p-dataView #dv [value]="transaction_item" *ngIf="transaction_item.length > 0">
+                    <ng-template let-item pTemplate="listItem">
+                        <div class="col-4" *ngIf="item.item_type == 'PRODUCT'">
+                            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                <p-image [src]="item.image" [alt]="item.item_type" width="40"
+                                    [preview]="true"></p-image>
+                                <div
+                                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                    <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                        <!-- <div class="text-2xl font-bold text-900">
+                                            {{ item.item_name }}
+                                        </div> -->
+
+                                        <div >
+                                            <span class="text-2xl font-bold text-900">{{ item.item_name }}</span>  <span *ngIf="item.product_type" class="text-2x">  [{{item.product_type}}]</span>  
+                                         </div>
+
+                                        <table styleClass="p-datatable-gridlines">
+                                            <tr>
+                                                <td>SL Đã nhận:</td>
+                                                <td class="width: 20px"></td>
+                                                <td>
+                                                    <b> {{ item.da_nhan }} </b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>SL Gửi đi:</td>
+                                                <td class="width: 20px"></td>
+
+                                                <td>
+                                                    <b> {{ item.da_gui }} </b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>SL Còn lại:</td>
+                                                <td class="width: 20px"></td>
+
+                                                <td>
+                                                    <b *ngIf="
+                                                            item.con_lai >=
+                                                            item.alert
+                                                        ">
+                                                        {{ item.con_lai }}</b>
+                                                    <div class="fade-loading" style="
+                                                            font-size: 12px;
+                                                            text-align: center;
+                                                            z-index: 99;
+                                                        " *ngIf=" item.con_lai <  item.alert  ">
+                                                        {{ item.con_lai }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dataView>
+            </p-panel>
+            <br />
+            <p-panel header="QUÀ TẶNG">
+                <p-dataView #dv [value]="transaction_item" *ngIf="transaction_item.length > 0">
+                    <ng-template let-item pTemplate="listItem">
+                        <div class="col-4" *ngIf="item.item_type == 'GIFT'">
+                            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                <p-image [src]="item.image" [alt]="item.item_type" width="40"
+                                    [preview]="true"></p-image>
+                                <div
+                                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                    <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                        <div class="text-2xl font-bold text-900">
+                                            {{ item.item_name }}
+                                        </div>
+                                        <table styleClass="p-datatable-gridlines">
+                                            <tr>
+                                                <td>SL Đã nhận:</td>
+                                                <td class="width: 20px"></td>
+                                                <td>
+                                                    <b> {{ item.da_nhan }} </b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>SL Gửi đi:</td>
+                                                <td class="width: 20px"></td>
+
+                                                <td>
+                                                    <b> {{ item.da_gui }} </b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>SL Còn lại:</td>
+                                                <td class="width: 20px"></td>
+
+                                                <td>
+                                                    <b *ngIf="
+                                                            item.con_lai >=
+                                                            item.alert
+                                                        ">
+                                                        {{ item.con_lai }}</b>
+                                                    <div class="fade-loading" style="
+                                                            font-size: 12px;
+                                                            text-align: center;
+                                                            z-index: 99;
+                                                        " *ngIf="
+                                                            item.con_lai <
+                                                            item.alert
+                                                        ">
+                                                        {{ item.con_lai }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dataView>
+            </p-panel>
+        </section>
+        <section *ngIf="div_section == 2">
+            <h4>QRCODE LIST</h4>
+            <!-- [tableStyle]="{ 'min-width': '50rem' }" -->
+            <p-table [value]="listBarcode" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowsPerPageOptions]="[5, 10, 20]" paginatorPosition="bottom">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">QRCode</th>
+                        <th class="text-center">product code</th>
+                        <th class="text-center">product name</th>
+                        <th class="text-center">product type</th>
+                        <th class="text-center">nhân viên</th>
+                        <th class="text-center">trạng thái</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="product_barcode"
+                                [showMenu]="true" [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="product_code"
+                                [showMenu]="true" [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="product_name"
+                                [showMenu]="true" [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="product_type"
+                                [showMenu]="true" [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="employee_follow_name"
+                                [showMenu]="true" [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="sell_name"
+                                [showMenu]="true" [matchMode]="'contains'"></p-columnFilter>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr tooltipPosition="top" class="cursor_pointer">
+                        <td class="text-center">
+                            <p-image [src]="rowData.image" [alt]="rowData.product_name" width="20"
+                                [preview]="true"></p-image>
+                        </td>
+                        <td class="text-center">
+                            {{ rowData.product_barcode }}
+                            <qrcode class="mt-5" [qrdata]="rowData.product_barcode" [width]="100"
+                                [errorCorrectionLevel]="'M'">
+                            </qrcode>
+                        </td>
+                        <td class="text-center">
+                            {{ rowData.product_code }}
+                        </td>
+
+                        <td class="text-center">
+                            {{ rowData.product_name }}
+                        </td>
+                        <td class="text-center">
+                            {{ rowData.product_type }}
+                        </td>
+                        <td class="text-center">
+                            {{ rowData.employee_follow_code }} -
+                            {{ rowData.employee_follow_name }}
+                        </td>
+                        <td class="text-center">
+                            {{ rowData.sell_name }}
+                            <label class="ml-2"> {{ rowData.sell_time }}</label>
+                            <label class="ml-2" *ngIf="rowData.employee_id_sell != null" >Nhân viên: {{ rowData.employee_name_sell }}</label>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </section>
+        <section *ngIf="div_section == 3">
+            <h4>TRANSACTION</h4>
+            <div class="card">
+                <div class="row">
+                    <div class="md:col-2">
+                        <h6>{{ GetLanguage("f_transaction_id") }}</h6>
+                        <input [style]="{ minWidth: '100%' }" type="number" pInputText [(ngModel)]="transaction_id"
+                            placeholder="transaction id" />
+                    </div>
+                    <!-- <div class="md:col-2">
+                        <h6>{{GetLanguage("f_seri_transaction")}}</h6>
+                        <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="UUID"
+                            placeholder="seri transaction">
+                    </div> -->
+                    <div class="md:col-2 p-fluid">
+                        <h6>{{ GetLanguage("f_start_date") }}</h6>
+                        <input pInputText id="dateStart" class="text-center font-bold mr-2" type="date"
+                            [(ngModel)]="dateStart" />
+                        <!-- <p-calendar [(ngModel)]="dateStart"></p-calendar> -->
+                    </div>
+                    <div class="md:col-2 p-fluid">
+                        <h6>{{ GetLanguage("f_end_date") }}</h6>
+                        <input pInputText id="dateEnd" class="text-center font-bold mr-2" type="date"
+                            [(ngModel)]="dateEnd" />
+                        <!-- <p-calendar [(ngModel)]="dateEnd"></p-calendar> -->
+                    </div>
+                </div>
+                <div class="row">
+                    <p-toolbar>
+                        <div class="p-toolbar-group-left flex flex-wrap">
+                            <button pButton type="button" label="Filter" (click)="filterTransaction(model_info)"
+                                icon="pi pi-search" class="p-button-sm p-button-success mr-2 ml-2"></button>
+                            <i class="pi pi-bars p-toolbar-separator"></i>
+                            <button pButton type="button" label="Back" (click)="backTransaction()"
+                                *ngIf="div_transaction == 2" icon="pi pi-angle-left"
+                                class="p-button-sm p-button-secondary mr-2 ml-2"></button>
+                        </div>
+                    </p-toolbar>
+                </div>
+                <div class="row mt-2" *ngIf="div_transaction == 1">
+                    <div class="md:col-6">
+                        <p-table selectionMode="single" [value]="list_nhan" [paginator]="true"
+                            [tableStyle]="{ width: '100%' }" [rows]="5" [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                            [rowsPerPageOptions]="[5, 10, 20]">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th class="text-center">Nhận Từ</th>
+                                    <th class="text-center">Thời gian</th>
+                                    <th class="text-center">Ghi chú</th>
+                                    <th class="text-center">Trạng thái</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr (click)="
+                                        ViewDetailTransaction(rowData, 'nhan')
+                                    " tooltipPosition="top" class="cursor_pointer">
+                                    <td class="text-left">
+                                        {{ rowData.from_name }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ rowData.created_date }}
+                                    </td>
+                                    <td class="text-left">
+                                        <input [style]="{ minWidth: '100%' }" type="text" pInputText
+                                            [(ngModel)]="rowData.note" />
+                                    </td>
+                                    <td class="text-center">
+                                        <p-tag [severity]="
+                                                getSeverityStatus(
+                                                    rowData.transaction_status_code
+                                                )
+                                            " [value]="
+                                                rowData.transaction_status_code ==
+                                                'Done'
+                                                    ? 'Chờ xác nhận'
+                                                    : rowData.transaction_status_name
+                                            "></p-tag>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="md:col-6">
+                        <p-table selectionMode="single" [value]="list_gui" [paginator]="true"
+                            [tableStyle]="{ width: '100%' }" [rows]="5" [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                            [rowsPerPageOptions]="[5, 10, 20]">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th class="text-center">Gửi Đến</th>
+                                    <th class="text-center">Thời gian</th>
+                                    <th class="text-center">Ghi chú</th>
+                                    <th class="text-center">Trạng thái</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr (click)="
+                                        ViewDetailTransaction(rowData, 'gui')
+                                    " tooltipPosition="top" class="cursor_pointer">
+                                    <td class="text-left">
+                                        {{ rowData.to_name }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ rowData.created_date }}
+                                    </td>
+                                    <td class="text-left">
+                                        <input [style]="{ minWidth: '100%' }" type="text" pInputText
+                                            [(ngModel)]="rowData.note" />
+                                    </td>
+                                    <td class="text-center">
+                                        <p-tag [severity]="
+                                                getSeverityStatus(
+                                                    rowData.transaction_status_code
+                                                )
+                                            " [value]="
+                                                rowData.transaction_status_code ==
+                                                'Done'
+                                                    ? 'Chờ xác nhận'
+                                                    : rowData.transaction_status_name
+                                            "></p-tag>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+                <div class="row mt-2" *ngIf="div_transaction == 2">
+                    <div class="md:col-4 mt-2">
+                        <p-button (click)="copyText(temp_rowData.transaction_id)" icon="pi pi-copy"
+                            styleClass="p-button-success  p-button-sm  mb-2 mt-2" pTooltip="copyText"
+                            tooltipPosition="bottom" label="seri:  {{ temp_rowData.transaction_id }}"></p-button>
+
+                        <div class="card">
+                            <div class="row">
+                                <div class="md:col-12">
+                                    <h6 *ngIf="temp_rowData.type == 'nhan'">
+                                        {{ GetLanguage("lb_from_to") }}
+                                        <label class="allow">*</label>
+                                    </h6>
+                                    <h6 *ngIf="temp_rowData.type == 'gui'">
+                                        {{ GetLanguage("lb_send_to") }}
+                                        <label class="allow">*</label>
+                                    </h6>
+                                    <input [style]="{ minWidth: '100%' }" type="text" pInputText
+                                        *ngIf="temp_rowData.type == 'nhan'" [(ngModel)]="temp_rowData.from_name" />
+                                    <input [style]="{ minWidth: '100%' }" type="text" pInputText
+                                        *ngIf="temp_rowData.type == 'gui'" [(ngModel)]="temp_rowData.to_name" />
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="md:col-12">
+                                        <h6>
+                                            {{
+                                            GetLanguage(
+                                            "lb_transaction_note"
+                                            )
+                                            }}
+                                        </h6>
+                                        <input [style]="{ minWidth: '100%' }" type="text" pInputText
+                                            [(ngModel)]="temp_rowData.note" placeholder="Enter note" />
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="flex col-12 flex-column max-w-full gap-2">
+                                        <div class="flex align-items-center" *ngFor="
+                                                let item of temp_rowData.file
+                                            ">
+                                            <i class="pi pi-paperclip"></i>
+                                            <div class="text-900 font-semibold block ml-2">
+                                                <a target="_blank" [href]="item.file_url">{{ item.file_name }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-2">
+                            <div class="row mt-1" *ngFor="let h of temp_rowData.history">
+                                <h5>
+                                    <p-tag [severity]="
+                                            getSeverityStatus(
+                                                h.transaction_status_code
+                                            )
+                                        " [value]="
+                                            h.transaction_status == 2
+                                                ? 'Chờ xác nhận'
+                                                : h.transaction_status_name
+                                        "></p-tag>
+                                </h5>
+                                <div class="md:col-6">
+                                    Ghi chú: {{ h.note }}
+                                </div>
+                                <div class="md:col-6">
+                                    {{ h.created_date }}
+                                </div>
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-8 mt-2">
+                        <div class="card">
+                            <p-panel header="SẢN PHẨM" *ngIf="
+                                    temp_rowData &&
+                                    temp_rowData.product &&
+                                    temp_rowData.product.length > 0
+                                ">
+                                <p-dataView #dv [value]="temp_rowData.product">
+                                    <ng-template let-item pTemplate="listItem">
+                                        <div class="col-4" *ngIf="item.item_type == 'PRODUCT'">
+                                            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                                <p-image [src]="item.product_image" [alt]="item.product_name" width="40"
+                                                    [preview]="true"></p-image>
+                                                <div
+                                                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                                    <div
+                                                        class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                                        <div class="text-2xl font-bold text-900">
+                                                            {{
+                                                            item.product_name
+                                                            }}
+                                                        </div>
+                                                        <div class="textfont-bold text-900">
+                                                            Số lượng
+                                                            <b>{{
+                                                                item.quantity
+                                                                }}
+                                                            </b>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-dataView>
+                            </p-panel>
+                            <br />
+                            <p-panel header="QUÀ TẶNG" *ngIf="
+                                    temp_rowData &&
+                                    temp_rowData.gift &&
+                                    temp_rowData.gift.length > 0
+                                ">
+                                <p-dataView #dv [value]="temp_rowData.gift">
+                                    <ng-template let-item pTemplate="listItem">
+                                        <div class="col-4" *ngIf="item.item_type == 'GIFT'">
+                                            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                                <p-image [src]="item.gift_image" [alt]="item.gift_name" width="40"
+                                                    [preview]="true"></p-image>
+                                                <div
+                                                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                                    <div
+                                                        class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                                        <div class="text-2xl font-bold text-900">
+                                                            {{ item.gift_name }}
+                                                        </div>
+                                                        <div class="textfont-bold text-900">
+                                                            Số lượng
+                                                            <b>{{
+                                                                item.quantity
+                                                                }}
+                                                            </b>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-dataView>
+                            </p-panel>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <section *ngIf="div_section == 4">
+            <h4>Tồn kho của nhân viên</h4>
+            <div class="card">
+                <div class="row">
+                    <div class="col-4">
+                        <p-listbox [options]="employeeList" [(ngModel)]="selectEmployee" (click)="onSelectEmployee()"
+                            optionLabel="name" [filter]="true" [style]="{ width: '100%' }"
+                            [listStyle]="{'max-height': '220px'}"></p-listbox>
+                    </div>
+                    <div class="col-8">
+                        <p-panel header="SẢN PHẨM">
+                            <p-dataView #dv [value]="transaction_item_employee"
+                                *ngIf="transaction_item_employee&& transaction_item_employee.length > 0">
+                                <ng-template let-item pTemplate="listItem">
+                                    <div class="col-4" *ngIf="item.item_type == 'PRODUCT'">
+                                        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                            <p-image [src]="item.image" [alt]="item.item_type" width="40"
+                                                [preview]="true"></p-image>
+                                            <div
+                                                class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                                <div
+                                                    class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                                    <div >
+                                                       <span class="text-2xl font-bold text-900">{{ item.item_name }}</span>  <span *ngIf="item.product_type" class="text-2x">  [{{item.product_type}}]</span>  
+                                                    </div>
+                                                     
+                                                    <table styleClass="p-datatable-gridlines">
+                                                        <tr>
+                                                            <td>SL Đã nhận:</td>
+                                                            <td class="width: 20px"></td>
+                                                            <td>
+                                                                <b> {{ item.da_nhan }} </b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL Gửi đi:</td>
+                                                            <td class="width: 20px"></td>
+
+                                                            <td>
+                                                                <b> {{ item.da_gui }} </b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL đã bán:</td>
+                                                            <td class="width: 20px"></td>
+
+                                                            <td>
+                                                                <b> {{ item.out_item }} </b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL Còn lại:</td>
+                                                            <td class="width: 20px"></td>
+
+                                                            <td>
+                                                                <b *ngIf="
+                                                                        item.con_lai >=
+                                                                        item.alert
+                                                                    ">
+                                                                    {{ item.con_lai }}</b>
+                                                                <div class="fade-loading" style="
+                                                                        font-size: 12px;
+                                                                        text-align: center;
+                                                                        z-index: 99;
+                                                                    " *ngIf=" item.con_lai <  item.alert  ">
+                                                                    {{ item.con_lai }}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-dataView>
+                        </p-panel>
+                        <br />
+                        <p-panel header="QUÀ TẶNG">
+                            <p-dataView #dv [value]="transaction_item_employee"
+                                *ngIf="transaction_item_employee&&  transaction_item_employee.length > 0">
+                                <ng-template let-item pTemplate="listItem">
+                                    <div class="col-4" *ngIf="item.item_type == 'GIFT'">
+                                        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                            <p-image [src]="item.image" [alt]="item.item_type" width="40"
+                                                [preview]="true"></p-image>
+                                            <div
+                                                class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                                <div
+                                                    class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                                    <div class="text-2xl font-bold text-900">
+                                                        {{ item.item_name }}
+                                                    </div>
+                                                    <table styleClass="p-datatable-gridlines">
+                                                        <tr>
+                                                            <td>SL Đã nhận:</td>
+                                                            <td class="width: 20px"></td>
+                                                            <td>
+                                                                <b> {{ item.da_nhan }} </b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL Gửi đi:</td>
+                                                            <td class="width: 20px"></td>
+
+                                                            <td>
+                                                                <b> {{ item.da_gui }} </b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL đã phát:</td>
+                                                            <td class="width: 20px"></td>
+
+                                                            <td>
+                                                                <b> {{ item.out_item }} </b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL Còn lại:</td>
+                                                            <td class="width: 20px"></td>
+
+                                                            <td>
+                                                                <b *ngIf="
+                                                                        item.con_lai >=
+                                                                        item.alert
+                                                                    ">
+                                                                    {{ item.con_lai }}</b>
+                                                                <div class="fade-loading" style="
+                                                                        font-size: 12px;
+                                                                        text-align: center;
+                                                                        z-index: 99;
+                                                                    " *ngIf="
+                                                                        item.con_lai <
+                                                                        item.alert
+                                                                    ">
+                                                                    {{ item.con_lai }}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-dataView>
+                        </p-panel>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </ng-template>
+    <!-- <div class="grid animation-duration-500 box mt-2"> -->
+    <ng-template pTemplate="footer">
+        <div>
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button" label="SUMMARY" (click)="opensummary(model_info)"
+                        icon="pi pi-briefcase" class="p-button-sm p-button-success mr-2 ml-2"></button>
+                    <button pButton type="button" label="Tạo phiếu" (click)="create_transaction(model_info)"
+                        icon="pi pi-send" class="p-button-sm p-button-info mr-2 ml-2"></button>
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+                    <button pButton type="button" (click)="checkTransaction(model_info)"
+                        label="Kiểm tra phiếu nhận | gửi" icon="pi pi-arrow-right-arrow-left"
+                        class="p-button-sm p-button-success mr-2 ml-2"></button>
+                    <button pButton type="button" label="Quản lý kho QRCode" (click)="openDetailBarcode(model_info)"
+                        icon="pi pi-qrcode" class="p-button-sm p-button-success mr-2 ml-2"></button>
+                    <button pButton type="button" label="Nhân viên" (click)="openDetailEmployee(model_info)"
+                        icon="pi pi-user" class="p-button-sm p-button-success mr-2 ml-2"></button>
+                    <button pButton type="button" label="Raw Data" (click)="exportRawData()"
+                        icon="pi pi-file-excel" class="p-button-sm p-button-success mr-2 ml-2"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </ng-template>
+    <!-- </div> -->
+</p-dialog>

@@ -1,0 +1,578 @@
+<div class="grid">
+    <div class="col-12 md:col-7">
+        <div class="card">
+            <div class="row flex-row">
+                <div class="col-12">
+                    <h6>Promotion Code</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="promotion_Code"
+                        placeholder="List Promotion Code"
+                    />
+                </div>
+                <div class="col-12">
+                    <h6>Promotion Name</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="promotion_name"
+                        placeholder="Promotion Name"
+                    />
+                </div>
+
+                <div class="col-12 md:col-8">
+                    <h6>Promotion Group</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="promotion_group"
+                        placeholder="Promotion Group"
+                    />
+                </div>
+
+                <div class="col-12 md:col-4">
+                    <h6>Status</h6>
+                    <p-dropdown
+                        [style]="{ minWidth: '100%' }"
+                        [options]="statuses"
+                        [placeholder]="status === 0 ? 'In Active' : 'Active'"
+                        optionLabel="title"
+                        optionValue="value"
+                        [showClear]="true"
+                    >
+                    </p-dropdown>
+                </div>
+
+                <div class="col-12 md:col-8" *ngIf="checkAction === true">
+                    <h6>Formula File JS</h6>
+                    <a [href]="formula_file_js" target="_blank">{{
+                        formula_file_js
+                    }}</a>
+                </div>
+                <div class="col-12 md:col-4" *ngIf="checkAction === true">
+                    <input
+                        id="formulaFile"
+                        #myInputFormulaFile
+                        type="file"
+                        (change)="onUploadFormulaFile($event, promotion_id)"
+                        accept=".js"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="md:col-5 col-12">
+        <div class="card">
+            <div class="row flex-wrap">
+                <div
+                    class="col-12 flex justify-content-between align-items-center"
+                >
+                    <h6>Image</h6>
+                    <p-image
+                        [src]="desc_image"
+                        alt="Image"
+                        width="100"
+                        [preview]="true"
+                    ></p-image>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex align-items-center gap-4 mr-2 mt-2">
+                <p-checkbox
+                    name="add_product"
+                    [(ngModel)]="status"
+                    [binary]="true"
+                    inputId="add_product"
+                ></p-checkbox>
+                <label for="add_product">Add product</label>
+            </div>
+            <div class="col-12 lg:col-12" *ngIf="data.product_survey_form !== 0">
+                <h6>Survey</h6>
+                <input 
+                    id="disabled-input" 
+                    type="text"
+                    [style]="{'width': '100%'}"
+                    pInputText 
+                    [disabled]="true" 
+                    placeholder="[{{data.product_survey_form}}] - {{data.product_survey_form_name}}" />
+            </div>
+        </div>
+
+        <div class="card flex gap-4">
+            <div
+                class="col-12 flex gap-2 py-0 align-items-center justify-content: space-between"
+            >
+                <h6 class="font-bold m-0">Create By :</h6>
+                <h6 class="m-0">{{ create_name }}</h6>
+                <h6 class="font-bold m-0 ml-4">Time:</h6>
+                <h6 class="m-0">{{ created_date }}</h6>
+            </div>
+            <div
+                *ngIf="create_name !== update_name && update_name"
+                class="col-12 flex py-0 align-items-center justify-content: space-between"
+            >
+                <h6 class="font-bold m-0">Update By :</h6>
+                <h6 class="m-0 ml-1">{{ update_name }}</h6>
+                <h6 class="font-bold m-0 ml-4">Time :</h6>
+                <h6 class="m-0 ml-1">{{ update_date }}</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-12" *ngIf="description">
+        <div class="card flex-col gap-4">
+            <div class="flex align-items-center gap-4">
+                <p-chip class="font-bold" label="Description"></p-chip>
+                <button
+                    pButton
+                    type="button"
+                    pTooltip="Hide Filter"
+                    pStyleClass=".box"
+                    enterClass="hidden"
+                    enterActiveClass="fadeinup"
+                    (click)="showDescript()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye-slash"
+                    class="p-button-success p-button-sm"
+                    [ngStyle]="{ display: !showDescription ? 'none' : 'flex' }"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    pTooltip="Show Filter"
+                    (click)="showDescript()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye"
+                    class="p-button-warning p-button-sm"
+                    pStyleClass=".box"
+                    leaveActiveClass="fadeoutup"
+                    leaveToClass="hidden"
+                    [ngStyle]="{ display: showDescription ? 'none' : 'flex' }"
+                ></button>
+            </div>
+            <div *ngIf="showDescription" class="animation-duration-500 box">
+                <angular-editor
+                    class="overflow-y-scroll"
+                    placeholder="Enter text here..."
+                    [(ngModel)]="description"
+                    [config]="editorConfig"
+                ></angular-editor>
+            </div>
+        </div>
+    </div>
+
+    <!-- detail -->
+    <div class="col-12">
+        <div class="card">
+            <div class="w-full mb-4">
+                <button
+                    type="button"
+                    (click)="ShowHideTemplate(1)"
+                    label="Import Excel"
+                    pButton
+                    pRipple
+                    class="p-button-sm"
+                    icon="pi pi-upload"
+                ></button>
+
+                <div class="mt-5" *ngIf="showTemplate === 1">
+                    <p-toolbar>
+                        <div class="p-toolbar-group-start">
+                            <div class="text-center" class="mr-2">
+                                <input
+                                    class="form-control"
+                                    type="file"
+                                    (change)="onChange($event)"
+                                    #myInputFile
+                                />
+                            </div>
+
+                            <button
+                                pButton
+                                pRipple
+                                label="Get Template"
+                                icon="pi pi-file-export"
+                                (click)="getTemplate()"
+                                class="p-button-sm p-button-info mr-2"
+                            ></button>
+                            <button
+                                pButton
+                                pRipple
+                                (click)="importTemplate()"
+                                class="ml-2"
+                                label="Upload File"
+                                icon="pi pi-upload"
+                                class="p-button-sm p-button-success"
+                            ></button>
+                        </div>
+                    </p-toolbar>
+
+                    <hr *ngIf="dataError" />
+
+                    <div class="card" *ngIf="dataError">
+                        <p-table
+                            #dt
+                            [columns]="cols"
+                            [value]="dataError"
+                            selectionMode="multiple"
+                            [exportHeader]="'customExportHeader'"
+                            [tableStyle]="{ 'min-width': '50rem' }"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <button
+                                        type="button"
+                                        pButton
+                                        pRipple
+                                        icon="pi pi-file-excel"
+                                        (click)="exportExcel()"
+                                        class="p-button-success ml-auto"
+                                        pTooltip="XLS"
+                                        tooltipPosition="bottom"
+                                    ></button>
+                                </div>
+                            </ng-template>
+
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{ col.header }}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="body"
+                                let-rowData
+                                let-columns="columns"
+                            >
+                                <tr [pSelectableRow]="rowData">
+                                    <td *ngFor="let col of columns">
+                                        <p>{{ rowData[col.field] }}</p>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <hr *ngIf="dataMessError" />
+                    <div class="card" *ngIf="dataMessError">
+                        <div class="col-12">
+                            <div class="grid">
+                                <div class="col-1 font-bold">Error Name :</div>
+                                <div class="col-11">
+                                    {{ dataMessError }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p-tabView
+                (onChange)="onChangeTab($event)"
+                styleClass="tabview-custom"
+            >
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <i class="pi pi-calendar"></i>
+                        <span class="ml-2">List Product</span>
+                    </ng-template>
+
+                    <div class="w-full mb-4">
+                        <p-toolbar>
+                            <div
+                                class="w-full flex gap-2 align-items-center flex-wrap"
+                            >
+                                <input
+                                    id="enter"
+                                    class="p-inputtext-sm"
+                                    [style]="{ minWidth: '40%' }"
+                                    type="text"
+                                    pInputText
+                                    [(ngModel)]="inputAction"
+                                    placeholder="Product list code (product01 product02)"
+                                />
+                                <i class="pi pi-bars p-toolbar-separator"></i>
+                                <p-splitButton
+                                    label="Action"
+                                    [model]="buttons"
+                                    styleClass="p-button-success p-button-sm"
+                                >
+                                </p-splitButton>
+                            </div>
+                        </p-toolbar>
+                    </div>
+
+                    <p-table
+                        [value]="dataProduct"
+                        styleClass="p-datatable-gridlines"
+                        [tableStyle]="{ 'min-width': '50rem' }"
+                        [paginator]="true"
+                        [rows]="10"
+                        [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        (onPage)="pageChange($event)"
+                        [rowsPerPageOptions]="[10, 25, 50]"
+                    >
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th
+                                    class="font-semibold text-sm text-center w-7rem"
+                                >
+                                    RowNumber
+                                </th>
+                                <th
+                                    class="font-semibold text-sm text-center w-7rem"
+                                >
+                                    Product ID
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Product Code
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Product Name
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Survey
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Product Target
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Data
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template
+                            pTemplate="body"
+                            let-product
+                            let-columns="columns"
+                        >
+                            <!-- [pTooltip] ="product.update_by != null ?  'Update By : [{{product.update_by}}] - {{ product.update_code }} - {{ product.update_name}}  Time : {{ product.update_date }}' : ''" -->
+                            <tr
+                                [pTooltip]="product.tooltip"
+                                tooltipPosition="left"
+                            >
+                                <td class="text-center text-sm w-7rem">
+                                    {{ product.RowNumber }}
+                                </td>
+                                <td class="text-center text-sm w-7rem">
+                                    {{ product.product_id }}
+                                </td>
+                                <td class="text-center text-sm">
+                                    {{ product.product_code }}
+                                </td>
+                                <td class="text-center text-sm">
+                                    {{ product.product_name }}
+                                </td>
+                                <td class="text-center text-sm">
+                                    {{ product.data_form_survey }} -
+                                    {{ product.survey_name }} -
+                                    {{ product.survey_type }}
+                                </td>
+                                <td class="text-center text-sm">
+                                    {{ product.product_target }}
+                                </td>
+                                <td class="text-sm block">
+                                    <h6 class="m-0" *ngIf="product.min_data">
+                                        min: {{ product.min_data }}
+                                    </h6>
+                                    <h6 class="m-0" *ngIf="product.max_data">
+                                        max: {{ product.max_data }}
+                                    </h6>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabPanel>
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <i class="pi pi-user"></i>
+                        <span class="ml-2">List Survey</span>
+                    </ng-template>
+
+                    <div class="w-full mb-4">
+                        <p-toolbar>
+                            <div class="w-full flex gap-2 align-items-center">
+                                <p-dropdown
+                                    [options]="listSurvey"
+                                    class="p-inputtext-sm"
+                                    [showClear]="true"
+                                    [filter]="true"
+                                    filterBy="name"
+                                    [style]="{
+                                        minWidth: '100%',
+                                        width: '250px'
+                                    }"
+                                    [(ngModel)]="selectedSurvey"
+                                    placeholder="Select a survey "
+                                    optionLabel="name"
+                                    appendTo="body"
+                                >
+                                </p-dropdown>
+                                <i class="pi pi-bars"></i>
+                                <p-splitButton
+                                    label="Action"
+                                    [model]="buttons"
+                                    styleClass="p-button-success p-button-sm"
+                                >
+                                </p-splitButton>
+                            </div>
+                        </p-toolbar>
+                    </div>
+
+                    <p-table
+                        [value]="dataSurvey"
+                        styleClass="p-datatable-gridlines"
+                        [tableStyle]="{ 'min-width': '50rem' }"
+                        [paginator]="true"
+                        [rows]="10"
+                        [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        (onPage)="pageChange($event)"
+                        [rowsPerPageOptions]="[10, 20, 50]"
+                    >
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th class="font-semibold text-sm text-center">
+                                    RowNumber
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Survey Id
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Survey Name
+                                </th>
+                                <th class="font-semibold text-sm text-center">
+                                    Data
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template
+                            pTemplate="body"
+                            let-survey
+                            let-columns="columns"
+                        >
+                            <tr
+                                [pTooltip]="survey.tooltip"
+                                tooltipPosition="left"
+                            >
+                                <td class="text-center text-sm">
+                                    {{ survey.RowNumber }}
+                                </td>
+                                <td class="text-center text-sm">
+                                    {{ survey.data_form_survey }}
+                                </td>
+                                <td class="text-center text-sm">
+                                    {{ survey.survey_name }} - {{ survey.survey_type }}
+                                </td>
+                                <td class="text-center text-sm block">
+                                    <h6 class="m-0" *ngIf="survey.min_data">
+                                        min: {{ survey.min_data }}
+                                    </h6>
+                                    <h6 class="m-0" *ngIf="survey.max_data">
+                                        max: {{ survey.max_data }}
+                                    </h6>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+    </div>
+</div>
+
+<p-dialog
+    [header]="tap === 0 ? 'Update Product' : 'Update Survey'"
+    [(visible)]="showUpdate"
+    [breakpoints]="{ '990px': '75vw' }"
+    [modal]="true"
+    [style]="{ width: '55vw' }"
+    [maximizable]="true"
+>
+    <div class="card mt-4">
+        <div class="grid">
+            <div class="col-12 lg:col-3" *ngIf="tap === 0">
+                <h6>
+                    Survey<span style="color: red; font-weight: bold"> *</span>
+                </h6>
+                <p-dropdown
+                    [options]="listSurvey"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="name"
+                    [style]="{ minWidth: '100%', maxWidth: '150px' }"
+                    [(ngModel)]="selectedSurvey"
+                    placeholder="Select a survey "
+                    optionLabel="name"
+                    appendTo="body"
+                >
+                </p-dropdown>
+            </div>
+            <!-- min="1" -->
+            <div
+                [ngClass]="{ 'md:col-3': tap === 0, 'lg:col-6': tap === 1 }"
+                class="col-6"
+            >
+                <h6>
+                    Min data<span style="color: red; font-weight: bold">
+                        *</span
+                    >
+                </h6>
+                <input
+                    [style]="{ minWidth: '100%' }"
+                    type="number"
+                    pInputText
+                    [(ngModel)]="mindata"
+                    placeholder="Min data"
+                    min="1"
+                />
+            </div>
+            <div
+                [ngClass]="{ 'md:col-3': tap === 0, 'lg:col-6': tap === 1 }"
+                class="col-6"
+            >
+                <h6>Max data</h6>
+                <input
+                    [style]="{ minWidth: '100%' }"
+                    type="text"
+                    pInputText
+                    [(ngModel)]="maxdata"
+                    placeholder="Max data"
+                />
+            </div>
+
+            <div class="col-12 lg:col-3" *ngIf="tap === 0">
+                <h6>Product Target</h6>
+                <input
+                    [style]="{ minWidth: '100%' }"
+                    type="number"
+                    pInputText
+                    [(ngModel)]="product_target"
+                    placeholder="Product Target"
+                />
+            </div>
+
+            <div class="col-12 flex justify-content-center">
+                <button
+                    [style]="{ minWidth: '100%' }"
+                    (click)="actionSubmit()"
+                    pButton
+                    pRipple
+                    label="update"
+                    class="p-button-success"
+                ></button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>

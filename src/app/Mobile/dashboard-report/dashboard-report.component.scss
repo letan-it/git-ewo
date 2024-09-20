@@ -1,0 +1,32 @@
+.wrapper {
+    width: 100vw;
+    // background-image: url('../../../assets/image/background_header_red.png');
+    background-size: 100% auto; /* Set the width to 100%, adjust height automatically */
+    background-repeat: no-repeat; /* Prevent the background from repeating */
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+
+    .wrapper-menu {
+        border-radius: 3rem 3rem 0 0;
+        background: #F1F5FF;
+        z-index: 2;
+    }
+
+    .container {
+        display: grid; 
+        padding: 0px;
+        grid-template-columns: 1fr 1fr 1fr; 
+        grid-template-rows: 1fr 1fr 1fr 1fr; 
+        gap: 20px 20px; 
+        grid-template-areas: 
+          ". ."
+          ". ."
+          ". ."; 
+
+        .item {
+            border-radius: 2rem;
+            background: #FFFFFF;
+        }
+    }
+}

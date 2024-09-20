@@ -1,0 +1,48 @@
+<!-- <p-button [label]="Refresh" icon="pi pi-undo" id="icoico" (onClick)="refresh()" *ngIf="flag" /> -->
+<h3 class="second">Refresh: {{value}}</h3>
+<!-- <p-skeleton *ngIf="!flag" width="10rem" height="4rem" borderRadius="16px" /> -->
+<div class="row">
+    <div class="formService " *ngFor="let item of listData">
+        <div class="card shadow-6 border-round border-none p-3">
+            <div class="col-4 panelleft">
+                <div class="flex flex-column">
+                    <div class="char1"><b>{{item.name}}</b></div>
+                    <div class="char2"><b>CPU: {{item.cpu.total|number:'1.0-2'}} Core</b></div>
+                    <div class="char2"><b>RAM: {{item.ram.total|number:'1.0-2'}} GB</b></div>
+                </div>
+            </div>
+            <div class="set-size charts-container" *ngIf="item.cpu.total >0">
+                <h1 class="mint">RUNING</h1>
+            </div>
+            <div class="set-size charts-container" *ngIf="item.cpu.total == null">
+                <h1 class="grays">ERROR</h1>
+            </div>
+            <div class="set-size charts-container" *ngIf="false">
+                <div class="pie-wrapper style-2" [ngClass]="[item?.classCPU]">
+                    <!-- <span *ngIf="item.cpu.cpuUsage < 100" class="label labelleft">CPU {{item.cpu.cpuUsage | number:'1.0-2'}}<span class="smaller">%</span></span> -->
+                    <span style="z-index: 1;" class="label labelleft">CPU <br>{{item.cpu.cpuUsage |
+                        number:'1.0-2'}}<span class="smaller">%</span></span>
+                    <!-- <span *ngIf="item.cpu.cpuUsage >= 100" class="label labelleft">CPU<br>FULL</span>  -->
+                    <div class="pie">
+                        <div class="left-side half-circle col-6"></div>
+                        <div class="right-side half-circle"></div>
+                    </div>
+                    <div class="shadow"></div>
+                </div>
+                <div class="pie-wrapper style-2" [ngClass]="[item?.classRAM]">
+                    <span class="label labelleft">RAM {{item.ram.memoryUsage | number:'1.0-3'}}<span
+                            class="smaller">%</span></span>
+                    <div class="pie">
+                        <div class="left-side half-circle col-6"></div>
+                        <div class="right-side half-circle"></div>
+                    </div>
+                    <div class="shadow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="formService" *ngFor="let item of dem">
+        <p-skeleton class="formService" height="11rem" borderRadius="10px" />
+       
+    </div>
+</div>

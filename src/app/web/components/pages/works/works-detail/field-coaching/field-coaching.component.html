@@ -1,0 +1,179 @@
+<div *ngIf="inValue && inValue && inValue.listData" style="width: 100%">
+    <div
+        class="flex justify-content-center w-full"
+        *ngFor="let listEmp of inValue.listData"
+    >
+        <p-accordion
+            class="w-full"
+            [multiple]="true"
+            [activeIndex]="[0]"
+            *ngIf="listEmp && listEmp.work && listEmp.work.length > 0"
+        >
+            <p-accordionTab *ngFor="let tab of listEmp.work">
+                <ng-template pTemplate="header">
+                    <div class="flex align-items-center gap-2 w-full">
+                        <i
+                            class="pi"
+                            [ngClass]="{
+                                'text-green-500 pi-check-circle': tab.textCheck,
+                                'text-red-500 pi-times-circle': !tab.textCheck
+                            }"
+                            [pTooltip]="tab.pTooltip_confirm_result"
+                        ></i>
+                        <span class="font-bold white-space-nowrap m-0">
+                            <span style="color: green; font-weight: bold"
+                                >[{{ tab.survey_id }}] - </span
+                            >{{ tab.survey_name }}
+                        </span>
+                        <i
+                            *ngIf="tab.confirm_note"
+                            class="pi pi-comment"
+                            [pTooltip]="tab.confirm_note"
+                            style="font-size: 2rem"
+                        ></i>
+
+                        <p-tag
+                            [value]="tab.field_type_name"
+                            [severity]="getSeverityResult(tab.field_type)"
+                            class="ml-auto mr-2"
+                        />
+                        {{ tab.employee_name }}
+                    </div>
+                </ng-template>
+
+                <div
+                    class="flex flex-row align-items-start justify-content-between gap-2 w-full"
+                >
+                    <div class="w-8">
+                        <p-table
+                            #dt1
+                            [value]="tab.detail"
+                            dataKey="question_id"
+                            [globalFilterFields]="[
+                                'question_name',
+                                'value_string'
+                            ]"
+                            [scrollable]="true"
+                            scrollHeight="400px"
+                            rowGroupMode="subheader"
+                            groupRowsBy="question_group"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div
+                                    class="flex flex-row align-items-center justify-content-between w-full"
+                                >
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clear(dt1)"
+                                    />
+
+                                    <input
+                                        #searchInput
+                                        type="text"
+                                        pInputText
+                                        [(ngModel)]="searchValue"
+                                        (input)="
+                                            dt1.filterGlobal(
+                                                searchInput.value,
+                                                'contains'
+                                            )
+                                        "
+                                        placeholder="Search"
+                                    />
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>#</th>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Câu hỏi
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-row justify-content-start align-items-center gap-7"
+                                        >
+                                            <div>
+                                                Kết quả
+                                                <span
+                                                    *ngIf="tab.result !== null"
+                                                    style="
+                                                        color: green;
+                                                        font-weight: bold;
+                                                    "
+                                                    >{{ tab.result }}</span
+                                                >
+                                            </div>
+                                            <div
+                                                *ngIf="
+                                                    tab.result_value !== null
+                                                "
+                                            >
+                                                Điểm số:
+                                                <span
+                                                    style="
+                                                        color: green;
+                                                        font-weight: bold;
+                                                    "
+                                                    >{{
+                                                        tab.result_value
+                                                    }}</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="groupheader" let-item>
+                                <tr
+                                    pRowGroupHeader
+                                    style="background-color: rgb(239, 239, 239)"
+                                >
+                                    <td colspan="3">
+                                        <span class="font-bold ml-2">{{
+                                            item.question_group
+                                        }}</span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td
+                                        style="
+                                            background-color: rgb(
+                                                239,
+                                                239,
+                                                239
+                                            );
+                                        "
+                                    ></td>
+                                    <td>
+                                        {{ item.question_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.value_string }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data found.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="w-4">
+                        <app-control-tab-photo
+                            [KPI]="'FIELDCOACHING'"
+                            [fulldata]="tab"
+                            [inValue]="tab.files"
+                        >
+                        </app-control-tab-photo>
+                    </div>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+</div>

@@ -1,0 +1,304 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-2 p-fluid">
+                    <h6>{{GetLanguage("f_start_date")}}</h6>
+                    <input pInputText id="dateStart" class="text-center mr-2" type="date"
+                        [(ngModel)]="dateStart" />
+                </div>
+                <div class="md:col-2 p-fluid">
+                    <h6>{{GetLanguage("f_end_date")}}</h6>
+                    <input pInputText id="dateEnd" class="text-center mr-2 h-5" type="date"
+                        [(ngModel)]="dateEnd" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button" label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData(1)" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button pButton pRipple label="New" icon="pi pi-plus" (click)="openAddForm()"
+                        class="p-button-sm mr-2 mt-2"></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                        class=" p-button-success mr-2 mt-2"
+                        [ngStyle]="{'display' : showFilter === 1 ? 'none' : 'flex'}"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()"
+                        tooltipPosition="top" icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box" leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                        [ngStyle]="{'display' : showFilter === 0 ? 'none' : 'flex'}"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <p-table #dt [value]="listSellOut" paginatorPosition="top" *ngIf="listSellOut && listSellOut.length > 0"
+        styleClass="p-datatable-gridlines" [paginator]="true" [first]="first" [rows]="20"
+        [rowsPerPageOptions]="[20, 50, 100]" dataKey="id"
+        [globalFilterFields]="['active_date']">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th class="text-center" pSortableColumn="active_date">Active date <p-sortIcon field="active_date">
+                    </p-sortIcon>
+                </th>
+                <th class="text-center">Input Quantity </th>
+                <th class="text-center">Input Price</th>
+                <th class="text-center">Add Product</th>
+                <th class="text-center">Info Customer</th>
+                <th class="text-center">Sellout Result</th>
+                <th class="text-center">Photo Item</th>
+                <th class="text-center">System Price</th>
+                <th class="text-center">Created date</th>
+                <th class="text-center">Created by</th>
+                <th class="text-center">Updated date</th>
+                <th class="text-center">Updated by</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr [pSelectableRow]="item">
+                <td class="text-center">
+                    <span class="font-medium">{{ item.active_date }}</span>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.input_quantity"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.input_price"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.add_product"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <div class="w-full flex flex-row align-items-center gap-3 mt-3">
+                        <div *ngFor="let x of item.InfoCustomer" class="flex align-items-center justify-content-center w-8 p-2 h-5 border-round surface-200 hover:surface-300 cursor-pointer">
+                            <span class="font-medium">{{ x }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.sellout_result"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.photo_item"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.system_price"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium cursor-pointer" pTooltip="Created at {{item.created_date}}"
+                        [fitContent]="true" tooltipPosition="top">{{ item.created_date }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium cursor-pointer" pTooltip="Created at {{item.created_by}}"
+                        [fitContent]="true" tooltipPosition="top">{{ item.created_by }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium cursor-pointer" pTooltip="Updated at {{item.update_date}}"
+                        [fitContent]="true" tooltipPosition="top">{{ item.update_date }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium cursor-pointer" pTooltip="Updated at {{item.updated_by}}"
+                        [fitContent]="true" tooltipPosition="top">{{ item.updated_by }}</span>
+                </td>
+                <td>
+                    <div class="text-center flex flex-row align-items-center justify-content-around h-full">
+                        <button class="p-button-rounded p-button-text" style="font-size: 2.5rem" title="Edit" 
+                            (click)="openEditForm(item)" pButton pRipple type="button" icon="pi pi-pencil"></button>
+                        <!-- (click)="openEditForm(item.id, item.project_id, item.active_date, item.input_quantity, item.input_price, item.add_product, item.sellout_result, item.photo_item, item.info_customer)" -->
+                        <button class="p-button-rounded p-button-danger p-button-text" style="font-size: 2.5rem" title="Delete"
+                            (click)="openDelete(item.id, item.project_id, item.active_date, item.input_quantity, item.input_price, item.add_product, item.sellout_result, item.photo_item, item.system_price, item.info_customer, $event)"
+                            pButton pRipple type="button" icon="pi pi-trash">
+                        </button>     
+                        <p-confirmPopup></p-confirmPopup>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="listSellOut && listSellOut.length === 0" style="float: right;">
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog [(visible)]="newSelloutDialog" [style]="{ width: '77rem', height: 'fit-content' }"
+    header="Create new Config Sellout" [modal]="true" styleClass="p-fluid" [closable]="true"
+    (onHide)="resetNewSelloutDialog()">
+
+    <ng-template pTemplate="content">
+        <div class="flex flex-row w-full gap-3">
+            <div class="flex flex-row w-3">
+                <div class="field w-full">
+                    <label for="active_date_int">Active Date<span class="font-bold" style="color: red;">
+                            *</span></label>
+                    <input pInputText id="active_date_int" class="text-center mr-2" type="date"
+                        [(ngModel)]="activeDateInt" />
+                </div>
+            </div>
+            <div class="flex flex-column w-9 h-fit align-items-end justify-content-between gap-3">
+                <div class="flex flex-row w-full h-fit align-items-center p-1 mt-5">
+                    <div class="field w-4">
+                        <p-checkbox label="Input Quantity" id="input_quantity" [binary]="true" [value]="inputQuantity"
+                            [(ngModel)]="inputQuantity"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="Input Price" id="input_price" [binary]="true" [value]="inputPrice"
+                            [(ngModel)]="inputPrice"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="Add Product" id="add_product" [binary]="true" [value]="addProduct"
+                            [(ngModel)]="addProduct"></p-checkbox>
+                    </div>
+                </div>
+                <div class="flex flex-row w-full h-fit align-items-center p-1">
+                    <div class="field w-4">
+                        <p-checkbox label="Sellout Result" id="sellout_result" [binary]="true" [value]="selloutResult"
+                            [(ngModel)]="selloutResult"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="Photo Item" id="photo_item" [binary]="true" [value]="photoItem"
+                            [(ngModel)]="photoItem"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="System Price" id="system_price" [binary]="true" [value]="systemPrice"
+                            [(ngModel)]="systemPrice"></p-checkbox>
+                    </div>
+                </div>
+                <div class="flex flex-column align-items-start w-full">
+                    <label for="info_customer">Info Customer</label>
+                    <p-multiSelect
+                        [options]="infoCustomerArr"
+                        [showToggleAll]="false"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="name"
+                        [virtualScroll]="true"
+                        display="chip"
+                        [filter]="true"
+                        [virtualScrollItemSize]="40"
+                        [style]="{ minWidth: '100%' }"
+                        class="multiselect-custom-virtual-scroll p-fluid mt-2"
+                        [(ngModel)]="selectedItemCustomerArr"
+                        optionLabel="name"
+                        placeholder="Select Info Customer"
+                        appendTo="body"
+                        (onChange)="selectedInfoCustomer($event)"
+                        (onClear)="onClearType()"
+                    >
+                        <ng-template let-infoCustomerArr pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ infoCustomerArr?.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveNewSellout($event)"></button>
+            <p-toast></p-toast>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="editSelloutDialog" [style]="{ width: '77rem', height: 'fit-content' }"
+    header="Edit Config Sellout" [modal]="true" styleClass="p-fluid" [closable]="true"
+    (onHide)="resetEditSelloutDialog()">
+
+    <ng-template pTemplate="content">
+        <div class="flex flex-row w-full gap-3">
+            <div class="flex flex-row w-3">
+                <div class="field w-full">
+                    <label for="active_date_int">Active Date<span class="font-bold" style="color: red;"> *</span></label>
+                    <input pInputText id="active_date_int" class="text-center font-bold mr-2" type="date"
+                        [(ngModel)]="editActiveDate" [disabled]="true" />
+                </div>
+            </div>
+            <div class="flex flex-column w-9 h-fit align-items-end justify-content-between gap-3">
+                <div class="flex flex-row w-full h-fit align-items-center p-1 mt-5">
+                    <div class="field w-4">
+                        <p-checkbox label="Input Quantity" id="input_quantity" [binary]="true" [value]="editInputQuantity"
+                            [(ngModel)]="editInputQuantity"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="Input Price" id="input_price" [binary]="true" [value]="editInputPrice"
+                            [(ngModel)]="editInputPrice"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="Add Product" id="add_product" [binary]="true" [value]="editAddProduct"
+                            [(ngModel)]="editAddProduct"></p-checkbox>
+                    </div>
+                </div>
+                <div class="flex flex-row w-full h-fit align-items-center p-1">
+                    <div class="field w-4">
+                        <p-checkbox label="Sellout Result" id="sellout_result" [binary]="true" [value]="editSelloutResult"
+                            [(ngModel)]="editSelloutResult"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="Photo Item" id="photo_item" [binary]="true" [value]="editPhotoItem"
+                            [(ngModel)]="editPhotoItem"></p-checkbox>
+                    </div>
+                    <div class="field w-4">
+                        <p-checkbox label="System Price" id="system_price" [binary]="true" [value]="editSystemPrice"
+                            [(ngModel)]="editSystemPrice"></p-checkbox>
+                    </div>
+                </div>
+                <div class="flex flex-column align-items-start w-full">
+                    <label for="info_customer">Info Customer</label>
+                    <p-multiSelect
+                        [options]="infoCustomerArr"
+                        [showToggleAll]="false"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="name"
+                        [virtualScroll]="true"
+                        display="chip"
+                        [filter]="true"
+                        [virtualScrollItemSize]="40"
+                        [style]="{ minWidth: '100%' }"
+                        class="multiselect-custom-virtual-scroll p-fluid mt-2"
+                        [(ngModel)]="infoCustomerEditArr"
+                        optionLabel="name"
+                        appendTo="body"
+                        (onChange)="selectedInfoCustomerEdit($event)"
+                        (onClear)="onClearType()"
+                    >
+                        <ng-template let-infoCustomerArr pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ infoCustomerArr?.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+            (click)="saveEditSellout($event)"></button>
+            <p-toast></p-toast>
+    </ng-template>
+</p-dialog> 

@@ -1,0 +1,93 @@
+<div *ngIf="action == 'create'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+                <div class="col-md-12 mb-3">
+                    <div class="card mt-3">
+                        <div class="field p-fluid">
+                            <label htmlFor="router_code"
+                                >Router code<span
+                                    style="color: red; font-weight: bold"
+                                >
+                                    *</span
+                                ></label
+                            >
+                            <p>
+                                <input
+                                    pInputText
+                                    id="router_code "
+                                    [(ngModel)]="router_code"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <label htmlFor="router_name"
+                                >Router name<span
+                                    style="color: red; font-weight: bold"
+                                >
+                                    *</span
+                                ></label
+                            >
+                            <p>
+                                <input
+                                    pInputText
+                                    id="router_name "
+                                    [(ngModel)]="router_name"
+                                    [disabled]="false"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <label htmlFor="router_type"
+                                >Router type<span
+                                    style="color: red; font-weight: bold"
+                                >
+                                    *</span
+                                ></label
+                            >
+                            <p>
+                                <input
+                                    pInputText
+                                    id="router_type "
+                                    [(ngModel)]="router_type"
+                                    [disabled]="false"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+                        <div class="field p-fluid">
+                            <label htmlFor="_status">Status</label>
+                            <p>
+                                <p-checkbox
+                                    name="group1"
+                                    [binary]="true"
+                                    [(ngModel)]="_status"
+                                    (onclick)="clickStatus()"
+                                ></p-checkbox>
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <p-button
+                                label="Save"
+                                (click)="createStoreRouter()"
+                                styleClass="p-button-success p-button-sm"
+                            ></p-button>
+                            <!-- {{clearMess}} -->
+                            <p-messages
+                                *ngIf="clearMess == true"
+                                [value]="msgsInfo"
+                            ></p-messages>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

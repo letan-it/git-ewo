@@ -1,0 +1,829 @@
+<div *ngIf="action === 'view'" class="grid">
+    <!-- {{inValue.category|json}} -->
+
+    <div class="col-12" *ngIf="inValue !== undefined">
+        <div class="card">
+            <div class="grid">
+                <div class="col-6">
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Category Name</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <!-- [ngStyle]="{'background' : inValue.category.color }" -->
+                                <input
+                                    pInputText
+                                    id="category_name"
+                                    type="text"
+                                    [(ngModel)]="inValue.category_name"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Category Name Vi</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="category_name_vi"
+                                    type="text"
+                                    [(ngModel)]="inValue.category_name_vi"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Group Code</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <!-- [ngStyle]="{'background' : inValue.category.color }" -->
+                                <input
+                                    pInputText
+                                    id="category_name"
+                                    type="text"
+                                    [(ngModel)]="inValue.group_code"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Group Name</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <!-- [ngStyle]="{'background' : inValue.category.color }" -->
+                                <input
+                                    pInputText
+                                    id="category_name"
+                                    type="text"
+                                    [(ngModel)]="inValue.group_name"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Brand Code</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="brand_code"
+                                    type="text"
+                                    [(ngModel)]="inValue.brand_code"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Brand Name</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="brand"
+                                    type="text"
+                                    [(ngModel)]="inValue.brand"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Brand Name Vi</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="brand_name_vi"
+                                    type="text"
+                                    [(ngModel)]="inValue.brand_name_vi"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Division Code</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="division_code"
+                                    type="text"
+                                    [(ngModel)]="inValue.division_code"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Division Name</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="division_name"
+                                    type="text"
+                                    [(ngModel)]="inValue.division_name"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Market Code</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="market_code"
+                                    type="text"
+                                    [(ngModel)]="inValue.market_code"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Market Name</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="market_name"
+                                    type="text"
+                                    [(ngModel)]="inValue.market_name"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Market Name Vi</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="market_name_vi"
+                                    type="text"
+                                    [(ngModel)]="inValue.market_name_vi"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Package</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="package"
+                                    type="text"
+                                    [(ngModel)]="inValue.package"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Order</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <input
+                                    pInputText
+                                    id="orders"
+                                    type="number"
+                                    [(ngModel)]="inValue.order"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="grid">
+                            <div class="col-5">
+                                <h6>Color</h6>
+                            </div>
+                            <div class="col-7 p-fluid">
+                                <!-- <p-colorPicker [(ngModel)]="inValue.color" format="HEX" [disabled]="true"></p-colorPicker> -->
+                                <button
+                                    pButton
+                                    type="button"
+                                    [ngStyle]="{
+                                        background: inValue.color,
+                                        'border-color': inValue.color
+                                    }"
+                                    icon="pi pi-circle-fill"
+                                    class="p-button-sm p-button-success mr-2 mt-2"
+                                ></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- *ngIf="inValue.barcode_list  != undefined && inValue.barcode_list.length > 0" -->
+                    <div class="col-12">
+                        <div class="grid">
+                            <p-table
+                                [columns]="cols"
+                                [value]="inValue.barcode_list"
+                                [paginator]="true"
+                                [tableStyle]="{ 'min-width': '50rem' }"
+                                [rows]="5"
+                                [showCurrentPageReport]="true"
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                [rowsPerPageOptions]="[5, 10, 20]"
+                            >
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th
+                                            class="text-center"
+                                            *ngFor="let col of columns"
+                                        >
+                                            {{ col.header }}
+                                        </th>
+                                        <th class="text-center" rowspan="2">
+                                            <!-- ĐÓNG TẠM THỜI -->
+                                            <!-- <button pButton icon="pi pi-plus"
+                                                class="p-button-icon p-button-success mr-2" (click)="showModel()"
+                                                pTooltip="Add BarCode" tooltipPosition="top"></button> -->
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th
+                                            class="text-center"
+                                            *ngFor="let col of columns"
+                                        >
+                                            <p-columnFilter
+                                                [style]="{ minWidth: '30%' }"
+                                                type="text"
+                                                [field]="col.field"
+                                                [showMenu]="true"
+                                                [matchMode]="'contains'"
+                                            ></p-columnFilter>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template
+                                    pTemplate="body"
+                                    let-rowData
+                                    let-columns="columns"
+                                >
+                                    <tr
+                                        [pTooltip]="rowData.toolTip"
+                                        tooltipPosition="top"
+                                        class="cursor_pointer"
+                                    >
+                                        <td
+                                            *ngFor="let col of columns"
+                                            [ngClass]="{
+                                                'text-center':
+                                                    col.field === 'created_date'
+                                            }"
+                                        >
+                                            {{ rowData[col.field] }}
+                                        </td>
+                                        <!-- ĐÓNG TẠM THỜI -->
+                                        <!-- <td class="text-center">
+                                            <button pButton icon="pi pi-trash" pTooltip="Delete BarCode"
+                                                tooltipPosition="top" class="p-button-icon p-button-danger mr-2"
+                                                (click)="confirm1($event, rowData)"></button>
+                                        </td> -->
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="col-12 card flex justify-content-center justify-content-between text-center"
+        *ngIf="!inValue"
+        style="float: right"
+    >
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<p-dialog
+    [(visible)]="productBarcodeDialog"
+    [style]="{ width: '450px' }"
+    header="Product BarCode Details"
+    [modal]="true"
+    styleClass="p-fluid"
+>
+    <ng-template pTemplate="content">
+        <!-- <div class="field">
+            <label for="product_barcode" class="font-bold">Product BarCode<span class="font-bold" style="color: red;">
+                    *</span></label>
+        </div> -->
+        <input
+            class="mt-2"
+            type="text"
+            pInputText
+            [(ngModel)]="product_barcode"
+            placeholder="Product BarCode"
+        />
+
+        <button
+            type="button"
+            (click)="actionProductBarcode(null)"
+            label="Save"
+            pButton
+            pRipple
+            icon="pi pi-check"
+            style="float: right"
+            class="p-button-sm mt-2"
+        ></button>
+    </ng-template>
+</p-dialog>
+
+<div *ngIf="action === 'create'">
+    <p-dialog
+        header="Reload the form information"
+        [(visible)]="display"
+        padding="0px"
+        width="1200"
+        height="350"
+        [responsive]="true"
+    >
+        Do you want to reload the form information or not ?
+        <p-footer>
+            <button
+                type="button"
+                pButton
+                icon="pi pi-check"
+                (click)="loadForm()"
+                class="p-button-sm mr-2 mt-2"
+                label="Yes"
+            ></button>
+        </p-footer>
+    </p-dialog>
+
+    <button
+        type="button"
+        (click)="showDialog()"
+        pButton
+        icon="pi pi-replay"
+        class="p-button-sm mr-2 mt-2"
+        label="Reload"
+    ></button>
+
+    <!-- <i style="cursor: pointer; margin-left: 97%;"  class="pi pi-refresh" (click)="clear()" ></i>  -->
+
+    <div class="container">
+        <div class="main-body">
+            <div class="row gutters-sm">
+                <div class="col-md-12 mb-3">
+                    <div class="card mt-3">
+                        <div class="field p-fluid">
+                            <h6>
+                                Product Code
+                                <span style="color: red; font-weight: bold">
+                                    *</span
+                                >
+                            </h6>
+                            <p>
+                                <input
+                                    pInputText
+                                    id="product_code"
+                                    [(ngModel)]="product_code"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+                        <div class="field p-fluid">
+                            <h6>
+                                Product Name
+                                <span style="color: red; font-weight: bold">
+                                    *</span
+                                >
+                            </h6>
+                            <p>
+                                <input
+                                    pInputText
+                                    id="product_name"
+                                    [(ngModel)]="product_name"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+                        <div class="field p-fluid">
+                            <h6>
+                                Category
+                                <span style="color: red; font-weight: bold">
+                                    *</span
+                                >
+                            </h6>
+                            <p>
+                                <app-control-osa-category
+                                    [itemCategory]="item_Category"
+                                    (outValue)="selectedCategory($event)"
+                                ></app-control-osa-category>
+                            </p>
+                        </div>
+                        <div class="field p-fluid">
+                            <h6>Group</h6>
+                            <p-dropdown
+                                [options]="group_product_data"
+                                [(ngModel)]="group_product_selected"
+                                placeholder="Select a group product"
+                                [showClear]="true"
+                                optionLabel="name"
+                                [style]="{ minWidth: '100%' }"
+                            />
+                        </div>
+
+                        <div class="grid">
+                            <div class="col-2"></div>
+                            <div class="col-10">
+                                <p-image
+                                    *ngIf="image"
+                                    [src]="image"
+                                    [preview]="true"
+                                    alt="Admin"
+                                    (onImageError)="
+                                        onImageErrorImage($event, 'image')
+                                    "
+                                    width="50"
+                                >
+                                </p-image>
+                            </div>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>Image</h6>
+                            <p>
+                                <input
+                                    pInputText
+                                    id="image"
+                                    type="file"
+                                    (change)="
+                                        onChangeImage($event, product_code)
+                                    "
+                                    #myInputImage
+                                    (onImageError)="
+                                        onImageErrorImage($event, 'image')
+                                    "
+                                    accept=".png, .jpg, .jpeg"
+                                />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6>Price</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            class="p-fluid"
+                                            pInputText
+                                            id="price"
+                                            [(ngModel)]="price"
+                                            min="0"
+                                            type="number"
+                                        />
+                                    </p>
+                                </div>
+
+                                <div class="col-3">
+                                    <h6>Order</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            pInputText
+                                            id="order"
+                                            [(ngModel)]="order"
+                                            min="0"
+                                            type="number"
+                                        />
+                                    </p>
+                                </div>
+
+                                <div class="col-3">
+                                    <h6>Unit</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            class="p-fluid"
+                                            pInputText
+                                            id="unit"
+                                            [(ngModel)]="unit"
+                                            type="text"
+                                        />
+                                    </p>
+                                </div>
+
+                                <div class="col-3">
+                                    <h6>Size</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            pInputText
+                                            id="size"
+                                            [(ngModel)]="size"
+                                            min="0"
+                                            type="number"
+                                        />
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>BarCode</h6>
+                            <p>
+                                <input
+                                    pInputText
+                                    id="barcode"
+                                    [(ngModel)]="barcode"
+                                    type="text"
+                                />
+                            </p>
+
+                            <p *ngIf="barcode">
+                                <!-- Adding a barcode in app.component.html -->
+                                <ngx-barcode
+                                    class="mt-5"
+                                    [bc-value]="barcode"
+                                    [bc-display-value]="true"
+                                ></ngx-barcode>
+
+                                <!-- <qrcode class="mt-5" (qrCodeURL)="onChangeURL($event)" [qrdata]="inValue.barcode" [width]="256" [errorCorrectionLevel]="'M'"> </qrcode>
+                               <a [href]="qrCodeDownloadLink" download="qrcode">Download</a>  -->
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>
+                                Status
+                                <span class="ml-5"
+                                    ><p-checkbox
+                                        [(ngModel)]="_status"
+                                        [binary]="true"
+                                        inputId="binary"
+                                    ></p-checkbox
+                                ></span>
+                            </h6>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <p-button
+                                label="Save"
+                                (click)="createProduct()"
+                                styleClass="p-button-success p-button-sm"
+                            ></p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="action === 'update' && inValue !== undefined">
+    <div class="container">
+        <div class="main-body">
+            <div class="row gutters-sm">
+                <div class="col-md-12 mb-3">
+                    <div class="card mt-3">
+                        <div class="field p-fluid">
+                            <h6>
+                                Product Code
+                                <span style="color: red; font-weight: bold">
+                                    *</span
+                                >
+                            </h6>
+                            <p>
+                                <input
+                                    [disabled]="true"
+                                    pInputText
+                                    id="product_code"
+                                    [(ngModel)]="inValue.product_code"
+                                    type="text"
+                                    class="font-bold"
+                                />
+                            </p>
+                        </div>
+                        <div class="field p-fluid">
+                            <h6>
+                                Product Name
+                                <span style="color: red; font-weight: bold">
+                                    *</span
+                                >
+                            </h6>
+                            <p>
+                                <input
+                                    pInputText
+                                    id="product_name"
+                                    [(ngModel)]="inValue.product_name"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+                        <div class="field p-fluid">
+                            <h6>
+                                Category
+                                <span style="color: red; font-weight: bold">
+                                    *</span
+                                >
+                            </h6>
+                            <p>
+                                <app-control-osa-category
+                                    [itemCategory]="inValue.category_id"
+                                    (outValue)="selectedCategory($event)"
+                                ></app-control-osa-category>
+                            </p>
+                        </div>
+                        <div class="field p-fluid">
+                            <h6>Group</h6>
+                            <p-dropdown
+                                [options]="group_product_data"
+                                [(ngModel)]="group_product_selected"
+                                placeholder="Select a group product"
+                                [showClear]="true"
+                                optionLabel="name"
+                                [style]="{ minWidth: '100%' }"
+                            />
+                        </div>
+
+                        <div class="grid">
+                            <div class="col-2"></div>
+                            <div class="col-10">
+                                <p-image
+                                    *ngIf="inValue.image"
+                                    [src]="inValue.image"
+                                    [preview]="true"
+                                    alt="Admin"
+                                    (onImageError)="
+                                        onImageErrorImage($event, 'image')
+                                    "
+                                    width="50"
+                                >
+                                </p-image>
+                            </div>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>Image</h6>
+                            <p>
+                                <input
+                                    pInputText
+                                    id="imageUpdate"
+                                    type="file"
+                                    (change)="
+                                        onChangeImage(
+                                            $event,
+                                            inValue.product_code
+                                        )
+                                    "
+                                    #myInputImage
+                                    (onImageError)="
+                                        onImageErrorImage($event, 'image')
+                                    "
+                                    accept=".png, .jpg, .jpeg"
+                                />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6>Price</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            pInputText
+                                            id="price"
+                                            [(ngModel)]="inValue.price"
+                                            min="0"
+                                            type="number"
+                                        />
+                                    </p>
+                                </div>
+                                <div class="col-3">
+                                    <h6>Order</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            pInputText
+                                            id="order"
+                                            [(ngModel)]="inValue.order"
+                                            min="0"
+                                            type="number"
+                                        />
+                                    </p>
+                                </div>
+
+                                <div class="col-3">
+                                    <h6>Unit</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            class="p-fluid"
+                                            pInputText
+                                            id="unit"
+                                            [(ngModel)]="inValue.unit"
+                                            type="text"
+                                        />
+                                    </p>
+                                </div>
+
+                                <div class="col-3">
+                                    <h6>Size</h6>
+                                    <p class="p-fluid mt-2">
+                                        <input
+                                            pInputText
+                                            id="size"
+                                            [(ngModel)]="inValue.size"
+                                            min="0"
+                                            type="number"
+                                        />
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>BarCode</h6>
+                            <p>
+                                <input
+                                    pInputText
+                                    id="barcode"
+                                    [(ngModel)]="inValue.barcode"
+                                    type="text"
+                                />
+                            </p>
+                            <p *ngIf="inValue.barcode">
+                                <!-- Adding a barcode in app.component.html -->
+                                <ngx-barcode
+                                    class="mt-5"
+                                    [bc-value]="inValue.barcode"
+                                    [bc-display-value]="true"
+                                ></ngx-barcode>
+
+                                <!-- myAngularxQrCode -->
+                                <!-- <qrcode class="mt-5" (qrCodeURL)="onChangeURL($event)" [qrdata]="inValue.barcode" [width]="256" [errorCorrectionLevel]="'M'"> </qrcode>
+                                <a [href]="qrCodeDownloadLink" download="qrcode">Download</a>  -->
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>
+                                Status
+                                <span class="ml-5"
+                                    ><p-checkbox
+                                        [(ngModel)]="inValue._status"
+                                        [binary]="true"
+                                        inputId="binary"
+                                    ></p-checkbox
+                                ></span>
+                            </h6>
+                            <!-- <p>
+                                <p-checkbox [(ngModel)]="inValue._status" [binary]="true" inputId="binary"></p-checkbox>
+                            </p> -->
+                        </div>
+
+                        <div class="field p-fluid">
+                            <p-button
+                                label="Update"
+                                (click)="updateProduct()"
+                                styleClass="p-button-success p-button-sm"
+                            ></p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

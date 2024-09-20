@@ -1,0 +1,19 @@
+
+
+
+<ng-container *ngIf="listPosition && isLoadForm==0 && multiSelect === false">
+    <p-dropdown class="p-fluid" [options]="listPosition" [(ngModel)]="selectPosition" optionLabel="name" 
+    (onChange)="returnValue(selectPosition)" 
+    [showClear]="true" [filter]="true" filterBy="name" [style]="{'minWidth':'100%'}" 
+    optionLabel="name" appendTo="body" placeholder="Select a position"  (onClear)="resetSelection()"></p-dropdown>
+</ng-container>
+
+<ng-container *ngIf="listPosition && isLoadForm==0 && multiSelect === true">
+    <p-multiSelect class="p-fluid" [options]="listPosition" [(ngModel)]="selectPosition" optionLabel="name" 
+    (onChange)="returnValue(selectPosition)" 
+    [showClear]="true" [filter]="true" filterBy="name" [style]="{'minWidth':'100%'}" 
+    optionLabel="name" appendTo="body" placeholder="Select a position"  (onClear)="resetSelection()" ></p-multiSelect>
+</ng-container>
+   
+
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

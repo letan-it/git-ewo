@@ -1,0 +1,130 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-4">
+                    <h6>Year Month</h6>
+                    <p-dropdown [options]="listMonth" [(ngModel)]="year_month" [showClear]="true" [filter]="true"
+                        filterBy="name" [style]="{'minWidth':'100%'}" placeholder="{{ year_month }}" optionLabel="name">
+                    </p-dropdown>
+                </div>
+                <div class="md:col-4">
+                    <h6>Create Date</h6>
+                    <p-calendar [style]="{'minWidth':'100%'}" inputId="date" [(ngModel)]="date" appendTo="body"
+                        dateFormat="yy-mm-dd" [readonlyInput]="true" placeholder="Search by creation date" [showButtonBar]="true"
+                        onchange="changeDate($event)"></p-calendar>
+                </div>
+                <div class="md:col-4">
+                    <h6>Employee code</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="employee_code" placeholder="List employee code">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData(1)" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button type="button" label="Raw data" pButton (click)="export()" pRipple icon="pi pi-file-excel"
+                        style="float: right" class="p-button-sm mr-2 mt-2"></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                        class=" p-button-success mr-2 mt-2"
+                        [ngStyle]="{'display': showFilter === 1?'none':'flex'}"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()" tooltipPosition="top"
+                        icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2" pStyleClass=".box"
+                        leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                        [ngStyle]="{'display': showFilter === 0?'none':'flex'}"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="flex flex-row align-items-center justify-content-center">
+    <p-toast></p-toast>
+    <div class="card w-full">
+        <p-table #dt [value]="listLogFile" [globalFilterFields]="['_employee_code', 'url', 'created-date']"
+            [rowHover]="true" dataKey="id" styleClass="p-datatable-gridlines">
+
+            <ng-template pTemplate="caption">
+                Total Item: {{ totalRecords }}
+                <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                    [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-start" pSortableColumn="_employee_code">Employee ID <p-sortIcon field="_employee_code"></p-sortIcon></th>
+                    <th class="text-start">Employee Code</th>
+                    <th class="text-start">Employee Name</th>
+                    <th class="text-start" pSortableColumn="url">File <p-sortIcon field="url"></p-sortIcon></th>
+                    <th class="text-center" pSortableColumn="created_date">Created Date <p-sortIcon field="created_date"></p-sortIcon></th>                
+                </tr>
+                <tr>
+                    <th>
+                        <p-columnFilter 
+                            type="text"
+                            field="_employee_code" 
+                            placeholder="Search by Employee ID" 
+                            ariaLabel="Filter Employee ID" />
+                    </th>
+                    <th>
+                        <p-columnFilter 
+                            type="text"
+                            field="created_code"
+                            placeholder="Search by Employee Code" 
+                            ariaLabel="Filter Employee Code" />
+                    </th>
+                    <th>
+                        <p-columnFilter 
+                            type="text"
+                            field="created_name" 
+                            placeholder="Search by Employee Name" 
+                            ariaLabel="Filter Employee Name" />
+                    </th>
+                    <th>
+                        <p-columnFilter 
+                            type="text"
+                            field="url"
+                            placeholder="Search by File" 
+                            ariaLabel="Filter File" />
+                    </th>
+                    <th>
+                        <p-columnFilter 
+                            type="text"
+                            field="created_date"
+                            placeholder="Search by Date" 
+                            ariaLabel="Filter Date" />
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td><span class="font-bold" style="color: green;">[{{item._employee_code}}]</span></td>
+                    <td><span class="font-medium">{{item.created_code}}</span> </td>
+                    <td><span class="font-medium">{{item.created_name}}</span> </td>
+                    <td>
+                        <div class="flex flex-row align-items-center justify-content-between">
+                            <span class="font-medium">{{item.url}}</span>
+                            <i class="pi pi-download" style="font-size: 2rem; cursor: pointer;" (click)="DownloadFile(item.url)"></i>
+                        </div>
+                    </td>
+                    <td class="text-center">{{item.created_date}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

@@ -1,0 +1,246 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="grid">
+    <div class="col-7">
+        <p-messages
+            [(value)]="messages"
+            [showTransitionOptions]="'500ms'"
+            [hideTransitionOptions]="'500ms'"
+            [enableService]="false"
+        ></p-messages>
+        <p-table
+            [value]="inValue.data_posm.posM_Results"
+            dataKey="id"
+            editMode="row"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-center">posm_name</th>
+                    <th class="text-center">posm_target</th>
+                    <th class="text-center">value</th>
+                    <th class="text-center">reason</th>
+                    <th class="text-center">note</th>
+                    <th
+                        class="text-center"
+                        *ngIf="inValue.data_posm.is_edit_data == 1"
+                    >
+                        Action
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template
+                pTemplate="body"
+                let-details
+                let-editing="editing"
+                let-ri="rowIndex"
+            >
+                <tr [pEditableRow]="details">
+                    <td>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <i style="cursor: pointer; font-size: 1.5rem" class="pi pi-image"
+                                    (click)="showImageProduct(details.posm_image)"></i> - {{ details.posm_name }}
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <i style="cursor: pointer; font-size: 1.5rem" class="pi pi-image"
+                                    (click)="showImageProduct(details.posm_image)"></i> - {{ details.posm_name }}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td class="text-center">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                {{ details.posm_target }}
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{ details.posm_target }}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td class="text-center">
+                        <p-overlayPanel #op>
+                            <ng-template pTemplate="content">
+                                <div class="flex align-items-center gap-2">
+                                    <p-table
+                                        [value]="details.his"
+                                        [tableStyle]="{ 'max-height': '250px' }"
+                                        [rows]="5"
+                                        [paginator]="true"
+                                        [rowHover]="true"
+                                        dataKey="id"
+                                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                        [showCurrentPageReport]="true"
+                                    >
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Values</th>
+                                                <th>Reason Name</th>
+                                                <th>Note</th>
+                                                <th>Create Date</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-item>
+                                            <tr>
+                                                <td>
+                                                    <b
+                                                        style="color: darkgreen"
+                                                        >{{
+                                                            item.employee_name
+                                                        }}</b
+                                                    >
+                                                </td>
+                                                <td>{{ item.values }}</td>
+                                                <td>{{ item.reason_name }}</td>
+                                                <td>{{ item.note }}</td>
+                                                <td>{{ item.created_date }}</td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </ng-template>
+                        </p-overlayPanel>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input
+                                    pInputText
+                                    type="number"
+                                    [(ngModel)]="details.values"
+                                />
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <label
+                                    (click)="op.toggle($event)"
+                                    *ngIf="details.values < details.posm_target"
+                                    class="text-red"
+                                    >{{ details.values }}
+                                </label>
+                                <label
+                                    (click)="op.toggle($event)"
+                                    *ngIf="
+                                        details.values >= details.posm_target
+                                    "
+                                    >{{ details.values }}</label
+                                >
+                                <span
+                                    *ngIf="details.his != null"
+                                    (click)="op.toggle($event)"
+                                >
+                                    <i class="pi pi-history ml-3"></i>
+                                </span>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td
+                        [ngStyle]="{
+                            'background-color':
+                                (details.reason_id == null ||
+                                    details.reason_id == 0) &&
+                                details.values < details.posm_target
+                                    ? 'red'
+                                    : ''
+                        }"
+                    >
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <app-control-posm-reason
+                                    (outValue)="selectPosmReason($event)"
+                                    [itemPosmReason]="details.reason_id"
+                                ></app-control-posm-reason>
+                                <!-- {{ details.reason_name }} -->
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{ details.reason_name }}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <!-- {{ details.note }} -->
+                                <input
+                                    pInputText
+                                    type="text"
+                                    [(ngModel)]="details.note"
+                                />
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{ details.note }}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td *ngIf="inValue.data_posm.is_edit_data == 1">
+                        <div
+                            class="flex align-items-center justify-content-center gap-2"
+                            [pTooltip]="details.employee_name"
+                            tooltipPosition="top"
+                        >
+                            <button
+                                *ngIf="!editing"
+                                pButton
+                                pRipple
+                                type="button"
+                                pInitEditableRow
+                                icon="pi pi-pencil"
+                                (click)="onRowEditInit(details)"
+                                class="p-button-rounded p-button-warning"
+                            ></button>
+                            <button
+                                *ngIf="editing"
+                                pButton
+                                pRipple
+                                type="button"
+                                pSaveEditableRow
+                                icon="pi pi-check"
+                                (click)="onRowEditSave(details)"
+                                class="p-button-rounded p-button-text p-button-success mr-2"
+                            ></button>
+                            <button
+                                *ngIf="editing"
+                                pButton
+                                pRipple
+                                type="button"
+                                pCancelEditableRow
+                                icon="pi pi-times"
+                                (click)="onRowEditCancel(details, ri)"
+                                class="p-button-rounded p-button-text p-button-danger"
+                            ></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="col-5">
+        <!-- [POSMconfig]="inValue.data_posm.posM_Results" -->
+        <app-control-tab-photo
+            [KPI]="'POSM'"
+            [fulldata]="inValue"
+            [POSMconfig]="inValue.data_posm.posM_Results"
+            [inValue]="inValue.data_posm.posM_Image"
+            [is_edit_data]="inValue.data_posm.is_edit_data"
+        ></app-control-tab-photo>
+    </div>
+</div>
+<div class="grid">
+    <app-qc-result-posm
+        [KPI]="'POSM'"
+        [inValue]="inValue.report_id"
+    ></app-qc-result-posm>
+</div>
+
+<div class="card flex justify-content-center">
+    <p-dialog header="Header" [(visible)]="visible" [style]="{ width: '20vw' }">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold">notification</span>
+        </ng-template>
+        <p>{{ notification }}</p>
+        <ng-template pTemplate="footer">
+            <p-button
+                icon="pi pi-check"
+                (click)="visible = false"
+                label="Ok"
+                styleClass="p-button-text"
+            ></p-button>
+        </ng-template>
+    </p-dialog>
+</div>

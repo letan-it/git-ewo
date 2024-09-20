@@ -1,0 +1,341 @@
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="md:col-6">
+                <h6>Employee</h6>
+                <app-control-employee-list
+                    [multiSelect]="false"
+                    (outValue)="selectEmployee($event)"
+                    [placeholder]="'Select Employee'"
+                    [employee_type_id]="'7'"
+                    [project_id]="project_id"
+                    (outClear)="clearSelectEmployee($event)"
+                ></app-control-employee-list>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button
+                        pButton
+                        type="button "
+                        label="Filter"
+                        [loading]="isLoading_Filter"
+                        icon="pi pi-search"
+                        (click)="loadData(1)"
+                        class="p-button-sm mr-2 mt-2"
+                    ></button>
+
+                    <button
+                        pButton
+                        pRipple
+                        label="New"
+                        icon="pi pi-plus"
+                        class="p-button-sm mr-2 mt-2"
+                        (click)="openNew('Create')"
+                    ></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Show Filter"
+                        pStyleClass=".box"
+                        enterClass="hidden"
+                        enterActiveClass="fadeinup"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye"
+                        class="p-button-success mr-2 mt-2"
+                        [ngStyle]="{
+                            display: showFilter === 1 ? 'none' : 'flex'
+                        }"
+                    ></button>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Hide Filter"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye-slash"
+                        class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box"
+                        leaveActiveClass="fadeoutup"
+                        leaveToClass="hidden"
+                        [ngStyle]="{
+                            display: showFilter === 0 ? 'none' : 'flex'
+                        }"
+                    ></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card" *ngIf="is_loadForm === 1">
+    <p-toast></p-toast>
+
+    <p-table
+        #dt2
+        [value]="data"
+        *ngIf="data && data.length > 0"
+        [rowHover]="false"
+        [paginator]="true"
+        [first]="first"
+        [rows]="20"
+        [rowsPerPageOptions]="[20, 50, 100]"
+        paginatorPosition="top"
+        (onPage)="onPageChange($event)"
+        selectionMode="single"
+        dataKey="id"
+        styleClass="p-datatable-gridlines"
+    >
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th class="text-center">Id</th>
+                <th class="text-center">Empoyee Code</th>
+                <th class="text-center" pSortableColumn="employee_name">
+                    Employee Name
+                    <p-sortIcon field="employee_name"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="year">
+                    Year <p-sortIcon field="year"></p-sortIcon>
+                </th>
+                <th class="text-center">Leave year</th>
+                <th class="text-center">Leave used</th>
+                <th class="text-center">Update time</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <tr>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.id }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.employee_code }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.employee_name }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.year }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.leave_year }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.days_off_used }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.update_time }}</span>
+                </td>
+                <td
+                    class="text-center flex flex-row align-items-center justify-content-center gap-3 h-full"
+                >
+                    <button
+                        class="p-button-rounded p-button-text"
+                        style="font-size: 2.5rem"
+                        title="Edit"
+                        (click)="openEdit(item)"
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-pencil"
+                    ></button>
+                    <button
+                        class="p-button-rounded p-button-danger p-button-text"
+                        style="font-size: 2.5rem"
+                        title="Delete"
+                        (click)="openDelete(item, $event)"
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-trash"
+                    ></button>
+                    <button
+                        pTooltip="History Details"
+                        tooltipPosition="top"
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-history"
+                        (click)="op1.toggle($event)"
+                        class="p-button-rounded p-button-text"
+                        *ngIf="item.his && item.his.length > 0"
+                    ></button>
+                    <p-confirmPopup></p-confirmPopup>
+                </td>
+            </tr>
+            <p-overlayPanel
+                #op1
+                [style]="{ width: '550px' }"
+                [showCloseIcon]="true"
+            >
+                <ng-template pTemplate="content">
+                    <p-table
+                        [value]="item.his"
+                        selectionMode="single"
+                        [paginator]="true"
+                        [rows]="3"
+                        responsiveLayout="scroll"
+                    >
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Update By</th>
+                                <th class="text-center">Lave year</th>
+                                <th class="text-center">Update Date</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-his>
+                            <tr [pSelectableRow]="rowData">
+                                <td>
+                                    <span class="font-bold" style="color: green"
+                                        >[{{ his.update_by }}]</span
+                                    >
+                                    -
+                                    {{ his.update_by_code }}
+                                    -
+                                    {{ his.update_by_name }}
+                                </td>
+
+                                <td class="text-center">
+                                    {{ his.leave_year }}
+                                </td>
+                                <td class="text-center">
+                                    {{ his.update_time }}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </ng-template>
+            </p-overlayPanel>
+        </ng-template>
+    </p-table>
+    <div
+        class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="data && data.length === 0"
+        style="float: right"
+    >
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog
+    [(visible)]="openDialog"
+    [style]="{ width: '60rem', height: 'fit-content' }"
+    header="{{ type }}"
+    [modal]="true"
+    styleClass="p-fluid"
+    [closable]="true"
+    (onHide)="clearItem()"
+>
+    <ng-template pTemplate="content">
+        <div class="col-12">
+            <div class="row">
+                <div class="md:col-6 m-0" *ngIf="!isEdit">
+                    <h6>Code</h6>
+                    <p-dropdown
+                        id="EmpSelect"
+                        [options]="listEmp"
+                        [showClear]="true"
+                        [filter]="true"
+                        optionLabel="name"
+                        filterBy="name"
+                        appendTo="body"
+                        [virtualScroll]="true"
+                        display="chip"
+                        [filter]="true"
+                        [virtualScrollItemSize]="43"
+                        [style]="{ minWidth: '100%' }"
+                        [(ngModel)]="selectedEmp"
+                        placeholder="Select Emp"
+                        (onChange)="selectedListEmp($event)"
+                    >
+                        <ng-template let-listEmp pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ listEmp.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="md:col-6" *ngIf="isEdit">
+                    <h6>Employee</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        [disabled]="isEdit"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="item.emp_name"
+                        placeholder="Employee"
+                    />
+                </div>
+                <div class="md:col-5 m-0" *ngIf="!isEdit">
+                    <h6>Year</h6>
+                    <p-calendar
+                        [(ngModel)]="year"
+                        view="year"
+                        dateFormat="yy"
+                        appendTo="body"
+                    />
+                </div>
+                <div class="md:col-6" *ngIf="isEdit">
+                    <h6>Year</h6>
+                    <input
+                        [disabled]="isEdit"
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="year"
+                        placeholder="Year"
+                    />
+                </div>
+                <div class="md:col-6 m-0">
+                    <h6>Leave year</h6>
+                    <p-inputNumber
+                        [(ngModel)]="item.leave_year"
+                        mode="decimal"
+                        inputId="withoutgrouping"
+                        [useGrouping]="false"
+                    />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-confirmDialog></p-confirmDialog>
+        <button
+            *ngIf="!isEdit"
+            pButton
+            pRipple
+            label="Reset all data input"
+            icon="pi pi-times"
+            class="p-button-text"
+            (click)="clearItem()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Save"
+            icon="pi pi-check"
+            class="p-button-text"
+            (click)="save($event)"
+        ></button>
+    </ng-template>
+</p-dialog>

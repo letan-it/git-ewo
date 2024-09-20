@@ -1,0 +1,76 @@
+<!-- <div class="align-items-center justify-content-center">
+        <p-galleria [value]="images"
+            [responsiveOptions]="responsiveOptions" *ngIf="images && images.length > 0 "
+             [numVisible]="5">
+
+            <ng-template pTemplate="item" let-item>
+                <img *ngIf="item" [src]="item.src" style="width: 100%;min-height: 230px;max-height: 800px;" />
+            </ng-template>
+
+            <ng-template pTemplate="caption" let-item>
+                <div *ngIf="item">
+                    <h4 class="mb-2 font-bold" style="color: white;">{{item.alt}}</h4>
+                    <p>{{item.image_time}}</p>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="thumbnail" let-item>
+                <div class="grid grid-nogutter justify-content-center" (click)="GetImagePhoto(item)">
+                    <img (dblclick)="openImage(item)" width="45px" [src]="item.src" />
+                </div>
+
+            </ng-template>
+        </p-galleria>
+</div> 
+  --><div class="card" *ngIf="images">
+   
+    <button type="button" (click)="openImage(images[0])"  style="" label="Show list" pButton pRippleicon="pi pi-image" 
+    style="width: 150px;margin-bottom: 20px;" class="p-button-sm mr-2"></button>
+    <!-- <div *ngIf="images" class="grid" style="max-width: 10px;">
+        <div *ngFor="let image of images; let index = index" class="col-3" key="index">
+            <img  [src]="image.src" [alt]="image.alt" style="cursor: pointer;width: 150px;" (click)="imageClick(index)" />
+            <label>{{image.alt}}</label>
+        </div>
+    </div> -->
+    <p-dataView #dv [value]="images" *ngIf="images" >
+        <ng-template let-item pTemplate="listItem">
+            <div class="col-12">
+                <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                    <!-- <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" [src]="item.src" [alt]="item.alt" (click)="imageClick(item)" /> -->
+
+                    <p-image  [src]="item.src" [alt]="item.alt"  width="250" [preview]="true"></p-image>
+                    <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                        <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                            <div class="text-2xl font-bold text-900">{{ item.alt }}</div>
+                            
+                            <div class="flex align-items-center gap-3">
+                                <span class="flex align-items-center gap-2">
+                                    <i class="pi pi-tag"></i>
+                                    <span class="font-semibold">{{ item.image_time }}</span>
+                                </span>
+                               
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-dataView>
+    <p-galleria
+        [value]="images"
+        [(visible)]="displayCustom"
+        [(activeIndex)]="activeIndex"
+        [responsiveOptions]="responsiveOptions"
+        [containerStyle]="{ 'max-width': '850px' }"
+        [numVisible]="7"
+        [circular]="true"
+        [fullScreen]="true"
+        [showItemNavigators]="true"
+        [showThumbnails]="true"
+        [showIndicatorsOnItem]="true"
+    >
+        <ng-template pTemplate="item" let-item>
+            <img [src]="item.src" style="width: 100%; display: block;" />
+        </ng-template>
+    </p-galleria>
+</div>

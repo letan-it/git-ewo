@@ -1,0 +1,188 @@
+<div class="grid animation-duration-500 box" >
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="col-2">
+                    <h6>Month </h6>
+                    <p-dropdown [options]="ListMonth" [showClear]="true" [filter]="true" filterBy="name"
+                        [style]="{'minWidth':'100%'}" [(ngModel)]="selectMonth" placeholder="Select a Month"
+                         optionLabel="name"></p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid">
+    <div class="col-12">
+
+
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+
+
+
+
+                <button pButton type="button" label="Filter" [loading]="isLoading_Filter" (click)="filter()"
+                    icon="pi pi-search" class="mr-2 ml-2"></button>
+
+
+
+                <button type="button" (click)="export()" label="Raw data" pButton pRipple icon="pi pi-file-excel"
+                    style="float: right;"></button>
+
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+
+                <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box"
+                enterClass="hidden" enterActiveClass="fadeinup" (click)="ShowHideFiter()"
+                tooltipPosition="top"  icon="pi pi-eye" class=" p-button-success mr-2 mt-2" 
+                [ngStyle]="{'display': showFiter == 1?'none':'flex'}"
+                ></button>
+
+            <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFiter()"
+                tooltipPosition="top" icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2"
+                pStyleClass=".box" leaveActiveClass="fadeoutup" leaveToClass="hidden" 
+                [ngStyle]="{'display': showFiter == 0?'none':'flex'}"
+                ></button> 
+
+            </div>
+
+            <div class="p-toolbar-group-right">
+
+                <div class="field-checkbox">
+                    <!-- <p-checkbox name="group_name" value="1" label="is Data Test" [(ngModel)]="is_test"></p-checkbox> -->
+                </div>
+            </div>
+        </p-toolbar>
+    </div>
+
+</div>
+<hr>
+<p-table [value]="dataArea" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th rowspan="2" style="text-align: center;background-color: dodgerblue;font-weight: bold;">Regionals
+            </th>
+            <th colspan="3" style="text-align: center;background-color: dodgerblue;">ASO</th>
+            <th colspan="2" style="text-align: center;background-color: cornflowerblue;">QC</th>
+            <th colspan="2" style="text-align: center;background-color: green;">PASS</th>
+            <th colspan="2" style="text-align: center;background-color: indianred;">REJECT</th>
+            <th colspan="2" style="text-align: center;">PROCESS</th>
+        </tr>
+        <tr>
+
+            <th class="text-center">#Plan</th>
+            <th class="text-center">#Finish</th>
+            <th class="text-center">%</th>
+            <!-- QC -->
+            <th class="text-center">#ASO</th>
+            <th class="text-center">%</th>
+            <!-- Đạt -->
+            <th class="text-center">#ASO</th>
+            <th class="text-center">%</th>
+            <!-- Không Đạt -->
+            <th class="text-center">#ASO</th>
+            <th class="text-center">%</th>
+            <!-- Đang xử lý -->
+            <th class="text-center">#ASO</th>
+            <th class="text-center">%</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+        <tr>
+            <td class="text-center">{{ item.area_name }}</td>
+            <td class="text-center">{{ item.ASO_plan }}</td>
+            <td class="text-center">{{ item.ASO_finish }}</td>
+            <td class="text-center">{{ item.ASO_AC }}</td>
+            <!-- QC -->
+            <td class="text-center">{{ item.QC }}</td>
+            <td class="text-center">{{ item.ASO_QC }}</td>
+            <!-- Đạt -->
+            <td class="text-center">{{ item.PASS }}</td>
+            <td class="text-center">{{ item.ASO_QC_PASS }}</td>
+            <!-- Không Đạt -->
+            <td class="text-center">{{ item.REJECT }}</td>
+            <td class="text-center">{{ item.ASO_QC_REJECT }}</td>
+            <!-- Đang xử lý -->
+            <td class="text-center">{{ item.Process }}</td>
+            <td class="text-center">{{ item.ASO_QC_PROCESS }}</td>
+
+        </tr>
+    </ng-template>
+</p-table>
+<hr>
+<p-table #dt2 [value]="dataShop" dataKey="RowNum" styleClass="p-datatable-gridlines" [rows]="10"
+    [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [globalFilterFields]="['area_name', 'customer_shop_code', 'customer_shop_name','shop_code','shop_name','report_date','report_status','Total','Pass','KPI_result','Func']"
+    [tableStyle]="{ 'min-width': '75rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Region </th>
+            <th>Dis Code</th>
+            <th>Dis Name</th>
+            <th>Shop Code</th>
+            <th>Shop Name</th>
+            <th style="width: 150px;">Report Date</th>
+            <th>Shop Status</th>
+            <th>Total KPI</th>
+            <th>KPI Pass</th>
+            <th>KPI Result</th>
+            <th>Status QC</th>
+
+        </tr>
+        <tr>
+            <th>
+                <p-columnFilter type="text" [matchMode]="'contains'" field="area_name"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" [matchMode]="'contains'" field="customer_shop_code"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" [matchMode]="'contains'" field="customer_shop_name"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" [matchMode]="'contains'" field="shop_code"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" [matchMode]="'contains'" field="shop_name"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="date"  display="menu" field="report_date"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" [matchMode]="'contains'" field="report_status"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="numeric"   field="Total"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="numeric"   field="Pass"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" [matchMode]="'contains'"  field="KPI_result"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text"  [matchMode]="'contains'" field="Func"></p-columnFilter>
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+        <tr>
+            <td> {{ item.area_name }}</td>
+            <td> {{ item.customer_shop_code }}</td>
+            <td> {{ item.customer_shop_name }}</td>
+            <td> {{ item.shop_code }}</td>
+            <td> {{ item.shop_name }}</td>
+            <td> {{ item.report_date }}</td>
+            <td> {{ item.report_status }}</td>
+            <td> {{ item.Total }}</td>
+            <td> {{ item.Pass }}</td>
+            <td> {{ item.KPI_result }}</td>
+            <td> {{ item.Func }}</td>
+
+
+        </tr>
+    </ng-template>
+
+</p-table>

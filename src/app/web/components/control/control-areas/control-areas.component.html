@@ -1,0 +1,6 @@
+<ng-container *ngIf="listAreas && isLoadForm==0">
+    <p-dropdown [options]="listAreas" [showClear]="true" (onChange)="returnValue(selectedAreas)" [filter]="true"
+        filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedAreas" [placeholder]="nameAreas"
+        optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

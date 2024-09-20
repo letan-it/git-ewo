@@ -1,0 +1,157 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-4">
+                    <h6>List Shift Code</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="shift_code"
+                        placeholder="List Shift Code" />
+                </div>
+                <div class="md:col-4">
+                    <h6>Note</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="note"
+                        placeholder="Note" />
+                </div>
+                <div class="md:col-4">
+                    <h6>Type</h6>
+                    <p-dropdown class="p-fluid" [options]="type" [(ngModel)]="selectedType" optionLabel="name"
+                        [showClear]="true" appendTo="body" [filter]="true" filterBy="name" [showClear]="true"
+                        placeholder="Select a Type"></p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData()" class="p-button-sm mr-2 mt-2"></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFiter()" tooltipPosition="top" icon="pi pi-eye"
+                        class="p-button-success mr-2 mt-2" [ngStyle]="{
+                            display: showFiter == 1 ? 'none' : 'flex'
+                        }"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFiter()" tooltipPosition="top"
+                        icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2" pStyleClass=".box"
+                        leaveActiveClass="fadeoutup" leaveToClass="hidden" [ngStyle]="{
+                            display: showFiter == 0 ? 'none' : 'flex'
+                        }"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <p-toast></p-toast>
+
+    <p-table #dt [value]="shifts" [rows]="10" [paginator]="true" [globalFilterFields]="[
+            'shift_code',
+            'note',
+            'employee_code',
+            'employee_name',
+            'type'
+        ]" [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedShifts" [rowHover]="true" dataKey="shift_id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <button class="m-0" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="openNew()"></button>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center">Row Number</th>
+                <th class="text-center">Shift Code</th>
+                <th class="text-center">Note</th>
+                <th class="text-center">Employee Code</th>
+                <th class="text-center">Employee Name</th>
+                <th class="text-center">Type</th>
+                <th class="text-center">From time</th>
+                <th class="text-center">To time</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-shift>
+            <tr>
+                <td class="text-center">{{ shift.rowNumber }}</td>
+                <td class="text-center">{{ shift.shift_code }}</td>
+                <td class="text-center">{{ shift.note }}</td>
+                <td class="text-center">{{ shift.employee_code }}</td>
+                <td class="text-center">{{ shift.employee_name }}</td>
+                <td class="text-center">{{ shift.type }}</td>
+                <td class="text-center">{{ shift.from_time }}</td>
+                <td class="text-center">{{ shift.to_time }}</td>
+                <td class="text-center">
+                    <button class="p-button-rounded p-button-text" pButton pRipple type="button" icon="pi pi-pencil"
+                        (click)="editShift(shift)"></button>
+                    <button class="p-button-rounded p-button-danger p-button-text" pButton pRipple type="button" icon="pi pi-trash"
+                        (click)="deleteShift(shift)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                In total there are {{ shifts ? shifts.length : 0 }} shifts.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+<p-dialog [(visible)]="shiftDialog" [style]="{ width: '450px' }" header="Shift Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <!--  , shift_id, shift_code, note, type, action -->
+        <div class="field">
+            <label for="shift_code">Shift Code<span class="font-bold" style="color: red">
+                    *</span></label>
+            <input type="text" pInputText id="shift_code" [(ngModel)]="shift.shift_code"
+                [disabled]="action == 'create' ? false : true" />
+        </div>
+        <div class="field">
+            <label for="note">Note</label>
+            <input type="text" pInputText id="note" [(ngModel)]="shift.note" />
+        </div>
+
+        <div class="field">
+            <label for="type">Type</label>
+            <!-- {{shift.type|json}} -->
+            <p-dropdown class="p-fluid" [options]="type" [(ngModel)]="shift._type" optionLabel="name" [showClear]="true"
+                appendTo="body" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Type">
+            </p-dropdown>
+        </div>
+        <div class="field">
+            <div class="row">
+                <div class="flex-auto col-5">
+                    <label for="calendar-timeonly" class="font-bold block mb-2">
+                        From time
+                    </label>
+                    <p-calendar appendTo="body" inputId="calendar-timeonly" [(ngModel)]="from_time" [timeOnly]="true" />
+                </div>
+                <div class="flex-auto col-5">
+                    <label for="calendar-timeonly" class="font-bold block mb-2">
+                        To time
+                    </label>
+                    <p-calendar appendTo="body" inputId="calendar-timeonly" [(ngModel)]="to_time" [timeOnly]="true" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveShift()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

@@ -1,0 +1,33 @@
+ 
+ 
+
+ 
+         
+         
+         
+         <ng-container *ngIf="listPosm && multiSelect == false">
+            <p-dropdown [options]="listPosm" [showClear]="true" (onChange)="returnValue(selectedPosm)" [filter]="true"
+                filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedPosm" placeholder="Select a POSM"
+                 optionLabel="name" appendTo="body"></p-dropdown>
+        </ng-container>
+     
+
+        <!-- <div class="card flex justify-content-center" *ngIf="multiSelect == true"> -->
+            <p-multiSelect *ngIf="multiSelect == true" [options]="listPosm" [(ngModel)]="selectedPosm" placeholder="Select the POSM list" optionLabel="name" 
+            [showClear]="true" (onChange)="returnValue(selectedPosm)" [filter]="true" filterBy="name"  [style]="{'width':'370px'}"  appendTo="body"
+            inputId="float-label" >
+                <ng-template let-value pTemplate="selectedItems">
+                    <div class="inline-flex align-items-center gap-2 px-1" *ngFor="let option of value">
+                        <img [src]="option.posm_image" class="flag flag-AU" style="width: 18px" />   
+                        <div>{{ option.name }},</div>
+                    </div>
+                    <div *ngIf="!value || value.length === 0">Select the POSM list</div>
+                </ng-template>
+                <ng-template let-posm pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <img [src]="posm.posm_image" class="flag flag-AU" style="width: 18px" /> 
+                        <div>{{ posm.name }}</div>
+                    </div>
+                </ng-template>
+            </p-multiSelect>
+        <!-- </div> -->

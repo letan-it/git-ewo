@@ -1,0 +1,478 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+
+                <!-- <div class="col-3" *ngIf="showAddremoveTarget == 0" >
+                    <h6>Project</h6>
+                    <app-control-employee-project (outValue)="selectProject($event)"  
+                    ></app-control-employee-project>
+                </div> -->
+                <div class="md:col-3">
+                    <h6>ShopType</h6>
+                    <app-control-shop-type (outValue)="selectShopType($event)"></app-control-shop-type>
+                </div>
+                <div class="md:col-3">
+                    <h6>Channel</h6>
+                    <app-control-channel (outValue)="selectedChannel($event)"></app-control-channel>
+                </div>
+                <div class="md:col-3">
+                    <h6>Router</h6>
+                    <app-control-shop-router (outValue)="selectShopRouter($event)"></app-control-shop-router>
+                </div>
+                <div class="md:col-3">
+                    <h6>Manager </h6>
+                    <app-control-employee-list (outValue)="selectASM($event)" [placeholder]="'Select a Manager '"
+                        [project_id]="project_id"></app-control-employee-list>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="md:col-2">
+                    <h6>Province</h6>
+                    <app-control-province (outValue)="selectProvince($event)"></app-control-province>
+                </div>
+                <div class="md:col-2">
+                    <h6>District</h6>
+                    <app-control-district [inValue]="item_Province" [inValueProvince]="item_Province"
+                        (outValue)="selectDistrict($event)"></app-control-district>
+                </div>
+                <div class="md:col-2">
+                    <h6>Ward</h6>
+                    <app-control-ward [inValue]="item_District" [inValueProvince]="item_Province"
+                        [inValueDistrict]="item_District" (outValue)="selectWard($event)"></app-control-ward>
+                </div>
+                <div class="md:col-3">
+                    <h6>Status</h6>
+                    <p-dropdown [options]="ListStatus" [showClear]="true" [filter]="true" filterBy="name"
+                        [style]="{ minWidth: '100%' }" [(ngModel)]="selectStatus" placeholder="Select a Status"
+                        optionLabel="name"></p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>Supplier</h6>
+                    <app-control-shop-suppliers (outValue)="selectSupplier($event)"> </app-control-shop-suppliers>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="md:col-3" *ngIf="listAreas.length > 0">
+                    <h6>Areas</h6>
+                    <app-control-shop-areas (outValue)="selectAreas($event)"> </app-control-shop-areas>
+                </div>
+
+                <div [class]="listAreas.length > 0 ? 'md:col-3' : 'md:col-4'">
+                    <h6>Shop Code</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="shop_code"
+                        placeholder="List Shop Code" />
+                </div>
+                <div [class]="listAreas.length > 0 ? 'md:col-3' : 'md:col-4'">
+                    <h6>Customer Shop Code</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="customer_shop_code"
+                        placeholder="List Customer Code" />
+                </div>
+
+                <div [class]="listAreas.length > 0 ? 'md:col-3' : 'md:col-4'">
+                    <h6>Project Shop Code</h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="project_shop_code"
+                        placeholder="List Project Shop Code" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+
+                <button pButton type="button" label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                    (click)="filter(1)" class="p-button-sm mr-2 mt-2"></button>
+
+                <button type="button" label="Create" pButton pRipple icon="pi pi-plus" style="float: right"
+                    *ngIf="(userProfile && userProfile.employee_type_id == 1 ||  userProfile.employee_type_id == 2|| userProfile.employee_type_id == 3)"
+                    (click)="create()" class="p-button-sm mr-2 mt-2"></button>
+
+                <p-splitButton label="Master" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2"
+                    [model]="items"></p-splitButton>
+
+                <button type="button" *ngIf="totalRecords > 0 && (userProfile && userProfile.employee_type_id == 1 )"
+                    label="Project" pButton pRipple icon="pi pi-file-edit" style="float: right"
+                    (click)="viewAddRemoveProject()" class="p-button-sm mr-2 mt-2"></button>
+
+                <button type="button" label="Target"
+                    *ngIf="totalRecords > 0 && (userProfile && userProfile.employee_type_id == 1 ||  userProfile.employee_type_id == 2|| userProfile.employee_type_id == 3)"
+                    pButton pRipple icon="pi pi-file-edit" style="float: right" (click)="viewAddremoveTarget()"
+                    class="p-button-sm mr-2 mt-2"></button>
+
+                <p-splitButton label="Raw data" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2"
+                    [model]="itemsRawData"></p-splitButton>
+
+                <!-- <p-splitButton  *ngIf="totalRecords > 0"  label="Raw data"  icon="pi pi-file-excel" 
+                    styleClass="p-button-sm mr-2"  [model]="itemsData"  ></p-splitButton> -->
+
+                <!-- <button type="button"    (click)="ShowHideTemplate()"  label="Import Excel"
+                    pButton  pRipple  class="p-button-sm mr-2"   icon="pi pi-upload" style="float: right" ></button> -->
+
+                <p-splitButton label="Import Data" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2" *ngIf="userProfile && userProfile.employee_type_id == 1 
+                || userProfile.employee_type_id == 2  || userProfile.employee_type_id == 3"
+                    [model]="itemsImport"></p-splitButton>
+
+                <i class="pi pi-bars p-toolbar-separator mt-2"></i>
+
+
+                <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" (click)="ShowHideFiter()" tooltipPosition="top" icon="pi pi-eye"
+                    class=" p-button-success mr-2 mt-2" [ngStyle]="{'display': showFiter == 1?'none':'flex'}"></button>
+
+                <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFiter()" tooltipPosition="top"
+                    icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2" pStyleClass=".box"
+                    leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                    [ngStyle]="{'display': showFiter == 0?'none':'flex'}"></button>
+
+            </div>
+
+            <div class="p-toolbar-group-right">
+                <!-- <div class="field-checkbox">
+                    <p-checkbox   name="group_name"  value="1"  label="is Data Test"   [(ngModel)]="is_test"  ></p-checkbox>
+                </div> -->
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+<div class="grid" *ngIf="showAddremoveTarget == 1">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap ">
+
+                <!-- <h6>Month</h6>  -->
+                <p-dropdown [options]="ListMonth" [showClear]="true" [filter]="true" filterBy="name"
+                    [style]="{'minWidth':'100%'}" [(ngModel)]="selectMonth"
+                    [placeholder]="selectMonth ? selectMonth.name : 'Select a Month'" optionLabel="name"></p-dropdown>
+
+
+
+            </div>
+            <div class="p-toolbar-group-right">
+                <!-- <button pButton type="button" label="Add" 
+                    icon="pi pi-angle-right" (click)="addTarget()" 
+                    class="p-button-sm p-button-success m-2"></button> -->
+
+                <p-splitButton label="Action" icon="pi pi-angle-right" styleClass="p-button-sm p-button-success mr-2"
+                    [model]="itemsDataTarget"></p-splitButton>
+
+                <p-confirmPopup></p-confirmPopup>
+                <button pButton type="button" label="Remove" icon="pi pi-angle-left" (click)="removeTarget($event)"
+                    class="p-button-sm p-button-danger m-2"></button>
+
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+<hr />
+
+<div class="card" *ngIf="showTemplate == 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input class="form-control" type="file" (change)="onChange($event)" #myInputFile />
+            </div>
+
+            <button pButton pRipple (click)="exportTemplate()" *ngIf="typeImport == 1" label="Get Template Shop"
+                icon="pi pi-file-excel" class="p-button-sm p-button-info mr-2"></button>
+
+            <a [href]="template_areas">
+                <button *ngIf="typeImport == 2" pButton pRipple label="Get Template Areas" icon="pi pi-file-export"
+                    class="p-button-sm p-button-info mr-2"></button>
+            </a>
+            <a [href]="template_manager">
+                <button *ngIf="typeImport == 3" pButton pRipple label="Get Template Manager" icon="pi pi-file-export"
+                    class="p-button-sm p-button-info mr-2"></button>
+            </a>
+
+            <a [href]="template_supplier">
+                <button *ngIf="typeImport == 4" pButton pRipple label="Get Template Supplier" icon="pi pi-file-export"
+                    class="p-button-sm p-button-info mr-2"></button>
+            </a>
+
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" *ngIf="typeImport == 1"
+                label="Upload File Shops" icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" *ngIf="typeImport == 2"
+                label="Upload File Areas" icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" *ngIf="typeImport == 3"
+                label="Upload File Manager" icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" *ngIf="typeImport == 4"
+                label="Upload File Supplier" icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+
+        </div>
+    </p-toolbar>
+
+    <hr>
+
+    <div class="card" *ngIf="dataError">
+        <p-table [value]="dataError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Shop Code</th>
+                    <th>Areas</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.shop_code }}</td>
+                    <td>{{ error.areas }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="card" *ngIf="dataSupplierError">
+        <p-table [value]="dataSupplierError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Shop Code</th>
+                    <th>Supplier Code</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.shop_code }}</td>
+                    <td>{{ error.supplier_code }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="card" *ngIf="dataManagerError">
+        <p-table [value]="dataManagerError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Shop Code</th>
+                    <th>Manager Code</th>
+                    <th>FromDate</th>
+                    <th>ToDate</th>
+                    <th>IsActive</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.shop_code }}</td>
+                    <td>{{ error.manager_code }}</td>
+                    <td>{{ error.FromDate }}</td>
+                    <td>{{ error.ToDate }}</td>
+                    <td>{{ error.IsActive }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="card" *ngIf="dataShopError">
+        <p-table [value]="dataShopError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Shop Code</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.shop_code }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+    <hr>
+    <div class="card" *ngIf="dataMessError">
+        <div class=" col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">
+                    Error Name :
+                </div>
+                <div class="col-11">
+                    {{dataMessError}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="grid" *ngIf="showAddRemoveProject == 1">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap ">
+                <app-control-employee-project [itemEmployeeProject]="item_Project"
+                    (outValue)="selectProject($event)"></app-control-employee-project>
+
+            </div>
+            <div class="p-toolbar-group-right">
+                <!-- <button pButton type="button" label="Add" icon="pi pi-angle-right" (click)="addProject()" class="p-button-sm p-button-success m-2 mt-2"></button> -->
+
+                <p-splitButton label="Action" icon="pi pi-angle-right" styleClass="p-button-sm p-button-success mr-2"
+                    [model]="itemsDataProject"></p-splitButton>
+
+                <p-confirmPopup></p-confirmPopup>
+                <button pButton type="button" label="Remove" icon="pi pi-angle-left" (click)="removeProject($event)"
+                    class="p-button-sm p-button-danger m-2 mt-2"></button>
+
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+<hr />
+<div class="card" *ngIf="is_loadForm == 1">
+    <div class="border-round border-1 surface-border p-4">
+        <div class="flex mb-3">
+            <div>
+                <p-skeleton width="10rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton width="5rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton height=".5rem"></p-skeleton>
+            </div>
+        </div>
+        <p-skeleton width="100%" height="500px"></p-skeleton>
+    </div>
+</div>
+<div class="card" *ngIf="is_loadForm == 0">
+
+    <p-table selectionMode="single" dataKey="id" *ngIf="ListShop && ListShop.length > 0" [scrollable]="true"
+        [value]="ListShop" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }"
+        [(selection)]="selectedShop">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center">
+                    <p-tableHeaderCheckbox (click)="onChoose()"></p-tableHeaderCheckbox>
+                </th>
+                <th class="text-center" style="width: 5rem"></th>
+                <th class="text-center">RowNum</th>
+                <th class="text-center">Shop Code</th>
+                <th class="text-center">Shop Name</th>
+                <th class="text-center">Project Shop Code</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">Province</th>
+                <th class="text-center">ShopType</th>
+                <th class="text-center">Channel</th>
+                <th class="text-center">Router</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Verify</th>
+                <th class="text-center" style="width: 15px">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-shop let-expanded="expanded">
+            <tr>
+                <td>
+                    <p-tableCheckbox (click)="onChoose()" [value]="shop"></p-tableCheckbox>
+                </td>
+
+                <td>
+                    <button type="button" (click)="onDetail(shop)" pButton pRipple [pRowToggler]="shop"
+                        class="p-button-text p-button-rounded p-button-plain" [icon]="
+                            expanded
+                                ? 'pi pi-chevron-down'
+                                : 'pi pi-chevron-right'
+                        "></button>
+                </td>
+                <td>{{ shop.RowNum }}</td>
+                <td>
+                    {{ shop.shop_code }}
+                </td>
+                <td>{{ shop.shop_name }}</td>
+                <td>{{ shop.shopinfoProject[0].shop_code }}</td>
+                <td>{{ shop.shop_address }}</td>
+                <td [pTooltip]="shop.district_name + ' - ' + shop.ward_name" tooltipPosition="top">
+                    {{ shop.province_name }}
+                </td>
+                <td>
+                    <label *ngIf="shop.shop_type_name != null && shop.shop_type_code != null ">
+                        {{ shop.shop_type_name }} - {{ shop.shop_type_code }}
+                    </label>
+                </td>
+                <td>{{ shop.channel_name }}</td>
+                <td>
+                    <label *ngIf="shop.router_code != null && shop.router_name != null && shop.router_type != null  ">
+                        {{ shop.router_code }} - {{ shop.router_name }} - {{ shop.router_type }}
+                    </label>
+                </td>
+                <!-- <td>{{ shop.manager_name }}</td> -->
+                <td class="text-center"> 
+                    <app-control-status-check [status]="shop.status"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="shop.verify"></app-control-status-check>
+                </td>
+                <td>
+                    <p-button pTooltip="Update info shop" (click)="update(shop)" tooltipPosition="left"
+                        icon="pi pi-file-edit" styleClass="p-button-rounded p-button-text p-button-raised"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-shop>
+            <tr>
+                <td colspan="100%">
+                    <div class="p-3">
+                        <app-store-detail (newEventInfo)="displayShopInfo($event)" [inValue]="shop"
+                            [action]="'view'"></app-store-detail>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="summary">
+
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="ListShop && ListShop.length == 0">
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog header="Notification" [(visible)]="display" [modal]="true" showEffect="fade " [style]="{ width: '30vw' }"
+    [breakpoints]="{ '960px': '75vw' }">
+    <p class="line-height-3 m-1">
+        {{ message }}
+    </p>
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+        <button pButton icon="pi pi-check " (click)="OK()" label="Ok " class="p-button-outlined float-right"
+            style="margin-right: 0%"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Shop Infor" [(visible)]="ShopEdit" [modal]="true" [style]="{ width: '50vw' }" [maximizable]="true">
+    <app-store-detail (newItemEvent)="addItem($event)" [inValue]="shopDetail" [action]="'edit'"></app-store-detail>
+</p-dialog>
+
+<p-dialog header="Create Shop" [(visible)]="ShopCreate" [modal]="true" [style]="{ width: '50vw' }" [maximizable]="true">
+    <app-store-detail (newEventCreate)="displayShopForm($event)" [action]="'create'"></app-store-detail>
+</p-dialog>

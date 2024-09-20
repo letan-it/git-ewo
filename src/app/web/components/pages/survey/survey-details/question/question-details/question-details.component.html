@@ -1,0 +1,350 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div *ngIf="action =='create'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+ 
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+
+                    <div class="card mt-3">  
+  
+                        <div class="field p-fluid">
+                            <h6>Question Name<span style="color: red; font-weight: bold;"> *</span></h6>  
+                            <p> 
+                                <!-- {{question_name}} -->
+                                <input pInputText id="question_name" [(ngModel)]="question_name" type="text" />
+
+                        
+                                <textarea id="description" placeholder="support question multi string join '|'" pInputTextarea [(ngModel)]="value" (change)="supportCreateMulQuestion()" required rows="3"
+                                cols="20"></textarea>
+                              
+                            </p> 
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6> Question Group </h6>  
+                            <p>
+                                <input pInputText id="question_group" [(ngModel)]="question_group" type="text" />
+                            </p> 
+                        </div>
+                         
+                        <div class="field p-fluid">
+                            <h6> Group </h6>  
+                            <p>
+                                <input pInputText placeholder="SYSTEM CODE IT" id="Group" [(ngModel)]="Group" type="text" />
+                            </p> 
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>Description</h6>  
+                            <p>
+                                <input pInputText id="desc" [(ngModel)]="desc" type="text" />
+                            </p> 
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 >Question Master<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>   
+                                <app-control-question-master [itemQuestion_type]="question_type" [itemTypeOf]="typeOf" [itemSupport_data]="support_data"
+                                (outValue)="selectQuestionMaster($event)"></app-control-question-master>
+                            </p>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="grid"> 
+                                    <div class="col-3 field p-fluid">
+                                        <h6>Min Value</h6>
+                                        <p>
+                                            <input pInputText id="min_value" [(ngModel)]="min_value" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 field p-fluid">
+                                        <h6>Max Value</h6>
+                                        <p>
+                                            <input pInputText id="max_value" [(ngModel)]="max_value" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 field p-fluid">
+                                        <h6>Min Image</h6>
+                                        <p>
+                                            <input pInputText id="min_image" [(ngModel)]="min_image" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 field p-fluid">
+                                        <h6>Max Image</h6>
+                                        <p>
+                                            <input pInputText id="max_image" [(ngModel)]="max_image" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                            </div>
+                        </div>
+    
+                        <div class="col-12">
+                            <div class="grid"> 
+
+                                <div class="col-4 field p-fluid">
+                                    <h6>Order<span style="color: red; font-weight: bold;"> *</span></h6>
+                                    <p>
+                                        <input pInputText id="order" [(ngModel)]="order" [disabled]="false" type="number" [min]="1"/>
+                                    </p>
+                                </div>
+
+                                <div class="col-2 field p-fluid">
+                                    <h6>Is Comment</h6>
+                                    <p>
+                                        <p-checkbox  name="_is_comment" [binary]="true"  [(ngModel)]="_is_comment" >
+                                        </p-checkbox>
+                                        <!-- <input pInputText id="is_comment" [(ngModel)]="is_comment" [disabled]="false" type="number" [min]="0"/> -->
+                                    </p>
+                                </div> 
+                               
+                                <div class="col-2 field p-fluid">
+                                    <h6>Is Allow</h6>
+                                    <p>
+                                        <p-checkbox  name="_is_allow" [binary]="true"  [(ngModel)]="_is_allow" >
+                                        </p-checkbox>
+                                        <!-- <input pInputText id="is_allow" [(ngModel)]="is_allow" [disabled]="false" type="number" [min]="0"/> -->
+                                    </p>
+                                </div>
+  
+                                <!-- {{inValue|json}} -->
+                                <div class="col-2 field p-fluid" *ngIf="inValue.survey_id > 1 && hideNextQuestion == true">
+                                    <h6 htmlFor="_next_question">Next Question</h6>
+                                    
+                                    <p >
+                                        <!-- [disabled]="inValue == 1 ? true : false"  -->
+                                        <p-checkbox  name="_next_question" [binary]="true" [(ngModel)]="_next_question" >
+                                        </p-checkbox>
+                                        <!-- <input pInputText id="next_question" [(ngModel)]="next_question" [disabled]="false" type="number" [min]="0"/> -->
+                                    </p>
+                                </div>  
+ 
+
+                            </div>
+                        </div> 
+                        <div class="col-12">
+                            <div  class="animation-duration-500 box">
+                                <angular-editor class="overflow-y-scroll" placeholder='Enter text here...'
+                                    [(ngModel)]="html_desc" [config]='editorConfig'></angular-editor>
+                            </div>
+                        </div>
+ 
+ 
+                        <div class="field p-fluid">
+                            <p-button label="Save" (click)="createQuestion()" styleClass="p-button-success p-button-sm"></p-button>
+                            <!-- <p-messages *ngIf="clearMessCreate == false && clearMessUpdate == true" [value]="msgsInfoCreate"></p-messages> -->
+                        </div>
+
+                    </div>
+                </div> 
+                
+            </div>
+
+        </div>
+    </div>
+</div> 
+
+<div *ngIf="action =='update'"> 
+    <div class="container" *ngIf="inValue">
+        <div class="main-body">
+            <!-- /Breadcrumb --> 
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+
+                    <div class="card mt-3">  
+  
+                        <div class="field p-fluid">
+                            <h6 htmlFor="question_name">Question Name<span style="color: red; font-weight: bold;"> *</span></h6>  
+                            <p> 
+                                <!-- {{question_name}} -->
+                                <input pInputText id="question_name" [(ngModel)]="inValue.question_name" type="text" />
+                            </p> 
+                        </div>
+
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="question_group"> Question Group </h6>  
+                            <p>
+                                <input pInputText id="question_group" [(ngModel)]="inValue.question_group" type="text" />
+                            </p> 
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="Group"> Group </h6>  
+                            <p>
+                                <input pInputText placeholder="SYSTEM CODE IT" id="Group" [(ngModel)]="inValue.Group" type="text" />
+                            </p> 
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="desc">Description </h6>  
+                            <p>
+                                <input pInputText id="desc" [(ngModel)]="inValue.desc" type="text" />
+                            </p> 
+                        </div>
+
+
+                        <div class="field p-fluid"  >
+                            <h6 htmlFor="question_master">Question Master<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p> 
+                                 
+                                <app-control-question-master (outValue)="selectQuestionMaster($event)"
+                                  [itemQuestion_type]="inValue._question_master[0].question_type" 
+                                  [itemSupport_data]="inValue._question_master[0].support_data"
+                                  [itemTypeOf]="inValue._question_master[0].typeOf"></app-control-question-master> 
+                            </p>
+                        </div>
+
+
+                        <div class="col-12">
+                            <div class="grid"> 
+                                    <div class="col-3 field p-fluid">
+                                        <h6 htmlFor="min_value">Min Value</h6>
+                                        <p>
+                                            <input pInputText id="min_value" [(ngModel)]="inValue.min_value" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 field p-fluid">
+                                        <h6 htmlFor="max_value">Max Value</h6>
+                                        <p>
+                                            <input pInputText id="max_value" [(ngModel)]="inValue.max_value" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 field p-fluid">
+                                        <h6 htmlFor="min_image">Min Image</h6>
+                                        <p>
+                                            <input pInputText id="min_image" [(ngModel)]="inValue.min_image" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 field p-fluid">
+                                        <h6 htmlFor="max_image">Max Image</h6>
+                                        <p>
+                                            <input pInputText id="max_image" [(ngModel)]="inValue.max_image" [disabled]="false" type="number" [min]="0"/>
+                                        </p>
+                                    </div>
+                            </div>
+                        </div>
+    
+                        <div class="col-12">
+                            <div class="grid"> 
+
+                                <div class="col-4 field p-fluid">
+                                    <h6 htmlFor="order">Order<span style="color: red; font-weight: bold;"> *</span></h6>
+                                    <p>
+                                        <input pInputText id="order" [(ngModel)]="inValue.order" [disabled]="false" type="number" [min]="1"/>
+                                    </p>
+                                </div>
+
+                                <div class="col-2 field p-fluid">
+                                    <h6 htmlFor="_is_comment">Is Comment</h6>
+                                    <p>
+                                        <p-checkbox  name="_is_comment" [binary]="true"  [(ngModel)]="inValue._is_comment" >
+                                        </p-checkbox> 
+                                    </p>
+                                </div> 
+                               
+                                <div class="col-2 field p-fluid">
+                                    <h6 htmlFor="_is_allow">Is Allow</h6>
+                                    <p>
+                                        <p-checkbox  name="_is_allow" [binary]="true"  [(ngModel)]="inValue._is_allow" >
+                                        </p-checkbox> 
+                                    </p>
+                                </div>
+
+                                <!-- {{inValue|json}} -->
+                                <!-- "_question_master": [ { "name": "Câu kết thúc", "question_type": "final" -->
+                                
+                                <div class="col-2 field p-fluid" *ngIf="inValue.survey_id > 1 && inValue._question_master[0].question_type != 'final'">
+                                    <h6 htmlFor="_next_question">Next Question</h6>
+                                    
+                                    <p > 
+                                        <p-checkbox  name="_next_question" [binary]="true" [(ngModel)]="inValue._next_question" >
+                                        </p-checkbox> 
+                                    </p>
+                                </div>  
+
+                                <div class="col-2 field p-fluid">
+                                    <h6 htmlFor="_status">Status</h6>
+                                    <p> 
+                                        <p-checkbox  name="group1" [binary]="true"  [(ngModel)]="inValue._status" >
+                                        </p-checkbox>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div> 
+                        <div class="col-12">
+                            <div  class="animation-duration-500 box">
+                                <angular-editor class="overflow-y-scroll" placeholder='Enter text here...'
+                                    [(ngModel)]="inValue.html_desc" [config]='editorConfig'></angular-editor>
+                            </div>
+                        </div>
+ 
+                        <div class="field p-fluid">
+                            <p-button label="Update" (click)="updateQuestion()" styleClass="p-button-success p-button-sm"></p-button>
+                            <!-- <p-messages *ngIf="clearMessCreate == true && clearMessUpdate == false" [value]="msgsInfo"></p-messages> -->
+                        </div>
+
+                    </div>
+                </div> 
+                
+            </div>
+
+        </div>
+    </div>
+</div> 
+
+<div *ngIf="action =='clone'"> 
+    <!-- {{inValue|json}} -->
+    <div class="container" *ngIf="inValue"  >
+        <div class="main-body">
+            <!-- /Breadcrumb --> 
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+
+                    <div class="card mt-3">  
+   
+                        <div class="field p-fluid"> 
+                             
+                            <h6 htmlFor="question_name_new">Question Name<span style="color: red; font-weight: bold;"> *</span></h6>  
+                            <p>  
+                                <input pInputText id="question_name_new" [(ngModel)]="inValue.question_name" type="text" />
+
+                                <textarea id="description" placeholder="support question multi string join '|'" pInputTextarea [(ngModel)]="valueClone" (change)="supportCreateMulClone()" required rows="3"
+                                cols="20"></textarea>
+                            </p> 
+                        </div>
+
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="question_group_new"> Question Group</h6>  
+                            <p>
+                                <input pInputText id="question_group_new" [(ngModel)]="inValue.question_group" type="text" />
+                            </p> 
+                        </div> 
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="desc_new">Description</h6>  
+                            <p>
+                                <input pInputText id="desc_new" [(ngModel)]="inValue.desc" type="text" />
+                            </p> 
+                        </div> 
+ 
+                        <div class="field p-fluid">
+                            <p-button label="Clone" (click)="cloneQuestion()" styleClass="p-button-success p-button-sm"></p-button> 
+                        </div>
+
+                    </div>
+                </div> 
+                
+            </div>
+
+        </div>
+    </div>
+</div> 

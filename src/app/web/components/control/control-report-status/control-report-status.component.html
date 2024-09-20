@@ -1,0 +1,6 @@
+<ng-container *ngIf="listReportStatus && isLoadForm === 0">
+    <p-dropdown [options]="listReportStatus" [showClear]="true" (onChange)="returnValue(selectedReportStatus)"
+        [filter]="true" filterBy="name" [style]="inputStyle" [(ngModel)]="selectedReportStatus"
+        [placeholder]="nameReportStatus" optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm === 1"></p-skeleton>

@@ -1,0 +1,9 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ng-container *ngIf="listEmployeeType && isLoadForm==0">
+   <p-dropdown [options]="listEmployeeType" (onChange)="returnValue(selectedEmployeeType)" [filter]="true"
+      filterBy="Name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedEmployeeType" [showClear]="true"
+      appendTo="body" [placeholder]="placeholder" [disabled]="displayControl" (mousemove)="onMouseMove($event)"
+      optionLabel="Name"></p-dropdown>
+
+</ng-container>
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

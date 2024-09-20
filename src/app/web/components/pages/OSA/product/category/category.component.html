@@ -1,0 +1,374 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid" *ngIf="false">
+    <div class="col-12">
+        <div class="card">
+            <h4>Empty Page</h4>
+            <p>This is your empty page template to start building beautiful applications.</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+
+                <div class="md:col-3">
+                    <h6>Category Id</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="id"
+                        placeholder="List Category Id">
+                </div>
+
+                <div class="md:col-3">
+                    <h6>Category Name</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="category_name"
+                        placeholder="Category Name">
+                </div>
+                <div class="md:col-3">
+                    <h6>Company</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="company"
+                        placeholder="Company">
+                </div>
+
+                <div class="md:col-3">
+                    <h6>Brand</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="brand" placeholder="Brand">
+                </div>
+
+
+                <!-- 
+                <div class="md:col-3">
+                    <h6>Category</h6>
+                    <app-control-osa-category (outValue)="selectedCategory($event)"></app-control-osa-category>
+                </div> 
+             -->
+            </div>
+            <div class="row">
+                <div class="md:col-4">
+                    <h6>Package</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="package"
+                        placeholder="Package">
+                </div>
+
+                <div class="md:col-4">
+                    <h6>Division</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="division"
+                        placeholder="Division">
+                </div>
+
+                <div class="md:col-4">
+                    <h6>Market</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="market"
+                        placeholder="Market">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+                <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search "
+                    (click)="LoadData()" class="p-button-sm mr-2 mt-2"></button>
+                <button type="button" (click)="export()" label="Raw data" pButton pRipple icon="pi pi-file-excel"
+                    style="float: right" class="p-button-sm mr-2 mt-2"></button>
+
+                <!-- <p-splitButton label="Import Data" icon="pi pi-bars" styleClass="p-button-sm mr-2 mt-2"
+                    [model]="itemsImport"></p-splitButton> -->
+
+                <button type="button" (click)="ShowHideTemplate(1)" label="Import Excel" pButton pRipple
+                    class="p-button-sm mr-2 mt-2" icon="pi pi-upload"></button>
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+
+                <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                    class=" p-button-success mr-2 mt-2"
+                    [ngStyle]="{'display': showFilter == 1 ? 'none' : 'flex'}"></button>
+
+                <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()" tooltipPosition="top"
+                    icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2" pStyleClass=".box"
+                    leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                    [ngStyle]="{'display': showFilter == 0 ? 'none' : 'flex'}"></button>
+
+
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+<div class="card" *ngIf="showTemplate == 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input class="form-control" type="file" (change)="onChange($event)" #myInputFile />
+            </div>
+
+            <button pButton pRipple label="Get Template Category" icon="pi pi-file-export" (click)="getTemplate()"
+                class="p-button-sm p-button-info mr-2"></button>
+
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" label="Upload File Category"
+                icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+        </div>
+    </p-toolbar>
+
+    <hr>
+
+    <div class="card" *ngIf="dataError">
+        <p-table [value]="dataError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Category Name</th>
+                    <th>Category Name Vi</th>
+                    <th>Company</th>
+                    <th>Brand Code</th>
+                    <th>Brand</th>
+                    <th>Brand Name Vi</th>
+                    <th>Package</th>
+                    <th>Orders</th>
+                    <th>Division Code</th>
+                    <th>Division Name</th>
+                    <th>Market Code</th>
+                    <th>Market Name</th>
+                    <th>Market Name Vi</th>
+                    <th>Color</th>
+
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.category_name }}</td>
+                    <td>{{ error.category_name_vi }}</td>
+                    <td>{{ error.company }}</td>
+                    <td>{{ error.brand_code }}</td>
+                    <td>{{ error.brand }}</td>
+                    <td>{{ error.brand_name_vi }}</td>
+                    <td>{{ error.package }}</td>
+                    <td>{{ error.orders}}</td>
+                    <td>{{ error.division_code}}</td>
+                    <td>{{ error.division_name}}</td>
+                    <td>{{ error.market_code}}</td>
+                    <td>{{ error.market_name}}</td>
+                    <td>{{ error.market_name_vi}}</td>
+                    <td>
+                        // eslint-disable-next-line @angular-eslint/template/eqeqeq
+                        <button *ngIf="error.color != '' && error.color != null && error.color != undefined" pButton
+                            type="button" [ngStyle]="{'background':  error.color, 'border-color' : error.color}"
+                            icon="pi pi-circle-fill" class="p-button-sm p-button-success mr-2 mt-2"></button>
+                    </td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <hr>
+    <div class="card" *ngIf="dataMessError">
+        <div class=" col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">
+                    Error Name :
+                </div>
+                <div class="col-11">
+                    {{dataMessError}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card">
+    <p-toast></p-toast>
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-sm p-button-success mr-2 mt-2"
+                (click)="openNew()"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+
+        </ng-template>
+    </p-toolbar>
+
+    <!-- [tableStyle]="{ 'min-width': '75rem' }" -->
+    <p-table #dt [value]="ListCategory" [rows]="10" [(selection)]="selectedCategory" [rowHover]="true"
+        dataKey="category_id" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [showCurrentPageReport]="true" [paginator]="true" [scrollable]="true" styleClass="p-datatable-gridlines">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center">Id</th>
+                <th class="text-center">Category Name EN*</th>
+                <th class="text-center">Category Name VI*</th>
+                <th class="text-center">Company</th>
+                <th class="text-center">Package</th>
+                <th class="text-center">Brand</th>
+                <th class="text-center">Division</th>
+                <th class="text-center">Market</th>
+                <th class="text-center">Color</th>
+                <th class="text-center">Orders</th>
+                <th class="text-center">Action</th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-category>
+            <tr>
+
+                <td>{{category.category_id}}</td>
+                <td>
+                    {{category.category_name}}
+                </td>
+                <td>
+                    {{category.category_name_vi}}
+                </td>
+                <td> {{category.company}} </td>
+                <td> {{category.package}} </td>
+                <td>
+                    {{category.brand_code}} - {{category.brand}} - {{category.brand_name_vi}}
+                </td>
+                <td>
+                    {{category.division_code}} - {{category.division_name}}
+                </td>
+                <td>
+                    {{category.market_code}} - {{category.market_name}} - {{category.market_name_vi}}
+                </td>
+                <td class="text-center">
+                    <!-- <p-colorPicker *ngIf="category.color != null" [(ngModel)]="category.color" [disabled]="true"  appendTo="body"></p-colorPicker> -->
+                    <div class="color border-round m-2 flex align-items-center justify-content-center"
+                        [ngStyle]="{'background': category.color, 'border-color' : category.color}">
+                        <span class="font-medium cursor-pointer" [title]="category.color">{{ category.color }}</span>
+                    </div>
+                    <!-- <button pButton type="button"
+                        [ngStyle]="{'background': category.color, 'border-color' : category.color}"
+                        icon="pi pi-circle-fill" class="p-button-sm p-button-success mr-2 mt-2"></button> -->
+                </td>
+                <td class="text-center"> {{category.orders}} </td>
+                <td>
+                    <div class="text-center flex flex-row align-items-center justify-content-around h-full">
+                        <button class="p-button-rounded p-button-text" style="font-size: 2.5rem" title="Edit" 
+                            (click)="editCategory(category)" pButton pRipple type="button" icon="pi pi-pencil"></button>
+                        <button class="p-button-rounded p-button-danger p-button-text" style="font-size: 2.5rem" title="Delete"
+                            (click)="deleteCategory(category)" pButton pRipple type="button" icon="pi pi-trash">
+                        </button>     
+                        <p-confirmPopup></p-confirmPopup>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">In total there are {{ ListCategory ?
+                ListCategory.length : 0 }} list category.</div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="categoryDialog" [style]="{ width: '1000px' }" header="Category Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <!-- <img [src]="'https://primefaces.org/cdn/primeng/images/demo/category/' + category.image" [alt]="category.image" class="block m-auto pb-3" *ngIf="category.image" /> -->
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="category_name">Category Name<span style="color: red; font-weight: bold;"> *</span></label>
+                <input [ngStyle]="{'background': category.color}" type="text" style="font-weight: bold;"
+                    [disabled]="action == 'update' ? true : false" pInputText id="category_name"
+                    [(ngModel)]="category.category_name" />
+            </div>
+            <div class="field col">
+                <label for="category_name_vi">Category Name Vi<span style="color: red; font-weight: bold;">
+                        *</span></label>
+                <input [ngStyle]="{'background': category.color}" type="text" style="font-weight: bold;"
+                    [disabled]="action == 'update' ? true : false" pInputText id="category_name_vi"
+                    [(ngModel)]="category.category_name_vi" />
+            </div>
+        </div>
+
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="company">Company</label>
+                <input type="text" pInputText id="company" [(ngModel)]="category.company" />
+            </div>
+            <div class="field col">
+                <label for="packages">Package</label>
+                <input type="text" pInputText id="packages" [(ngModel)]="category.package" />
+            </div>
+        </div>
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="division_code">Division Code</label>
+                <input type="text" pInputText id="division_code" [(ngModel)]="category.division_code" />
+            </div>
+            <div class="field col">
+                <label for="division_name">Division Name</label>
+                <input type="text" pInputText id="division_name" [(ngModel)]="category.division_name" />
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="brand_code">Brand Code</label>
+                <input type="text" pInputText id="brand_code" [(ngModel)]="category.brand_code" />
+            </div>
+            <div class="field col">
+                <label for="brand">Brand Name</label>
+                <input type="text" pInputText id="brand" [(ngModel)]="category.brand" />
+            </div>
+            <div class="field col">
+                <label for="brand_name_vi">Brand Name Vi</label>
+                <input type="text" pInputText id="brand_name_vi" [(ngModel)]="category.brand_name_vi" />
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="market_code">Market Code</label>
+                <input type="text" pInputText id="market_code" [(ngModel)]="category.market_code" />
+            </div>
+            <div class="field col">
+                <label for="market_name">Market Name</label>
+                <input type="text" pInputText id="market_name" [(ngModel)]="category.market_name" />
+            </div>
+            <div class="field col">
+                <label for="market_name_vi">Market Name Vi</label>
+                <input type="text" pInputText id="market_name_vi" [(ngModel)]="category.market_name_vi" />
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="orders">Orders</label>
+                <p-inputNumber id="orders" [(ngModel)]="category.orders"></p-inputNumber>
+            </div>
+            <div class="field col">
+                <label for="color">Color</label>
+                <p>
+                    <p-colorPicker [(ngModel)]="category.color" class="mr-2" [inline]="true"></p-colorPicker>
+
+                    <!-- <span>
+                        <p-colorPicker [(ngModel)]="category.color" class="mr-2" [disabled]="true" ></p-colorPicker> 
+                    </span> -->
+                </p>
+            </div>
+        </div>
+
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveCategory()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

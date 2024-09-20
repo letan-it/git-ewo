@@ -1,0 +1,379 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<p-accordion [multiple]="true" [activeIndex]="[0]" *ngIf="inValue && inValue.data_osa">
+
+
+    <p-accordionTab *ngFor="let tab of inValue.data_osa.osA_Results">
+
+        <ng-template pTemplate="header">
+            <div class="flex align-items-center">
+                <p-tag [severity]="tab.result == 1 ? 'success' : 'danger'" [value]="tab.resultNameVN"
+                    class="mr-4"></p-tag>
+                {{tab.Guid}}
+            </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <!-- && inValue.data_osa.osA_Detail.length > 0 -->
+            <div class="grid" *ngIf="tab">
+                <div class="col-7">
+                    <button *ngIf="tab.is_formular == 1" (click)="CallFormular(tab)" pButton class="mb-3" type="button"
+                        icon="pi pi-calculator" label="Recalculate the results of the grading"></button>
+
+                    <!-- scrollHeight="400px"  -->
+                    <p-table #dt [scrollable]="true" [value]="tab.detail" dataKey="id" editMode="row" dataKey="id"
+                        editMode="row" [globalFilterFields]="[ 'representative.name' ]" sortField="representative.name"
+                        sortMode="single" [scrollable]="true" rowGroupMode="subheader" groupRowsBy="representative.name"
+                        *ngIf="tab.detail" scrollHeight="800px">
+
+                        <ng-template pTemplate="caption">
+                            <div class="table-header">
+                                <span class="p-input-icon-left" class="p-fluid">
+
+                                    <p-columnFilter field="representative.name" matchMode="equals" [showMenu]="false"
+                                        style="margin-top: -10px;">
+                                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                            <p-dropdown [ngModel]="value" [options]="tab.sort"
+                                                (onChange)="filter($event.value)" placeholder="Select a category"
+                                                [showClear]="true" appendTo="body">
+                                            </p-dropdown>
+                                        </ng-template>
+                                    </p-columnFilter>
+
+                                </span>
+                            </div>
+                        </ng-template>
+
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Product</th>
+                                <th class="text-center">Target</th>
+                                <th class="text-center" *ngIf="tab.detail.fromOOS == 1 ? true : false">OOS</th>
+                                <th class="text-center">Reason OOS</th>
+
+                                <th class="text-center" *ngIf="tab.detail.fromQuantity == 1 ? true : false">Quantity
+                                </th>
+                                <th class="text-center" *ngIf="tab.detail.fromOOC == 1 ? true : false">OOC</th>
+                                <th class="text-center" *ngIf="tab.detail.fromPrice == 1 ? true : false">Price</th>
+                                <th class="text-center" *ngIf="tab.detail.fromFacing == 1 ? true : false">Facing</th>
+                                <th class="text-center">Note</th>
+                                <th class="text-center" *ngIf="inValue.data_osa.is_edit_data == 1">Action</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="groupheader" let-item>
+                            <!-- pRowGroupHeader  style="top: 50px;" -->
+                            <tr *ngIf="item && item.representative" class="p-fluid">
+                                <td colspan="10"
+                                    [style]="'background:' + (item.representative.color != undefined ? item.representative.color :  'palegoldenrod')">
+                                    <span class="font-bold">
+                                        <!-- <i style="cursor: pointer;" class="pi pi-eye" (click)="editCategory(item)" ></i> - -->
+                                        {{item.representative.name}}</span>
+                                </td>
+                            </tr>
+                        </ng-template>
+
+
+                        <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+                            <!-- [style]="'border-left: 1px solid ' + (item.representative.color != undefined ? item.representative.color :  'palegoldenrod')"  -->
+                            <tr [pEditableRow]="item" [pTooltip]="item.tooltip"
+                            tooltipPosition="top">
+                                <td>
+                                    <i style="cursor: pointer;" class="pi pi-image"
+                                        (click)="showImageProduct(item.image)"></i> - {{ item.product_code}} -
+                                    {{item.product_name }}
+                                </td>
+
+                                <td class="text-center">{{ item.product_target }}</td>
+
+                                <td class="text-center" *ngIf="tab.detail.fromOOS == 1 ? true : false">
+                                    <p-cellEditor>
+                                        <!-- (onChange)="clickChangeOOS($event)" -->
+                                        <ng-template pTemplate="input">
+                                            <p-checkbox [(ngModel)]="item._oos" [binary]="true"
+                                                inputId="binary"></p-checkbox>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <!-- <p-checkbox [(ngModel)]="item._oos" [disabled]="true" [binary]="true"
+                                                inputId="binary"></p-checkbox> -->
+                                            <span style="color: red;" *ngIf=" item._oos == true">Hết hàng</span>
+                                            <span *ngIf="item._oos == false">Còn hàng</span>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <!-- [ngStyle]="{
+                                    'background-color':
+                                        (item.reason_id == null || item.reason_id == 0 )&&
+                                        item.values < item.posm_target
+                                            ? 'red'
+                                            : ''
+                                                    }" -->
+                                <td class="text-center">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <div *ngIf="item._oos == true">
+
+                                                <app-control-osa-reason (outValue)="selectOSAReason($event)"
+                                                    [itemReason]="item.oos_reason_id"></app-control-osa-reason>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <div *ngIf="item._oos == true && item.reason_name ">
+                                                {{ item.reason_name }}
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <td class="text-center" *ngIf="tab.detail.fromQuantity == 1 ? true : false">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="number" min="0" [(ngModel)]="item.quantity"
+                                                style="width: 65px;" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ item.quantity }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <td class="text-center" *ngIf="tab.detail.fromOOC == 1 ? true : false">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-checkbox [(ngModel)]="item._ooc" [binary]="true"
+                                                inputId="binary"></p-checkbox>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <p-checkbox [(ngModel)]="item._ooc" [disabled]="true" [binary]="true"
+                                                inputId="binary"></p-checkbox>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <td class="text-center" *ngIf="tab.detail.fromPrice == 1 ? true : false">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="number" min="0" [(ngModel)]="item.price"
+                                                style="width: 100px;" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ item.price }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td class="text-center" *ngIf="tab.detail.fromFacing == 1 ? true : false">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="number" min="0" [(ngModel)]="item.facing"
+                                                style="width: 100px;" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ item.facing }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="item.note" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ item.note }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <td *ngIf="inValue.data_osa.is_edit_data == 1">
+                                    <div class="flex align-items-center justify-content-center gap-2"
+                                        [pTooltip]="item.created_by" tooltipPosition="top">
+                                        <!-- p-button-text -->
+                                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
+                                            icon="pi pi-pencil" (click)="onRowEditInit(item)"
+                                            class="p-button-rounded p-button-warning"></button>
+
+                                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
+                                            icon="pi pi-check" (click)="onRowEditSave(item, item.his)"
+                                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+
+                                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
+                                            icon="pi pi-times" (click)="onRowEditCancel(item, ri)"
+                                            class="p-button-rounded p-button-text p-button-danger"></button>
+
+                                        <span style="cursor: pointer;" *ngIf="item.his && item.his != null"
+                                            (click)="op.toggle($event)">
+                                            <i class="pi pi-history ml-3"></i>
+                                        </span>
+                                    </div>
+
+
+                                    <p-toast></p-toast>
+                                    <p-overlayPanel #op [style]="{'width': '850px'}" [showCloseIcon]="true">
+                                        <ng-template pTemplate="content">
+                                            <p-table [value]="item.his" selectionMode="single" [paginator]="true"
+                                                [rows]="4" responsiveLayout="scroll">
+                                                <ng-template pTemplate="header">
+                            <tr>
+                                <th>Employee</th>
+                                <th>OOS</th>
+                                <th>Reason Name</th>
+                                <th>OOC</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Facing</th>
+                                <th>Note</th>
+                                <th>Update time</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-history>
+                            <tr [pSelectableRow]="rowData">
+                                <td>
+                                    <span style="color: green; font-weight: bold;">
+                                        {{history.employee_code}} - {{history.employee_name}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <p-checkbox [disabled]="true" [(ngModel)]="history._oos" [binary]="true"
+                                        inputId="binary"></p-checkbox>
+                                </td>
+                                <td>{{history.reason_name}}</td>
+                                <td>
+                                    <p-checkbox [disabled]="true" [(ngModel)]="history._ooc" [binary]="true"
+                                        inputId="binary"></p-checkbox>
+                                </td>
+                                <td>{{history.quantity}}</td>
+                                <td>{{history.price}}</td>
+                                <td>{{history.facing}}</td>
+                                <td>{{history.note}}</td>
+                                <td>{{history.updateBy_date}}</td>
+
+                            </tr>
+                        </ng-template>
+                    </p-table>
+        </ng-template>
+        </p-overlayPanel>
+
+
+        </td>
+        </tr>
+        </ng-template>
+
+        </p-table>
+        </div>
+        <div class="col-5">
+
+            <!-- [is_edit_data]="inValue.data_osA.is_edit_data"  inValue.data_osa.osA_Results-->
+            <!-- loadOSAGuid(inValue.data_osa.osA_image, tab.Guid)  -->
+            <app-control-tab-photo [KPI]="'OSA'" [fulldata]="inValue" [OSAconfig]="tab.detail" [inValue]="tab.image"
+                [is_edit_data]="inValue.data_osa.is_edit_data"></app-control-tab-photo>
+
+        </div>
+        </div>
+        </ng-template>
+    </p-accordionTab>
+
+
+</p-accordion>
+<div class="grid">
+    <app-qc-result [KPI]="'OSA'" [inValue]="inValue.report_id"></app-qc-result>
+</div>
+
+<p-dialog [(visible)]="categoryDialog" [style]="{ width: '1000px' }" header="Category Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <!-- <img [src]="'https://primefaces.org/cdn/primeng/images/demo/category/' + category.image" [alt]="category.image" class="block m-auto pb-3" *ngIf="category.image" /> -->
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="category_name">Category Name<span style="color: red; font-weight: bold;"> *</span></label>
+                <input [ngStyle]="{'background': category.color}" type="text" style="font-weight: bold;"
+                    [disabled]="action == 'update' ? true : false" pInputText id="category_name"
+                    [(ngModel)]="category.category_name" />
+            </div>
+            <div class="field col">
+                <label for="category_name_vi">Category Name Vi<span style="color: red; font-weight: bold;">
+                        *</span></label>
+                <input [ngStyle]="{'background': category.color}" type="text" style="font-weight: bold;"
+                    [disabled]="action == 'update' ? true : false" pInputText id="category_name_vi"
+                    [(ngModel)]="category.category_name_vi" />
+            </div>
+        </div>
+
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="company">Company</label>
+                <input type="text" pInputText id="company" [(ngModel)]="category.company" />
+            </div>
+            <div class="field col">
+                <label for="packages">Package</label>
+                <input type="text" pInputText id="packages" [(ngModel)]="category.package" />
+            </div>
+        </div>
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="division_code">Division Code</label>
+                <input type="text" pInputText id="division_code" [(ngModel)]="category.division_code" />
+            </div>
+            <div class="field col">
+                <label for="division_name">Division Name</label>
+                <input type="text" pInputText id="division_name" [(ngModel)]="category.division_name" />
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="brand_code">Brand Code</label>
+                <input type="text" pInputText id="brand_code" [(ngModel)]="category.brand_code" />
+            </div>
+            <div class="field col">
+                <label for="brand">Brand Name</label>
+                <input type="text" pInputText id="brand" [(ngModel)]="category.brand" />
+            </div>
+            <div class="field col">
+                <label for="brand_name_vi">Brand Name Vi</label>
+                <input type="text" pInputText id="brand_name_vi" [(ngModel)]="category.brand_name_vi" />
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="market_code">Market Code</label>
+                <input type="text" pInputText id="market_code" [(ngModel)]="category.market_code" />
+            </div>
+            <div class="field col">
+                <label for="market_name">Market Name</label>
+                <input type="text" pInputText id="market_name" [(ngModel)]="category.market_name" />
+            </div>
+            <div class="field col">
+                <label for="market_name_vi">Market Name Vi</label>
+                <input type="text" pInputText id="market_name_vi" [(ngModel)]="category.market_name_vi" />
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="orders">Orders</label>
+                <p-inputNumber id="orders" [(ngModel)]="category.orders"></p-inputNumber>
+            </div>
+            <div class="field col">
+                <label for="color">Color</label>
+                <p>
+                    <!-- <p-colorPicker [(ngModel)]="category.color" class="mr-2" [inline]="true"></p-colorPicker>  -->
+                    <button pButton type="button"
+                        [ngStyle]="{'background': category.color, 'border-color' : category.color}"
+                        icon="pi pi-circle-fill" class="p-button-sm p-button-success mr-2 mt-2"></button>
+                </p>
+            </div>
+        </div>
+
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveCategory()"></button> -->
+    </ng-template>
+</p-dialog>

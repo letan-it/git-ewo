@@ -1,0 +1,228 @@
+<!-- UI Workday Detail Page -->
+<div class="flex justify-content-center">
+    <div class="grid w-screen p-2 mt-1">
+        <!-- Ngày công -->
+        <div class="col-6 h-fit p-2">
+            <a href="{{link}}">
+                <div class="flex flex-column px-2 py-4 border-round shadow-6 w-full h-full align-items-center bg-white text-black-alpha-70">
+                    <div class="title text-center shadow-5 p-2 border-round-sm font-bold w-full">
+                        Ngày công
+                    </div>
+
+                    <div class="set-size charts-container">
+                        <div class="pie-wrapper progress-45 style-2">
+                            <span class="label">{{ (20.98/29 * 100).toFixed(1) }}<span class="smaller">%</span></span>
+                            <div class="pie">
+                                <div class="left-side half-circle"></div>
+                                <div class="right-side half-circle"></div>
+                            </div>
+                            <div class="shadow"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row align-items-center justify-content-between w-full mt-1">
+                        <span>Công tháng</span>
+                        <span class="font-bold">{{lastDayMonth}} công</span>
+                    </div>
+                    <div class="flex flex-row align-items-center justify-content-between w-full">
+                        <span>Số giờ công</span>
+                        <span class="font-bold">{{totalHourTime}} giờ</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Quỹ phép -->
+        <div class="col-6 h-fit p-2">
+            <div class="flex flex-column px-2 py-4 border-round shadow-6 w-full h-full align-items-center bg-white">
+                <div class="title text-center shadow-5 p-2 border-round-sm font-bold w-full">
+                    Quỹ phép
+                </div>
+
+                <div class="set-size charts-container">
+                    <div class="pie-wrapper progress-100 style-2">
+                        <span class="label">4.5<span class="smaller">ngày</span></span>
+                        <div class="pie">
+                            <div class="left-side half-circle"></div>
+                            <div class="right-side half-circle"></div>
+                        </div>
+                        <div class="shadow"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-row align-items-center justify-content-between w-full mt-1">
+                    <span>Phép năm</span>
+                    <span class="font-bold">3 ngày</span>
+                </div>
+                <div class="flex flex-row align-items-center justify-content-between w-full">
+                    <span>Nghỉ thực tế</span>
+                    <span class="font-bold">1 ngày</span>
+                </div>
+            </div>
+        </div>
+        <!-- Đi muộn -->
+        <div class="col-6 h-fit p-2" (click)="detailLate()">
+            <div class="flex flex-column px-2 py-4 border-round shadow-6 w-full h-full align-items-center bg-white">
+                <div class="title text-center shadow-5 p-2 border-round-sm font-bold w-full">
+                    Đi muộn
+                </div>
+
+                <div class="flex flex-row align-items-center justify-content-between w-full h-full p-3 mt-2 h-10rem">
+                    <div class="flex flex-column align-items-center justify-content-between h-full">
+                        <span>Số lần</span>
+                        <i class="pi pi-file-edit" style="font-size: 2.5rem"></i>
+                        <span class="font-bold">{{countLate}} lần</span>
+                    </div>
+                    <div class="flex flex-column align-items-center justify-content-between h-full">
+                        <span *ngIf="minuteLate < 60">Số phút</span>
+                        <span *ngIf="minuteLate >= 60">Số giờ</span>
+                        <i class="pi pi-clock" style="font-size: 2.5rem"></i>
+                        <span class="font-bold" *ngIf="minuteLate < 60">{{minuteLate}} phút</span>
+                        <span class="font-bold" *ngIf="minuteLate >= 60">{{minuteLate/60}} giờ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Về sớm -->
+        <div class="col-6 h-fit p-2" (click)="detailEarly()">
+            <div class="flex flex-column px-2 py-4 border-round shadow-6 w-full h-full align-items-center bg-white">
+                <div class="title text-center shadow-5 p-2 border-round-sm font-bold w-full">
+                    Về sớm
+                </div>
+
+                <div class="flex flex-row align-items-center justify-content-between w-full h-full p-3 mt-2 h-10rem">
+                    <div class="flex flex-column align-items-center justify-content-between h-full">
+                        <span>Số lần</span>
+                        <i class="pi pi-file-edit" style="font-size: 2.5rem"></i>
+                        <span class="font-bold">{{countEarly}} lần</span>
+                    </div>
+                    <div class="flex flex-column align-items-center justify-content-between h-full">
+                        <span *ngIf="minuteEarly < 60">Số phút</span>
+                        <span *ngIf="minuteEarly >= 60">Số giờ</span>
+                        <i class="pi pi-clock" style="font-size: 2.5rem"></i>
+                        <span class="font-bold" *ngIf="minuteEarly < 60">{{minuteEarly}} phút</span>
+                        <span class="font-bold" *ngIf="minuteEarly >= 60">{{minuteEarly/60}} giờ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Làm thêm -->
+        <!-- <div class="col-6 h-fit p-2">
+            <div class="flex flex-column px-2 py-4 border-round shadow-6 w-full h-full align-items-center bg-white">
+                <div class="title text-center shadow-5 p-2 border-round-sm font-bold w-full">
+                    Làm thêm
+                </div>
+
+                <div>
+                    <span class="font-bold text-5xl" style="color: #3dd1b3ad">0 </span>
+                    <span>giờ</span>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Công tác -->
+        <!-- <div class="col-6 h-fit p-2">
+            <div class="flex flex-column px-2 py-4 border-round shadow-6 w-full h-full align-items-center bg-white">
+                <div class="title text-center shadow-5 p-2 border-round-sm font-bold w-full">
+                    Công tác
+                </div>
+
+                <div>
+                    <span class="font-bold text-5xl" style="color: #3dd1b3ad">0 </span>
+                    <span>ngày</span>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Tăng ca -->
+        <!-- <div class="col-6 h-fit p-2">
+            <div class="flex flex-column px-2 py-4 border-round shadow-6 w-full h-full align-items-center bg-white">
+                <div class="title text-center shadow-5 p-2 border-round-sm font-bold w-full">
+                    Tăng ca
+                </div>
+                <div class="flex flex-row align-items-center justify-content-between w-full h-full p-3 mt-2 h-10rem">
+                    <div class="flex flex-column align-items-center justify-content-between h-full">
+                        <span>Số công</span>
+                        <i class="pi pi-file-edit" style="font-size: 2.5rem"></i>
+                        <span class="font-bold">0 lần</span>
+                    </div>
+                    <div class="flex flex-column align-items-center justify-content-between h-full">
+                        <span>Số phút</span>
+                        <i class="pi pi-clock" style="font-size: 2.5rem"></i>
+                        <span class="font-bold">0 phút</span>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+<p-dialog [(visible)]="openDetailLate" [style]="{ width: '100%', height: 'fit-content'}"
+    header='Thống kê số lần đi muộn' [modal]="true" styleClass="p-fluid" [closable]="true">
+    <p-table #dt [value]="timeSheetDetailLate" *ngIf="timeSheetDetailLate && timeSheetDetailLate.length > 0"
+        styleClass="p-datatable-gridlines">
+        <ng-template pTemplate="header">
+            <tr class="text-base">
+                <th style="width: fit-content">#</th>
+                <th class="text-start">
+                    Tên shop
+                </th>
+                <th class="text-center">
+                    Ngày
+                </th>
+                <th class="text-center">
+                    Đi muộn
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr class="text-base">
+                <td>{{rowIndex + 1}}</td>
+                <td class="text-start">
+                    {{item.shop_name}}
+                </td>
+                <td class="text-start">
+                    {{item.atd_time_ci}}
+                </td>
+                <td class="text-start">
+                    {{item.duration_ci}}'
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
+
+<p-dialog [(visible)]="openDetailEarly" [style]="{ width: '90vw', height: 'fit-content'}"
+    header='Thống kê số lần về sớm' [modal]="true" styleClass="p-fluid" [closable]="true">
+    <p-table #dt [value]="timeSheetDetailEarly" *ngIf="timeSheetDetailEarly && timeSheetDetailEarly.length > 0"
+        styleClass="p-datatable-gridlines">
+        <ng-template pTemplate="header">
+            <tr class="text-base">
+                <th style="width: fit-content">#</th>
+                <th class="text-start">
+                    Tên shop
+                </th>
+                <th class="text-center">
+                    Ngày
+                </th>
+                <th class="text-center">
+                    Về sớm
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr class="text-base">
+                <td>{{rowIndex + 1}}</td>
+                <td class="text-start">
+                    {{item.shop_name}}
+                </td>
+                <td class="text-start">
+                    {{item.atd_time_co}}
+                </td>
+                <td class="text-start">
+                    {{item.duration_co * (-1)}}'
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>

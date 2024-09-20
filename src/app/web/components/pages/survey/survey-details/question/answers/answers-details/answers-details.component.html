@@ -1,0 +1,228 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div *ngIf="action =='create'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+
+                    <div class="card mt-3">
+
+
+                        <div class="field p-fluid">
+                            <h6 htmlFor="value">Value<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>
+                                <input pInputText id="value" [(ngModel)]="value" [disabled]="false" type="text" />
+                                <textarea id="description" placeholder="support answer multi string join '|'"
+                                    pInputTextarea [(ngModel)]="value_answer" (change)="supportCreateMulAnswer()"
+                                    required rows="3" cols="20"></textarea>
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid"
+                            *ngIf="visible == true && inValue.length > 0 && hideNextQuestion == true">
+                            <h6 htmlFor="next_question">Next Question</h6>
+
+                            <p>
+                                <!-- dataKey="inValue.question_id" == Id -->
+                                <p-dropdown [options]="inValue" [filter]="true" filterBy="Name"
+                                    placeholder="Select a next question" [style]="{'minWidth':'100%'}"
+                                    (onChange)="selectNextQuestion($event)" [(ngModel)]="item_NextQuestion"
+                                    optionLabel="Name" [showClear]="true" optionLabel="Name"></p-dropdown>
+
+                            </p>
+                        </div>
+
+                        <div class="formgrid grid" *ngIf="false">
+                            <div class="field col">
+                                <h6 htmlFor="point">Point</h6>
+                                <p>
+                                    <p-inputNumber [(ngModel)]="point" inputId="locale-user"
+                                        [minFractionDigits]="2"></p-inputNumber>
+                                </p>
+                            </div>
+                            <div class="field col">
+                                <h6 htmlFor="percent">Percent</h6>
+                                <p>
+                                    <p-inputNumber [(ngModel)]="percent" inputId="locale-user"
+                                        [minFractionDigits]="2"></p-inputNumber>
+                                </p>
+                            </div>
+                        </div>
+
+
+
+                        <div class="field p-fluid" *ngIf="question.question_type =='select'">
+                            <p-table [value]="list_action" [tableStyle]="{ 'min-width': '50rem' }">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-center">action</th>
+                                        <th class="text-center">show</th>
+                                        <th class="text-center">data</th>
+                                        <th class="text-center">allow</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-action>
+                                    <tr>
+                                        <td>{{ action.action}}</td>
+                                        <td class="text-center"> <p-checkbox name="group1" value="1"
+                                                [(ngModel)]="action.show" inputId="1"></p-checkbox>
+                                        </td>
+                                        <td class="text-center">
+                                            <input pInputText id="value_item" [(ngModel)]="action.label" type="text"
+                                                [ngClass]="{'width-3': action.data ==1}"
+                                                placeholder="nội dung hiển thị" />
+
+                                            <input *ngIf="action.data == 1" pInputText id="value_item_min"
+                                                [(ngModel)]="action.min_data" type="number" min="0"
+                                                placeholder="giá trị thấp nhất" class="width-3 ml-2 mr-2" />
+
+                                            <input *ngIf="action.data == 1" pInputText id="value_item_max"
+                                                [(ngModel)]="action.max_data" type="number" min="0"
+                                                placeholder="nội dung hiển thị" placeholder="giá trị cao nhất"
+                                                class="width-3" />
+
+                                        </td>
+                                        <td class="text-center"><p-checkbox name="group2" value="1"
+                                                [(ngModel)]="action.allow" inputId="1"></p-checkbox></td>
+                                    </tr>
+
+
+                                </ng-template>
+                            </p-table>
+
+                        </div>
+                        <div class="field p-fluid">
+                            <!-- <p-button label="CHECK" (click)="check()"
+                                styleClass="p-button-danger p-button-sm"></p-button> -->
+                            <p-button label="Save" (click)="actionAnswers('create')"
+                                styleClass="p-button-success p-button-sm"></p-button>
+                            <!-- <p-messages *ngIf="clearMess == true" [value]="msgsInfo"></p-messages> -->
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div *ngIf="action =='edit'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+            <div class="row gutters-sm">
+                <div class="col-md-12 mb-3">
+                    <div class="card mt-3">
+                        <h4>Answers Id: {{dataAnswer.answer_id}} </h4>
+                        <div class="field p-fluid">
+                            <h6 htmlFor="value">Value<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>
+                                <input pInputText id="value" [(ngModel)]="dataAnswer.value" [disabled]="false"
+                                    type="text" />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid"
+                            *ngIf="visible == true && dataAnswer._listNextQuestion != null && hideNextQuestion == true">
+                            <h6 htmlFor="next_question">Next Question</h6>
+
+                            <p>
+                                <!-- dataKey="inValue.question_id" == Id -->
+                                <p-dropdown [options]="inValue" [filter]="true" filterBy="Name"
+                                    placeholder="Select a next question" [style]="{'minWidth':'100%'}"
+                                    (onChange)="selectNextQuestion($event)" [(ngModel)]="item_NextQuestion"
+                                    optionLabel="Name" [showClear]="true" optionLabel="Name"></p-dropdown>
+                            </p>
+                        </div>
+
+                        <div class="formgrid grid" *ngIf="false">
+                            <div class="field col">
+                                <h6 htmlFor="point">Point</h6>
+                                <p>
+                                    <p-inputNumber [(ngModel)]="dataAnswer.point" id="point"></p-inputNumber>
+                                </p>
+                            </div>
+                            <div class="field col">
+                                <h6 htmlFor="percent">Percent</h6>
+                                <p>
+                                    <p-inputNumber [(ngModel)]="dataAnswer.percent" id="percent"></p-inputNumber>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- <p-inputNumber [(ngModel)]="answers.point" inputId="locale-user"
+                                        [minFractionDigits]="2"></p-inputNumber> -->
+                        <!-- <p-inputNumber [(ngModel)]="answers.percent" inputId="locale-user"
+                            [minFractionDigits]="2"></p-inputNumber> -->
+
+                        <div class="field p-fluid" *ngIf="survey_item && survey_item.survey_type == 3">
+                            <h6 htmlFor="value_quick_test">QuickTest<span style="color: red; font-weight: bold;"> *</span>
+                            </h6>
+                            <p>
+                                <input pInputText id="value_quick_test" [(ngModel)]="dataAnswer.quick_test" type="text" />
+
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid" *ngIf="survey_item && survey_item.survey_type == 5">
+                            <h6 htmlFor="value_point">Point<span style="color: red; font-weight: bold;"> *</span>
+                            </h6>
+                            <p>
+                                <input pInputText id="value_point" [(ngModel)]="dataAnswer.point" type="text" />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid" *ngIf="question.question_type =='select'">
+                            <p-table [value]="list_action" [tableStyle]="{ 'min-width': '50rem' }">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-center">action</th>
+                                        <th class="text-center">show</th>
+                                        <th class="text-center">data</th>
+                                        <th class="text-center">allow</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-action>
+                                    <tr>
+                                        <td>{{ action.action}}</td>
+                                        <td class="text-center"> <p-checkbox name="group1" value="1"
+                                            [(ngModel)]="action.show" inputId="1"></p-checkbox>
+                                        </td>
+                                        <td class="text-center">
+                                            <!-- {{action.label|json}} -->
+                                            <input pInputText id="value_item" [(ngModel)]="action.label" type="text"
+                                                [ngClass]="{'width-3': action.data ==1}"
+                                                placeholder="nội dung hiển thị" />
+
+                                            <input *ngIf="action.data == 1" pInputText id="value_item_min"
+                                                [(ngModel)]="action.min_data" type="number" min="0"
+                                                placeholder="giá trị thấp nhất" class="width-3 ml-2 mr-2" />
+
+                                            <input *ngIf="action.data == 1" pInputText id="value_item_max"
+                                                [(ngModel)]="action.max_data" type="number" min="0"
+                                                placeholder="nội dung hiển thị" placeholder="giá trị cao nhất"
+                                                class="width-3" />
+                                        </td>
+                                        <td class="text-center"><p-checkbox name="group2" value="1"
+                                            [(ngModel)]="action.allow" inputId="1"></p-checkbox></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <div class="field p-fluid">
+                            <!-- <p-button label="CHECK" (click)="check()"
+                                styleClass="p-button-danger p-button-sm"></p-button> -->
+                            <p-button label="Update" (click)="actionAnswers('update')"
+                                styleClass="p-button-success p-button-sm"></p-button>
+                            <!-- <p-messages *ngIf="clearMess == true" [value]="msgsInfo"></p-messages> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

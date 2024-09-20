@@ -1,0 +1,317 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-3 p-fluid ">
+                    <h6>Month</h6>
+                    <p-dropdown [options]="ListMonth" [showClear]="true" [filter]="true" filterBy="name"
+                        [style]="{'minWidth':'100%'}" [(ngModel)]="selectMonth"
+                        [placeholder]="selectMonth ? selectMonth.name : 'Select a Month'"
+                        optionLabel="name"></p-dropdown>
+
+                </div>
+                <div class="md:col-3">
+                    <h6>ShopType</h6>
+                    <app-control-shop-type (outValue)="selectShopType($event)"></app-control-shop-type>
+                </div>
+                <div class="md:col-3">
+                    <h6>Channel</h6>
+                    <app-control-channel (outValue)="selectedChannel($event)"></app-control-channel>
+
+                </div>
+                <div class="md:col-3">
+                    <h6>Router</h6>
+                    <app-control-shop-router (outValue)="selectShopRouter($event)"></app-control-shop-router>
+                </div>
+
+
+            </div>
+            <div class="row">
+
+                <div class="md:col-3">
+                    <h6>Manager </h6>
+                    <app-control-employee-list (outValue)="selectASM($event)" [project_id]="project_id"
+                        [placeholder]="'Select a Manager '"></app-control-employee-list>
+                </div>
+                <div class="md:col-3">
+                    <h6>Province</h6>
+                    <app-control-province (outValue)="selectProvince($event)"></app-control-province>
+
+                </div>
+                <div class="md:col-3">
+                    <h6>District</h6>
+                    <app-control-district [inValue]="item_Province"
+                        (outValue)="selectDistrict($event)"></app-control-district>
+
+                </div>
+                <div class="md:col-3">
+                    <h6>Ward</h6>
+                    <app-control-ward [inValue]="item_District" (outValue)="selectWard($event)"></app-control-ward>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="md:col-3">
+                    <h6>Status</h6>
+                    <p-dropdown [options]="ListStatus" [showClear]="true" [filter]="true" filterBy="name"
+                        [style]="{'minWidth':'100%'}" [(ngModel)]="selectStatus" placeholder="Select a Status"
+                        optionLabel="name"></p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>Shop Code</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="shop_code"
+                        placeholder="List Shop Code">
+                </div>
+                <div class="md:col-3">
+                    <h6>Project Shop Code</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="project_shop_code"
+                        placeholder="List Project Shop Code">
+                </div>
+                <div class="md:col-3">
+                    <h6>Customer Shop Code</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="customer_shop_code"
+                        placeholder="List Customer Shop Code">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+
+
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+
+
+                <button pButton type="button" label="Filter" [loading]="isLoading_Filter" (click)="filter(1)"
+                    icon="pi pi-search" class="p-button-sm mr-2 ml-2"></button>
+                <button type="button" label="Configuration" *ngIf="currentUser && (currentUser.employee_type_id == 1 || currentUser.employee_type_id == 2 
+                    || currentUser.employee_type_id == 3)" pButton pRipple icon="pi pi-cog" (click)="create()"
+                    class="p-button-sm mr-2"></button>
+                <button type="button" (click)="export()" *ngIf="totalRecords>0" label="Raw data" pButton pRipple
+                    class="p-button-sm mr-2" icon="pi pi-file-excel"></button>
+
+                <p-splitButton label="Import Data" icon="pi pi-bars" styleClass="p-button-sm mr-2"
+                    *ngIf="permission_full == 1" [model]="itemsImport"></p-splitButton>
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+
+                <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" (click)="ShowHideFiter()" tooltipPosition="top" icon="pi pi-eye"
+                    class=" p-button-success mr-2 mt-2" [ngStyle]="{'display': showFiter == 1?'none':'flex'}"></button>
+
+                <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFiter()" tooltipPosition="top"
+                    icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2" pStyleClass=".box"
+                    leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                    [ngStyle]="{'display': showFiter == 0?'none':'flex'}"></button>
+
+            </div>
+
+            <div class="p-toolbar-group-right">
+
+                <!-- <div class="field-checkbox">
+                    <p-checkbox name="group_name" value="1" label="is Data Test" [(ngModel)]="is_test"></p-checkbox>
+                </div> -->
+            </div>
+        </p-toolbar>
+        <!-- <p-messages [value]="msgs"></p-messages> -->
+    </div>
+
+</div>
+
+
+<hr />
+
+<div class="card" *ngIf="showTemplate == 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input class="form-control" type="file" (change)="onChange($event)" #myInputFile />
+            </div>
+
+            <a [href]="template_survey_shop">
+                <button *ngIf="typeImport == 1" pButton pRipple label="Get Template" icon="pi pi-file-excel"
+                    class="p-button-sm p-button-info mr-2"></button>
+            </a>
+
+            <button pButton pRipple (click)="importTemplate()" class="ml-2" label="Upload File" icon="pi pi-file-excel"
+                class="p-button-sm p-button-success"></button>
+        </div>
+    </p-toolbar>
+
+    <hr>
+
+    <div class="card" *ngIf="dataError">
+        <p-table [value]="dataError" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Error Name</th>
+                    <th>Survey Id</th>
+                    <th>Shop Code</th>
+                    <th>Year Month</th>
+                    <th>Action</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+                <tr>
+                    <td>{{ error.error_name }}</td>
+                    <td>{{ error.survey_id }}</td>
+                    <td>{{ error.shop_code }}</td>
+                    <td>{{ error.year_month }}</td>
+                    <td>{{ error.action }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <hr>
+    <div class="card" *ngIf="dataMessError">
+        <div class=" col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">
+                    Error Name :
+                </div>
+                <div class="col-11">
+                    {{dataMessError}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<hr>
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <div class="md:col-6 ">
+                <p-toolbar>
+                    <div class="p-toolbar-group-left flex flex-wrap">
+
+                        <app-control-survey-list (outValue)="selectSurvey($event)" [typeSurvey]="[1, 2]"></app-control-survey-list>
+
+
+                    </div>
+                    <div class="p-toolbar-group-right">
+                        <!-- <button pButton type="button" label="Add"
+                            icon="pi pi-angle-right" (click)="addSurvey()" class="p-button-success m-2"></button> -->
+
+                        <p-splitButton class="float-right" label="Add" icon="pi pi-plus" (onClick)="addSurvey()"
+                            [model]="itemsAdd" styleClass="p-button-sm p-button-success mb-2"></p-splitButton>
+                    </div>
+                </p-toolbar>
+
+                <p-listbox *ngIf="is_loadForm === 0" [filter]="true" [listStyle]="{ 'max-height': '600px' }"
+                    [options]="ListShop" [(ngModel)]="selected_store" optionLabel="shop_code">
+                    <ng-template let-store pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <p-checkbox [(ngModel)]="store.checked" [binary]="true" inputId="binary"></p-checkbox>
+                            <div>{{ store.RowNum }}/{{ store.TotalRows }}. - {{ store.shop_code }} - {{
+                                store.shop_address }} - {{
+                                store.manager_name }} - {{
+                                store.year_month }}</div>
+
+                        </div>
+                    </ng-template>
+                </p-listbox>
+                <div class="card" *ngIf="is_loadForm == 1">
+                    <div class="border-round border-1 surface-border p-4">
+                        <div class="flex mb-3">
+                            <div>
+                                <p-skeleton width="10rem" styleClass="mb-2"></p-skeleton>
+                                <p-skeleton width="5rem" styleClass="mb-2"></p-skeleton>
+                                <p-skeleton height=".5rem"></p-skeleton>
+                            </div>
+                        </div>
+                        <p-skeleton width="100%" height="200px"></p-skeleton>
+                    </div>
+                </div>
+                <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                    [totalRecords]="totalRecords" [rowsPerPageOptions]="[50,100]"></p-paginator>
+            </div>
+
+            <div class="md:col-6">
+                <p-toolbar>
+                    <div class="p-toolbar-group-left flex flex-wrap">
+                        <!-- <button pButton type="button" label="Remove" (click)="removeSurvey()" icon="pi pi-angle-left"
+                            class="p-button-danger m-2"></button> -->
+
+                        <p-splitButton label="Remove" icon="pi pi-times" (onClick)="removeSurvey()"
+                            [model]="itemsRemove" styleClass="p-button-sm p-button-danger mb-2"></p-splitButton>
+                    </div>
+                    <div class="p-toolbar-group-right"></div>
+                </p-toolbar>
+
+                <p-listbox *ngIf="is_loadForm == 0" [filter]="true" [listStyle]="{ 'max-height': '300px' }"
+                    [options]="Survey" [(ngModel)]="selected_survey" optionLabel="shop_code">
+                    <ng-template let-survey pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+
+
+                            <p-checkbox [(ngModel)]="survey.checked" [binary]="true" inputId="binary"></p-checkbox>
+
+
+                            <div>{{ survey.RowNum }}/{{ survey.TotalRows }}. - {{ survey.shop_code }} - {{
+                                survey.shop_address }} - {{
+                                survey.manager_name }}- {{
+                                survey.year_month }}
+                            </div>
+
+
+                        </div>
+                    </ng-template>
+                </p-listbox>
+
+
+                <div class="card" *ngIf="is_loadForm == 1">
+                    <div class=" border-round border-1 surface-border p-4">
+                        <div class="flex mb-3">
+                            <div>
+                                <p-skeleton width="10rem" styleClass="mb-2"></p-skeleton>
+                                <p-skeleton width="5rem" styleClass="mb-2"></p-skeleton>
+                                <p-skeleton height=".5rem"></p-skeleton>
+                            </div>
+                        </div>
+                        <p-skeleton width="100%" height="200px"></p-skeleton>
+                    </div>
+                </div>
+                <!-- <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                    [totalRecords]="totalRecordsSurvey" [rowsPerPageOptions]="[50,100]"></p-paginator> -->
+
+                <hr>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<p-dialog header="Notification" [(visible)]="display " [modal]="true " showEffect="fade " [style]="{width: '30vw'} "
+    [breakpoints]="{ '960px': '75vw'} ">
+    <p class="line-height-3 m-1 ">
+        {{message}}
+    </p>
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+        <button pButton icon="pi pi-check " (click)="OK() " label="Ok " class="p-button-outlined float-right"
+            style="margin-right: 0%;"></button>
+    </ng-template>
+</p-dialog>
+
+
+
+<!-- <p-dialog header="Create Survey" [(visible)]="SurveyCreate" [style]="{width: '50vw'}" [maximizable]="true">
+  
+  <app-survey-detalis [action]="'create'"></app-survey-detalis>
+
+</p-dialog> -->

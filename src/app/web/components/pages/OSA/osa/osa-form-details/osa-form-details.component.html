@@ -1,0 +1,48 @@
+<div *ngIf="action =='create'">
+    <div class="container">
+        <div class="main-body"> 
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+ 
+                      
+                    <div class="card mt-3">  
+                        <!-- {
+                            "project_id": 0,
+                            "quantity": 0,
+                            "price": 0,
+                            "oos": 0,
+                            "ooc": 0
+                          } -->
+
+                        <div class="field p-fluid"> 
+                            <p-checkbox name="quantity" [binary]="true" [(ngModel)]="quantity" inputId="quantity"></p-checkbox>
+                            <label for="quantity">Quantity<span style="color: red; font-weight: bold;"> *</span></label>
+                        </div>   
+                        <div class="field p-fluid"> 
+                            <p-checkbox name="price" [binary]="true" [(ngModel)]="price" inputId="price"></p-checkbox>
+                            <label for="price">Price<span style="color: red; font-weight: bold;"> *</span></label>
+                        </div> 
+                        <div class="field p-fluid"> 
+                            <p-checkbox name="oos" [binary]="true" [(ngModel)]="oos" inputId="oos"></p-checkbox>
+                            <label for="oos">OOS<span style="color: red; font-weight: bold;"> *</span></label>
+                        </div> 
+                        <div class="field p-fluid"> 
+                            <p-checkbox name="ooc" [binary]="true" [(ngModel)]="ooc" inputId="ooc"></p-checkbox>
+                            <label for="ooc">OOC<span style="color: red; font-weight: bold;"> *</span></label>
+                        </div> 
+ 
+ 
+                        <div class="field p-fluid">
+                            <p-button label="Save" (click)="createOSAFrom()" styleClass="p-button-success p-button-sm"></p-button> 
+                        </div>
+
+                    </div>
+                </div> 
+                
+            </div>
+
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,6 @@
+<ng-container *ngIf="listRegion && isLoadForm==0">
+    <p-dropdown [options]="listRegion" [showClear]="true" (onChange)="returnValue(selectedRegion)" [filter]="true"
+        filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedRegion" [placeholder]="nameRegion"
+        optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

@@ -1,0 +1,168 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<p-toast></p-toast>
+
+<p-accordion [activeIndex]="0">
+    <p-accordionTab [header]="tab.process_name" *ngFor="let tab of Config.process">
+        <div class="m-0">
+            <div *ngFor="let event of tab.step">
+                <section *ngIf="event.action_id === 1">
+                    <!-- ĐĂNG KÝ -->
+                    <div *ngIf="
+                            event.layout_type === 'add_plan_day' ||
+                            event.layout_type === 'add_plan_week' ||
+                            event.layout_type === 'add_plan_month'
+                        ">
+                        <div class="row">
+                            <div class="col-3">
+                                <p-calendar class="max-w-full" [(ngModel)]="date_plan_day" [inline]="true"
+                                    [showWeek]="true" [minDate]="minDate" (ngModelChange)="selectDate()" />
+                            </div>
+                            <div class="col-9">
+                                <div class="row">
+                                    <div class="md:col-3" *ngIf="form_add_plan === 1">
+                                        <p-dropdown [options]="Config.employee_list" [(ngModel)]="select_employee"
+                                            optionLabel="employee_name" [showClear]="true" [filter]="true"
+                                            filterBy="employee_name" [style]="{ minWidth: '100%' }"
+                                            placeholder="Select Employee">
+                                            <ng-template let-item pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                    <div>
+                                                        {{ item.employee_code }}
+                                                        -
+                                                        {{ item.employee_name }}
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                    <!-- <div class="md:col-3">
+                                        <p-dropdown [options]="Config.store_list" [(ngModel)]="select_shop"
+                                            optionLabel="shop_name" [showClear]="true" [filter]="true"
+                                            filterBy="shop_name" [style]="{ minWidth: '100%' }" (onClick)="selectedShop($event)"
+                                            placeholder="Select Shop">
+                                            <ng-template let-item pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                    <div>
+                                                        {{ item.shop_code }} -
+                                                        {{ item.shop_name }}
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="md:col-3">
+                                        <p-dropdown [options]="Config.shift_list" [(ngModel)]="select_shift"
+                                            optionLabel="shift_code" [showClear]="true" [filter]="true"
+                                            filterBy="shift_code" [style]="{ minWidth: '100%' }"
+                                            placeholder="Select shift">
+                                            <ng-template let-item pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                    <div>
+                                                        {{ item.shift_code }} -
+                                                        {{ item.note }}
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="md:col-3">
+                                        <p-button (click)="op.toggle($event)" icon="pi pi-clock-o" label="Time"
+                                            class="ml-2" />
+                                        <p-overlayPanel #op>
+                                            <div class="flex flex-column gap-3 w-25rem">
+                                                <div class="row">
+                                                    <div class="flex-auto col-5">
+                                                        <label for="calendar-timeonly" class="font-bold block mb-2">
+                                                            From time
+                                                        </label>
+                                                        <p-calendar inputId="calendar-timeonly" [(ngModel)]="
+                                                                from_time
+                                                            " [timeOnly]="true" />
+                                                    </div>
+                                                    <div class="flex-auto col-5">
+                                                        <label for="calendar-timeonly" class="font-bold block mb-2">
+                                                            To time
+                                                        </label>
+                                                        <p-calendar inputId="calendar-timeonly" [(ngModel)]="
+                                                                to_time
+                                                            " [timeOnly]="true" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p-overlayPanel>
+                                    </div> -->
+                                </div>
+
+                                <button pButton type="button" *ngIf="form_add_plan === 1" label="{{ btnAdd }}"
+                                    icon="pi pi-plus" class="p-button-sm mr-2 mt-2" (click)="addRequest()"></button>
+                                <button pButton type="button" *ngIf="index_edit > -1" label="Hủy chỉnh sửa"
+                                    icon="pi pi-times" class="p-button-sm mr-2 mt-2" (click)="cancelEdit()"></button>
+
+                                <hr />
+                                <p-table *ngIf="form_add_plan === 1 && data_request_table && data_request_table.length > 0" [value]="data_request_table"
+                                    [tableStyle]="{ 'min-width': '50rem' }">
+                                    <ng-template pTemplate="header" let-item index>
+                                        <tr>
+                                            <th class="text-center">STT</th>
+                                            <th class="text-center">Employee</th>
+                                            <th class="text-center">Store</th>
+                                            <th class="text-center">Shift</th>
+                                            <th class="text-center">Time</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                                        <tr>
+                                            <td class="text-center">
+                                                {{ rowIndex + 1 }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.emp }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.shop }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.shift }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.time }}
+                                            </td>
+                                            <td
+                                                class="text-center flex flex-row align-items-center justify-content-evenly gap-3 h-full">
+                                                <button class="border-circle border-none w-3rem h-3rem" style="
+                                                        background-color: #2ac764;
+                                                    " (click)="edit(rowIndex)">
+                                                    <i class="pi pi-pencil" style="
+                                                            font-size: 1rem;
+                                                            color: white;
+                                                        "></i>
+                                                </button>
+                                                <button class="border-circle border-none w-3rem h-3rem" style="
+                                                        background-color: red;
+                                                    " (click)="delete(rowIndex)">
+                                                    <i class="pi pi-trash" style="
+                                                            font-size: 1rem;
+                                                            color: white;
+                                                        "></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+
+                                <!-- *ngIf="Config.data_request.length>0" -->
+                                <button pButton *ngIf="
+                                        Config.data_request &&
+                                        Config.data_request.length > 0
+                                    " type="button" label="Gửi Request" icon="pi pi-plus" class="p-button-sm mr-2 mt-2"
+                                    (click)="save(tab.Prc_id, tab.step)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </p-accordionTab>
+</p-accordion>

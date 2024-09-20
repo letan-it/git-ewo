@@ -1,0 +1,163 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div *ngIf="action =='view'" class="">
+
+    <div class="col-12">
+        <div class="card">
+            <button type="button" label="" pButton pRipple icon="pi pi-plus" style="float: right;"
+                (click)="create()"></button>
+
+            <!-- {{ListSurveyAnswers|json}} -->
+
+            <p-table [value]="ListSurveyAnswers" dataKey="answer_id" class="p-5" editMode="row"
+                [tableStyle]="{'min-width': '50rem'}">
+
+                <ng-template pTemplate="header">
+                    <tr>
+
+                        <th class="text-center" style="width:20%">Value</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center" *ngIf="hideNextQuestion == true && question.next_question == 1">Next Question</th>
+
+                        <th class="text-center" *ngIf="survey_item.survey_type === 5">Point</th>
+                        <th class="text-center" *ngIf="survey_item.survey_type === 5">Percent</th>
+                        <th class="text-center" *ngIf="survey_item.survey_type === 3">Quick Test</th>
+                        <th class="text-center">Action
+                            <i class="pi pi-sync" style="cursor: pointer; margin-left: 2%;" (click)="LoadData()"
+                                pTooltip="Load Data" tooltipPosition="top"></i>
+                        </th>
+                    </tr>
+
+                </ng-template>
+
+                <ng-template pTemplate="body" let-answers let-editing="editing" let-ri="rowIndex">
+
+                    <tr [pTooltip]="answers.created_date + ' - '+ answers.last_update" [pEditableRow]="answers">
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="answers.value">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <b>{{answers.answer_id}}</b> - {{answers.value}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td class="text-center">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-checkbox name="group1" [binary]="true" [(ngModel)]="answers._status"
+                                        [inputId]="answers.answer_id">
+                                    </p-checkbox>
+
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <i class="pi"
+                                        [ngClass]="{'true-icon pi-check-circle text-green-500': answers.status == 1, 'false-icon pi-times-circle text-pink-500': answers.status == 0}"></i>
+
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td *ngIf="hideNextQuestion == true && question.next_question == 1">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <!-- [ { "question_id": 29, "question_name": "Tên điểm bán/cửa hàng", "Name": "29 - Tên điểm bán/cửa hàng" }, { "question_id": 31, "question_name": "Họ tên người được phỏng vấn", "Name": "31 - Họ tên người được phỏng vấn" } ] -->
+                                    <!--  dataKey="answers.answer_id"  -->
+
+                                    <!-- [(ngModel)]="item_NextQuestion" -->
+                                    <p-dropdown appendTo="body" [options]="ListNextQuestion" [filter]="true"
+                                        filterBy="Id" [style]="{'minWidth':'100%', 'max-height':'100%'}"
+                                        (onChange)="selectNextQuestion($event)" placeholder="Select a next question"
+                                        [(ngModel)]="answers._listNextQuestion[0]" [showClear]="true"
+                                        optionLabel="Name"></p-dropdown>
+                                </ng-template>
+
+                                <ng-template pTemplate="output"
+                                    *ngIf="answers._listNextQuestion[0] && _ListNextQuestion == true">
+                                    {{answers._listNextQuestion[0].Name}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td class="text-center" *ngIf="survey_item.survey_type === 5">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    {{answers.point}}
+                                    <p-inputNumber [(ngModel)]="answers.point" inputId="locale-user"
+                                        [minFractionDigits]="2"></p-inputNumber>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <b>{{answers.point}}</b>
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td class="text-center" *ngIf="survey_item.survey_type === 5">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    {{answers.percent}}
+                                    <p-inputNumber [(ngModel)]="answers.percent" inputId="locale-user"
+                                        [minFractionDigits]="2"></p-inputNumber>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <b>{{answers.percent}}</b>
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+
+                        <td class="text-center" *ngIf="survey_item.survey_type == 3">
+                            {{answers.quick_test}}
+                        </td>
+
+                        <td class="text-center">
+
+
+                            <p-button pTooltip="Update info Answers" (click)="updateAnswer(answers)"
+                                tooltipPosition="left" icon="pi pi-file-edit "
+                                styleClass="p-button-rounded p-button-text p-button-raised "></p-button>
+
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <div class="p-fluid card flex justify-content-center justify-content-between text-center "
+                    *ngIf="ListSurveyAnswers && ListSurveyAnswers.length==0 ">
+                    <h5>No data</h5>
+                </div>
+            </p-table>
+
+
+        </div>
+    </div>
+
+</div>
+
+<p-dialog header="Create Answers" [modal]="true" [(visible)]="AnswersCreate" [style]="{width: '55vw', height: '45vw'}"
+    [maximizable]="true ">
+
+    <app-answers-details (newItemEvent)="addItem($event)" [question_id]="question_id" [question]="question"
+        [inValue]="ListNextQuestion" [visible]="_ListNextQuestion" [action]="'create'"></app-answers-details>
+
+</p-dialog>
+
+
+<p-dialog header="Update Answers" [modal]="true" [(visible)]="AnswersUpdate" [style]="{width: '55vw', height: '45vw'}"
+    [maximizable]="true ">
+
+    <app-answers-details [survey_item]="survey_item" (newItemEventUpdate)="addItemUpdate($event)"
+        [question_id]="question_id" [question]="question" [inValue]="ListNextQuestion" [visible]="_ListNextQuestion"
+        [dataAnswer]="answerData" [action]="'edit'"></app-answers-details>
+
+</p-dialog>
+
+
+<div *ngIf="action =='nextQuestion'" style="min-height: 250px;">
+
+    <div class="card flex justify-content-center">
+        <p-dropdown [style]="{'minWidth':'100%', 'max-height':'100%'}" [options]="ListNextQuestion"
+            (onChange)="selectNextQuestion($event)" [showClear]="true" optionLabel="Name"
+            [(ngModel)]="selectedCity"></p-dropdown>
+    </div>
+
+</div>

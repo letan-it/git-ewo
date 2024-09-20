@@ -1,0 +1,56 @@
+ 
+<div *ngIf="action =='create'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+
+                    <div class="card mt-3">  
+                        
+                        <div class="field p-fluid">
+                            <h6>Posm Code<span style="color: red; font-weight: bold;"> *</span></h6>  
+                            <p>
+                                <input pInputText id="posm_code" [(ngModel)]="posm_code" type="text" />
+                            </p> 
+                        </div>
+
+                        <div class="field p-fluid">
+                            <h6>Posm Name<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>
+                                <input pInputText id="posm_name" [(ngModel)]="posm_name" type="text" />
+                            </p>
+                        </div> 
+
+                        <div class="field p-fluid">
+                            <h6>Posm Image<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p> 
+                                <!-- (change)="onChange($event)" -->
+                                 <input class="form-control" accept=".png, .jpg, .jpeg" type="file" (change)="onChange($event)">
+                            </p>
+                        </div>
+
+
+                        <div class="field p-fluid">
+                            <h6>Status</h6>
+                            <p>  
+                                <p-checkbox  name="group1" [binary]="true"  [(ngModel)]="_status" >
+                                </p-checkbox>
+                            </p>
+                        </div>
+ 
+                        <div class="field p-fluid">
+                            <p-button label="Save" (click)="createPosmList()" styleClass="p-button-success p-button-sm"></p-button>
+                            <!-- <p-messages *ngIf="clearMess == true" [value]="msgsInfo"></p-messages> -->
+                        </div>
+
+                    </div>
+                </div> 
+                
+            </div>
+
+        </div>
+    </div>
+</div> 

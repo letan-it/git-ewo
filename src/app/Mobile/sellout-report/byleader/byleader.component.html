@@ -1,0 +1,75 @@
+<section class="my-body">
+    <p-sidebar [(visible)]="sidebarVisible" styleClass="h-100" position="top">
+        <div class="row">
+            <div class="col-12">
+                <h6>{{GetLanguage("f_mobile_start_date")}}</h6>
+                <input pInputText id="dateStart" class="text-center font-bold w-100"   type="date"
+                    [(ngModel)]="dateStart" />
+            </div>
+            <div class="col-12">
+                <h6>{{GetLanguage("f_mobile_end_date")}}</h6>
+                <input pInputText id="dateEnd" class="text-center font-bold w-100" type="date"
+                    [(ngModel)]="dateEnd" />
+            </div>
+          
+    
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <p-button [label]="GetLanguage('action_mobile_filter')" (click)="filter()" size="small" icon="pi pi-filter"  ></p-button>
+                </div>
+                <div class="p-toolbar-group-right">
+                     
+                </div>
+            </p-toolbar>
+         
+        </div>
+    </p-sidebar>
+    <p-toolbar>
+        <div class="p-toolbar-group-left flex flex-wrap"></div>
+        <div class="p-toolbar-group-right">
+            <p-button (click)="sidebarVisible = true" size="small" icon="pi pi-filter"  ></p-button>
+        </div>
+    </p-toolbar>
+
+    <div class="grid animation-duration-500 box">
+        
+            <div class="card">
+                <div class="row">
+                    <p-dataView #dv [value]="ListLeader" *ngIf="ListLeader && ListLeader.length > 0">
+                        <ng-template let-item pTemplate="listItem">
+                            <div class="col-12 hover-div" (click)="openDetail(item)">
+                                <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                    <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                        <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                            <b>{{ item.employee_code }}</b>
+                                            <div class="text-2xl font-bold text-900">
+                                                {{ item.employee_name }}
+                                            </div>
+                                        </div>
+                                     </div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <p-image [src]="item.image" [alt]="item.item_type" width="100"></p-image>
+                                        </div>
+                                        <div class="col-8">
+                                          <span>{{GetLanguage("lb_quantity")}}: <b>{{item.quantity}}</b> {{GetLanguage("lb_item")}}</span> <br>
+                                          <span>{{GetLanguage("lb_mount")}}: <b class="sum_amount" style="color: blue;">{{item.price_outlet}}</b> {{GetLanguage("lb_VND")}}</span> <br>
+
+                                        </div>
+                                    </div>
+                                   
+
+                               
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dataView>
+                </div>
+           
+        </div>
+    </div>
+
+
+
+</section>
+ 

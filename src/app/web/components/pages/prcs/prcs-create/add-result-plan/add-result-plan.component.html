@@ -1,0 +1,377 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<p-toast></p-toast>
+
+<p-accordion [activeIndex]="0">
+    <p-accordionTab [header]="tab.process_name" *ngFor="let tab of Config.process">
+        <div class="m-0">
+            <div *ngFor="let event of tab.step">
+                <section *ngIf="event.action_id === 1">
+                    <!-- ĐĂNG KÝ -->
+                    <div >
+                        <div class="flex flex-row align-items-center w-full gap-1">
+                            <div class="w-fit">
+                                <p-dropdown
+                                    [options]="ListMonth"
+                                    [editable]="false"
+                                    [showClear]="true"
+                                    [filter]="false"
+                                    filterBy="name"
+                                    [style]="{ minWidth: '80px', maxWidth: '100%' }"
+                                    [(ngModel)]="selectMonth"
+                                    [placeholder]="
+                                        selectMonth
+                                            ? selectMonth.name
+                                            : GetLanguage('lb_select-month')
+                                    "
+                                    optionLabel="name"
+                                ></p-dropdown>
+                            </div>
+                            <div class="w-fit flex align-items-center gap-1 pl-1">
+                                <p-dropdown [options]="Config.employee_list" [(ngModel)]="select_employee"
+                                    optionLabel="employee_name" [showClear]="true" [filter]="true"
+                                    filterBy="employee_name" [style]="{ minWidth: '100px', maxWidth: '400px' }"
+                                    placeholder="Chọn nhân viên">
+                                    <ng-template let-item pTemplate="item">
+                                        <div class="flex align-items-center gap-2">
+                                            <div>
+                                                {{ item.employee_code }}
+                                                -
+                                                {{ item.employee_name }}
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+
+                                <button *ngIf="screenWidth > 1114" pButton type="button" [label]="GetLanguage('action.filter')" (click)="filter(1)"
+                                    icon="pi pi-search" class="p-button-sm"></button>
+                            </div>
+                            <div class="w-fit btn-cart" *ngIf="screenWidth > 1114">
+                                <button pButton type="button" label="Danh sách rút lịch" (click)="viewListRemovePlan()"
+                                    icon="pi pi-list" class="p-button-sm w-full align-right" [style]="{ minWidth: '50px', maxWidth: '200px' }"></button>
+                                    <div *ngIf="registerRemovePlanCount > 0" class="badge">
+                                        {{registerRemovePlanCount}}
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-row align-items-center gap-2 w-fit btn-cart mt-2" *ngIf="screenWidth <= 1114">
+                            <button pButton type="button" [label]="GetLanguage('action.filter')" (click)="filter(1)"
+                                icon="pi pi-search" class="p-button-sm" [style]="{ minWidth: '90px', maxWidth: '200px' }"></button>
+
+                            <button pButton type="button" label="Danh sách rút lịch" (click)="viewListRemovePlan()"
+                                icon="pi pi-list" class="p-button-sm w-full align-right" [style]="{ minWidth: '120px', maxWidth: '150px' }"></button>
+                                <div *ngIf="registerRemovePlanCount > 0" class="badge">
+                                    {{registerRemovePlanCount}}
+                                </div>                            
+                        </div>
+                    </div>
+                    <div class="calendar card flex flex-column align-items-center justify-content-between w-50rem h-fit mt-3"
+                        *ngIf="selectMonth.code !== null">
+                        <div class="year-month flex flex-row align-items-center justify-content-center gap-3 w-full h-fit text-3xl font-bont">
+                            <p><b>{{selectMonth.name}}</b></p>
+                        </div>
+                        <div class="container">
+                            <div *ngFor="let day of ListWeek" class="flex align-items-end justify-content-center text-4xl font-bold mb-3">
+                                <div *ngIf="selectMonth.code !== null">
+                                    <span *ngIf="screenWidth > 1114 && currLanguage === 'vn'">{{day.name_vn}}</span>
+                                    <span *ngIf="screenWidth > 1114 && currLanguage === 'en'">{{day.name}}</span>
+                                    <span *ngIf="screenWidth <= 1114 && currLanguage === 'vn'" class="text-xl">{{day.sub_vn}}</span>
+                                    <span *ngIf="screenWidth <= 1114 && currLanguage === 'en'" class="text-xl">{{day.sub}}</span>
+                                </div>
+                            </div>
+                            <div *ngFor="let day of listCalendar" class="container-child text-2xl">
+                                <!-- Calendar -->
+                                <div *ngIf="day.TheDay !== 0"
+                                    class="date flex align-items-center justify-content-between w-full h-full"
+                                    [ngStyle]="{'background-color': isDayInRegisterRemovePlan(day.DateInt) ? day.backgroup_color : day.backgroup_color + 'c3' ? day.backgroup_color + 'c3' : '#fff'}">
+                                    <div *ngIf="day.count_plan"
+                                        class="content flex align-items-center justify-content-between w-full h-full cursor-pointer">
+                                        <span *ngIf="screenWidth <= 1114" class="text-right align-self-start text-1xl">{{day.TheDay}}</span>
+                                        <div class="flex align-items-end align-self-end px-3 w-fit h-fit border-round cursor-pointer"
+                                            style="background-color: #B94A48; color: #fff" *ngIf="day.count_plan"
+                                            pTooltip="Chọn lịch bổ sung công"
+                                            (click)="openDetailATDResult(day.DateInt, $event)">
+                                            <p>{{day.count_plan}}</p>
+                                        </div>
+                                        <span *ngIf="screenWidth > 1114" class="text-right align-self-start text-3xl">{{day.TheDay}}{{day.TheDaySuffix}}</span>
+                                    </div>
+                                    <div *ngIf="!day.count_plan"
+                                        class="content flex align-items-center justify-content-between w-full h-full">
+                                        <span *ngIf="screenWidth <= 1114" class="text-right align-self-start text-1xl">{{day.TheDay}}</span>
+                                        <div style="color: transparent;"></div>
+                                        <span *ngIf="screenWidth > 1114" class="text-right align-self-start text-3xl">{{day.TheDay}}{{day.TheDaySuffix}}</span>
+                                    </div>
+                                </div>
+                                <div *ngIf="day.TheDay === 0">
+                                    <span style="display: none; color: transparent;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </p-accordionTab>
+</p-accordion>
+
+<p-dialog header="Chi tiết các ca làm việc" [(visible)]="openDialogDetailATDResult" [modal]="true" showEffect="fade"
+    [style]="{ width: '80vw' }" [breakpoints]="{ '960px': '95vw' }" (onHide)="hideDialogDetailATDResult()" *ngIf="screenWidth > 1114">
+
+    <div class="flex justify-content-end align-items-center gap-3">
+        <div class="p-input-icon-left flex flex-column gap-2">
+            <button pButton pRipple label="Thêm vào Danh sách rút lịch" icon="pi pi-check" class="p-button-text mb-2 mt-2"
+                (click)="showATDResultDetail()"></button>
+        </div>
+    </div>
+
+    <p-table [value]="listDetailATDResult" [(selection)]="selectedATDResult" [tableStyle]="{ 'min-width': '50rem' }"
+        dataKey="id">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-start"></th>
+                <th class="text-start">ID</th>
+                <th class="text-start">Code</th>
+                <th class="text-start">Name</th>
+                <th class="text-start">Address</th>
+                <th class="text-start">Shift Code</th>
+                <th class="text-start">Shift Note</th>
+                <th class="text-start">Plan date</th>
+                <th class="text-start">Reason Remove Plan</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr (click)="onRowSelect(item)" class="hover:surface-200" style="cursor: pointer;">
+                <td>
+                    <i class="pi pi-check-circle" *ngIf="item._check == true"
+                        style="font-size: 1.5rem; color: green;"></i>
+                </td>
+                <td>{{ item.id }}</td>
+                <td class="font-bold" style="color: green">{{ item.shop_code }}</td>
+                <td>{{ item.shop_name }}</td>
+                <td>{{ item.shop_address }}</td>
+                <td class="text-start">{{ item.shift_code }}</td>
+                <td class="text-start">{{ item.shift_note }}</td>
+                <td>{{ item.the_day }}</td>
+                <td>
+                    {{ item.note }} {{ item.reason }}
+                    <i class="pi pi-trash ml-3 hover:bg-red-200 border-round p-2" *ngIf="item._check == true"
+                        (click)="onRowUnselect(item, $event)"
+                        style="font-size: 1.5rem; color: red; cursor: pointer;"></i>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="openReason" [style]="{ width: 'fit-content' }" header="Lý do rút lịch" [modal]="true"
+    styleClass="p-fluid" (onHide)="hideDialogReason()" [closable]="true">
+    <div class="flex flex-column align-items-start w-full gap-2 mb-3">
+        <label for="note">Reason<span class="font-bold" style="color: red;"> *</span></label>
+        <p-dropdown [(ngModel)]="reason" [options]="reasons" (onChange)="selectedReasons($event)" optionLabel="note"
+            [showClear]="false" [filter]="false" filterBy="note" [style]="{'minWidth': '250px', 'maxWidth': '100%'}"
+            placeholder="Vui lòng chọn lý do" appendTo="body" [editable]="false">
+            <ng-template let-reason pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                    <div>{{reason.note}}</div>
+                </div>
+            </ng-template>
+        </p-dropdown>
+    </div>
+    <div *ngIf="isEditNote === true" class="flex flex-row align-items-start justify-content-between w-full gap-2 mb-3">
+        <div class="w-8 flex flex-column align-items-start justify-content-between w-full h-full gap-2">
+            <label for="item_note">Note</label>
+            <input pInputText id="item_note" class="w-full" [(ngModel)]="itemNote"
+                placeholder="Ghi chú thêm" [style]="{'minWidth': '100%'}" />
+        </div>
+        <div class="w-4 align-self-end">
+            <button pButton type="button" label="Xác nhận" class="p-button-lg flex align-items-center justify-content-center"
+                (click)="confirm()">
+            </button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog header="Danh sách rút lịch" [(visible)]="openViewList" [modal]="true" showEffect="fade"
+    [style]="{ width: '80vw' }" [breakpoints]="{ '960px': '95vw' }" *ngIf="screenWidth > 1114">
+
+    <div *ngFor="let tab of Config.process" class="flex flex-row align-items-center justify-content-end gap-3 w-full h-fit">
+        <div class="flex flex-column align-items-start justify-content-between gap-1 mb-4 w-3 h-full"
+            *ngIf="isEdit === 1">
+            <label for="note">Note</label>
+            <input pInputText id="note" class="w-full" [(ngModel)]="note"
+                placeholder="Ghi chú thêm" [style]="{'minWidth': '100px'}" />
+        </div>
+        <button pButton type="button" label="Xác nhận rút lịch" class="p-button-lg"
+            (click)="confirmRemovePlan(tab.Prc_id, tab.step, $event)"></button>
+        <p-toast></p-toast>
+        <p-confirmPopup></p-confirmPopup>
+    </div>
+
+    <p-table [value]="registerRemovePlan" [tableStyle]="{ 'min-width': '50rem' }"
+        dataKey="id">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-start"></th>
+                <th class="text-start">ID</th>
+                <th class="text-start">Code</th>
+                <th class="text-start">Name</th>
+                <th class="text-start">Address</th>
+                <th class="text-start">Shift Code</th>
+                <th class="text-start">Shift Note</th>
+                <th class="text-start">Plan date</th>
+                <th class="text-start">Reason Remove Plan</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr style="cursor: pointer;">
+                <td>
+                    <i class="pi pi-check-circle" *ngIf="item._check == true"
+                        style="font-size: 1.5rem; color: green;"></i>
+                </td>
+                <td>{{ item.id }}</td>
+                <td class="font-bold" style="color: green">{{ item.shop_code }}</td>
+                <td>{{ item.shop_name }}</td>
+                <td>{{ item.shop_address }}</td>
+                <td class="text-start">{{ item.shift_code }}</td>
+                <td class="text-start">{{ item.shift_note }}</td>
+                <td>{{ item.the_day }}</td>
+                <td>
+                    {{ item.reason }} {{ item.note }}
+                    <i class="pi pi-trash ml-3 hover:bg-red-200 border-round p-2" *ngIf="item._check == true"
+                        (click)="onRowUnselectFinal(item, $event)"
+                        style="font-size: 1.5rem; color: red; cursor: pointer;"></i>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+    </ng-template>
+</p-dialog>
+
+
+
+<!-- RESPONSIVE -->
+<p-dialog header="Chi tiết các ca làm việc" [(visible)]="openDialogDetailATDResult" [modal]="true" showEffect="fade"
+    [style]="{ width: '80vw' }" [breakpoints]="{ '960px': '85vw' }" (onHide)="hideDialogDetailATDResult()" *ngIf="screenWidth <= 1114">
+
+    <div class="flex justify-content-end align-items-center gap-3">
+        <div class="p-input-icon-left flex flex-column gap-2">
+            <button pButton pRipple label="Thêm vào Danh sách rút lịch" icon="pi pi-check" class="p-button-text mb-2 mt-2"
+                (click)="showATDResultDetail()"></button>
+        </div>
+    </div>
+
+    <p-table [value]="listDetailATDResult" [(selection)]="selectedATDResult" [tableStyle]="{ 'min-width': 'fit-content' }"
+        dataKey="id">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-start"></th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr (click)="onRowSelect(item)" class="hover:surface-200" style="cursor: pointer;">
+                <td>
+                    <div class="flex flex-row w-fit h-fit align-items-start gap-1">
+                        <div class="col-1 flex flex-column align-self-center justify-content-center gap-4 h-full">
+                            <i class="pi pi-check-circle" *ngIf="item._check == true"
+                                style="font-size: 1.5rem; color: green;"></i>
+                            <i class="pi pi-trash hover:bg-red-200 border-round" *ngIf="item._check == true"
+                                (click)="onRowUnselect(item, $event)"
+                                style="font-size: 1.5rem; color: red; cursor: pointer;"></i>
+                        </div>
+                        <div class="col-11 flex flex-column align-items-start gap-1 w-fit h-fit">
+                            <div class="w-fit">
+                                {{ item.shop_name }} 
+                            </div>
+                            <div class="w-fit">
+                                <span style="color: green">{{ item.shop_code }}</span> -
+                                {{ item.shop_address }} -
+                                {{ item.shift_code }}
+                            </div>
+                            <div class="w-fit">
+                                {{ item.shift_note }} -
+                                {{ item.the_day }}
+                            </div>
+                            <div class="w-fit">
+                                Lý do: <b>{{ item.note }} {{ item.reason }}</b>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Danh sách rút lịch" [(visible)]="openViewList" [modal]="true" showEffect="fade"
+    [style]="{ width: '80vw' }" [breakpoints]="{ '960px': '85vw' }" *ngIf="screenWidth <= 1114">
+
+    <div *ngFor="let tab of Config.process" class="flex flex-row align-items-center justify-content-end gap-4 w-full h-fit">
+        <div class="flex flex-column align-items-start justify-content-between gap-1 mb-4 w-3 h-full"
+            *ngIf="isEdit === 1">
+            <label for="note">Note</label>
+            <input pInputText id="note" class="w-full" [(ngModel)]="note"
+                placeholder="Ghi chú thêm" [style]="{'minWidth': '90px'}" />
+        </div>
+        <button pButton type="button" label="Xác nhận rút lịch" class="p-button-lg"
+            (click)="confirmRemovePlan(tab.Prc_id, tab.step, $event)"></button>
+        <p-toast></p-toast>
+        <p-confirmPopup></p-confirmPopup>
+    </div>
+
+    <p-table [value]="registerRemovePlan" [tableStyle]="{ 'min-width': 'fit-content' }"
+        dataKey="id">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-start"></th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr style="cursor: pointer;">
+                <td>
+                    <div class="flex flex-row w-fit h-fit align-items-start gap-1">
+                        <div class="col-1 flex flex-column align-self-center justify-content-center gap-4 h-full">
+                            <i class="pi pi-check-circle" *ngIf="item._check == true"
+                                style="font-size: 1.5rem; color: green;"></i>
+                            <i class="pi pi-trash hover:bg-red-200 border-round" *ngIf="item._check == true"
+                                (click)="onRowUnselectFinal(item, $event)"
+                                style="font-size: 1.5rem; color: red; cursor: pointer;"></i>
+                        </div>
+                        <div class="col-11 flex flex-column align-items-start gap-1 w-fit h-fit">
+                            <div class="w-fit">
+                                {{ item.shop_name }} 
+                            </div>
+                            <div class="w-fit">
+                                <span style="color: green">{{ item.shop_code }}</span> -
+                                {{ item.shop_address }} -
+                                {{ item.shift_code }}
+                            </div>
+                            <div class="w-fit">
+                                {{ item.shift_note }} -
+                                {{ item.the_day }}
+                            </div>
+                            <div class="w-fit">
+                                Lý do: <b>{{ item.reason }} {{ item.note }}</b>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+    </ng-template>
+</p-dialog>

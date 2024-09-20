@@ -1,0 +1,402 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-3 col-12">
+                    <h6>Product</h6>
+                    <p-multiSelect [options]="listProduct" [showToggleAll]="false" [showClear]="true" [filter]="true"
+                        filterBy="name" [virtualScroll]="true" display="chip" [filter]="true"
+                        [virtualScrollItemSize]="43" class="multiselect-custom-virtual-scroll p-fluid"
+                        [(ngModel)]="listProducts" optionLabel="name" placeholder="Select Product" appendTo="body"
+                        (onClear)="onClearProduct()">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ item.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                </div>
+
+                <div class="md:col-3 col-12">
+                    <h6>Category</h6>
+                    <p-multiSelect [options]="listCategory" [showToggleAll]="false" [showClear]="true" [filter]="true"
+                        filterBy="name" [virtualScroll]="true" display="chip" [filter]="true"
+                        [virtualScrollItemSize]="43" class="multiselect-custom-virtual-scroll p-fluid"
+                        [(ngModel)]="listCategorys" optionLabel="name" placeholder="Select Category" appendTo="body"
+                        (onClear)="onClearCategory()">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ item.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                </div>
+
+                <div class="md:col-3 col-12">
+                    <h6>Type</h6>
+                    <p-multiSelect [options]="listType" [showToggleAll]="false" [showClear]="true" [filter]="true"
+                        filterBy="name" [virtualScroll]="true" display="chip" [filter]="true"
+                        [virtualScrollItemSize]="43" class="multiselect-custom-virtual-scroll p-fluid"
+                        [(ngModel)]="listTypes" optionLabel="name" placeholder="Select Type" appendTo="body"
+                        (onClear)="onClearType()">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ item.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                </div>
+                <div class="md:col-3 p-fluid">
+                    <h6>SOS Code</h6>
+                    <input pInputText id="sosCode" type="text" [(ngModel)]="sosCode" placeholder="Search by SOS Code" />
+                </div>
+                <div class="md:col-3 p-fluid">
+                    <h6>SOS Name</h6>
+                    <input pInputText id="sosName" type="text" [(ngModel)]="sosName" placeholder="Search by SOS Name" />
+                </div>
+                <!-- <div class="md:col-2 p-fluid">
+                    <h6>Shop Code</h6>
+                    <input
+                        pInputText
+                        type="text"
+                        [(ngModel)]="shopCode"
+                        placeholder="Please fill in Shop Code"
+                    />
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button" label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData(1)" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button pButton pRipple label="New" icon="pi pi-plus" (click)="openAddForm()"
+                        class="p-button-sm mr-2 mt-2"></button>
+                    <button pButton pRipple label="Import excel" icon="pi pi-upload" (click)="showImportDialog()"
+                        class="p-button-sm mr-2 mt-2"></button>
+
+                    <button pButton pRipple label="Get Template" icon="pi pi-file-export" (click)="getTemplate()"
+                        class="p-button-sm mr-2 mt-2"></button>
+
+                    <button pButton pRipple label="Raw data" icon="pi pi-file-excel" (click)="export()"
+                        class="p-button-sm mr-2 mt-2"></button>
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                        class="p-button-success mr-2 mt-2" [ngStyle]="{
+                            display: showFilter === 1 ? 'none' : 'flex'
+                        }"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()"
+                        tooltipPosition="top" icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box" leaveActiveClass="fadeoutup" leaveToClass="hidden" [ngStyle]="{
+                            display: showFilter === 0 ? 'none' : 'flex'
+                        }"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+<div class="grid animation-duration-500 box">
+    <div class="col-12 flex">
+        <div class="card flex flex-row align-items-center justify-content-between w-12 gap-5" *ngIf="showImport === 1">
+            <p-toolbar class="w-6">
+                <div class="p-toolbar-group-start flex-row align-items-center justify-content-between w-full">
+                    <input class="form-control w-11" type="file" #myInput (change)="onChangeFile($event)" />
+
+                    <button pButton pRipple (click)="import()" label="Upload" icon="pi pi-upload"
+                        class="p-button-sm p-button-success mr-2 ml-2 w-2"></button>
+                </div>
+            </p-toolbar>
+
+            <p-toolbar class="w-6">
+                <div class="card" *ngIf="dataError">
+                    <p-table #dt [columns]="cols" [value]="dataError" selectionMode="multiple"
+                        [exportHeader]="'customExportHeader'" [tableStyle]="{ 'min-width': '30rem' }">
+                        <ng-template pTemplate="caption">
+                            <div class="flex">
+                                <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()"
+                                    class="p-button-success ml-auto" pTooltip="XLS" tooltipPosition="bottom"></button>
+                            </div>
+                        </ng-template>
+
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns">
+                                    {{ col.header }}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pSelectableRow]="rowData">
+                                <td *ngFor="let col of columns">
+                                    <p>{{ rowData[col.field] }}</p>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <p-table #dt [value]="listSOS" paginatorPosition="top" *ngIf="listSOS && listSOS.length > 0"
+        styleClass="p-datatable-gridlines" [globalFilterFields]="[
+            'RowNum',
+            'sos_code',
+            'sos_type',
+            'width',
+            'unit',
+            'order'
+        ]">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th class="text-center md:col-1" pSortableColumn="RowNum">
+                    Row num <p-sortIcon field="RowNum"> </p-sortIcon>
+                </th>
+                <th class="text-center md:col-1" pSortableColumn="sos_code">
+                    SOS code <p-sortIcon field="sos_code"> </p-sortIcon>
+                </th>
+                <th class="text-center md:col-3">SOS Name</th>
+                <th class="text-center md:col-1" pSortableColumn="sos_type">
+                    SOS Type <p-sortIcon field="sos_type"></p-sortIcon>
+                </th>
+                <th class="text-center md:col-1">Product information</th>
+                <th class="text-center md:col-1" pSortableColumn="width">
+                    Width <p-sortIcon field="width"></p-sortIcon>
+                </th>
+                <th class="text-center md:col-1" pSortableColumn="unit">
+                    Unit<p-sortIcon field="unit"> </p-sortIcon>
+                </th>
+                <th class="text-center md:col-1" pSortableColumn="order">
+                    Order <p-sortIcon field="order"> </p-sortIcon>
+                </th>
+
+                <th class="text-center md:col-1">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr [pSelectableRow]="item">
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.RowNum }}</span>
+                </td>
+                <td class="md:col-1">
+                    <div class="flex flex-row align-items-center gap-3">
+                        <p class="font-medium text-start mt-4">
+                            {{ item.sos_code }}
+                        </p>
+                        <i *ngIf="item.sos_type != 'CATEGORY'" class="text-end pi pi-copy cursor-pointer"
+                            style="font-size: 1.75rem" title="Click to copy!" (click)="handleCopy(item.sos_code)"></i>
+                    </div>
+                </td>
+                <td class="md:col-3">
+                    <span class="font-medium">{{ item.sos_name }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.sos_type }}</span>
+                </td>
+                <td class="text-start md:col-5">
+                    <span class="font-medium" *ngIf="item.product_code">{{ item.product_code }} -
+                        {{ item.product_name }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.width }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.unit }}</span>
+                </td>
+                <td class="text-center md:col-1">
+                    <span class="font-medium">{{ item.order }}</span>
+                </td>
+
+                <td class="text-center md:col-1">
+                    <div class="text-center flex flex-row align-items-center justify-content-around gap-3">
+                        <button class="p-button-rounded p-button-text" pButton pRipple type="button" icon="pi pi-pencil"
+                            (click)="
+                                openEditForm(
+                                    item.sos_id,
+                                    item.sos_type,
+                                    item.category_id,
+                                    item.product_id,
+                                    item.sos_code,
+                                    item.sos_name,
+                                    item.company,
+                                    item.width,
+                                    item.unit,
+                                    item.order
+                                )
+                            ">
+                        </button>
+                        <button class="p-button-rounded p-button-danger p-button-text" pButton pRipple type="button" icon="pi pi-trash"
+                            (click)="
+                                openDelete(
+                                    item.project_id,
+                                    item.sos_id,
+                                    item.sos_type,
+                                    item.category_id,
+                                    item.product_id,
+                                    item.sos_code,
+                                    item.sos_name,
+                                    item.company,
+                                    item.width,
+                                    item.unit,
+                                    item.order,
+                                    $event
+                                )
+                            ">
+                        </button>
+                        <!-- <p-toast></p-toast>
+                        <p-confirmPopup></p-confirmPopup> -->
+                    </div>
+                    <ng-template #configPass>
+                        <button class="border-circle border-none w-3rem h-3rem" style="background-color: #2ac76400"
+                            [disabled]="true">
+                            <i class="pi pi-pencil" style="
+                                    font-size: 1rem;
+                                    color: rgba(255, 255, 255, 0);
+                                "></i>
+                        </button>
+                        <button class="border-circle border-none w-3rem h-3rem"
+                            style="background-color: rgba(255, 0, 0, 0)" [disabled]="true">
+                            <i class="pi pi-trash" style="
+                                    font-size: 1rem;
+                                    color: rgba(255, 255, 255, 0);
+                                "></i>
+                        </button>
+                    </ng-template>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="listSOS && listSOS.length === 0" style="float: right">
+        <h5>No data</h5>
+    </div>
+</div>
+<!-- new dialog -->
+<p-dialog [(visible)]="newListSOSDialog" [style]="{ width: '60rem', height: 'fit-content' }"
+    header="{{ titleDialog }} new List SOS" [modal]="true" styleClass="p-fluid" [closable]="true"
+    (onHide)="resetNewListSOSDialog()">
+    <ng-template pTemplate="content">
+        <div class="flex flex-column w-full gap-1">
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-start gap-3">
+                <div class="field w-4">
+                    <h6>Type</h6>
+                    <p-dropdown [disabled]="editMode" [options]="listType" [showClear]="true" [filter]="true"
+                        optionLabel="name" filterBy="name" appendTo="body" [style]="{ minWidth: '100%' }"
+                        placeholder="Select Type" [(ngModel)]="selectedType" (onChange)="selectedListType($event)">
+                        <ng-template let-listType pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ listType.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="field w-4" *ngIf="typeInput == 'PRODUCT' || typeInput == 'CATEGORY'">
+                    <h6>Category</h6>
+                    <p-dropdown id="categorySelect" [disabled]="editMode" [options]="listCategory" [showClear]="true"
+                        [filter]="true" optionLabel="name" filterBy="name" appendTo="body" [virtualScroll]="true"
+                        display="chip" [filter]="true" [virtualScrollItemSize]="43" [style]="{ minWidth: '100%' }"
+                        [(ngModel)]="selectedCategory" placeholder="Select Category"
+                        (onChange)="selectedListCategory($event)">
+                        <ng-template let-listCategory pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ listCategory.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="field w-4" *ngIf="typeInput == 'PRODUCT'">
+                    <h6>Product</h6>
+                    <p-dropdown id="productSelect" [disabled]="editMode" [options]="listProduct" [showClear]="true"
+                        [filter]="true" optionLabel="name" filterBy="name" appendTo="body" [virtualScroll]="true"
+                        display="chip" [filter]="true" [virtualScrollItemSize]="43" placeholder="Select Product"
+                        [(ngModel)]="selectedProduct" (onChange)="selectedListProduct($event)">
+                        <ng-template let-listProduct pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ listProduct.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-start gap-3"
+                *ngIf="typeInput == 'SOSITEM'">
+                <div class="field w-4">
+                    <h6>SOS Code</h6>
+                    <input pInputText id="sosCodeInput" [disabled]="editMode" type="text" [(ngModel)]="sosCodeInput"
+                        placeholder="Input SOS Code" (ngModelChange)="onChangeInputSosCode($event)" />
+                </div>
+                <div class="field w-4">
+                    <h6>SOS Name</h6>
+                    <input pInputText id="sosNameInput" type="text" [(ngModel)]="sosNameInput"
+                        placeholder="Input SOS Name" />
+                </div>
+            </div>
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-start gap-3">
+                <div class="field w-4">
+                    <h6>Company</h6>
+                    <input pInputText id="companyInput" type="text" [(ngModel)]="companyInput"
+                        placeholder="Input Company" />
+                </div>
+                <div class="field w-4">
+                    <h6>Order</h6>
+                    <input pInputText id="orderInput" type="number" [(ngModel)]="orderInput"
+                        placeholder="Input Sos Name" />
+                </div>
+                <div class="field w-4">
+                    <h6>Width</h6>
+                    <input pInputText id="widthInput" type="number" [(ngModel)]="widthInput"
+                        placeholder="Input Sos Name" />
+                </div>
+            </div>
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-between gap-3">
+                <div class="field w-4">
+                    <label for="unit">Unit<span class="font-bold" style="color: red">
+                            *</span></label>
+                    <input pInputText id="unit" class="text-center" type="text" [(ngModel)]="showInputUnit"
+                        placeholder="Select Unit" [disabled]="true" />
+                    <div class="tag-wrapper flex flex-row align-items-center gap-3 mt-3">
+                        <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                            (click)="chooseMM()">
+                            mm
+                        </div>
+                        <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                            (click)="chooseCM()">
+                            cm
+                        </div>
+                        <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                            (click)="chooseM()">
+                            m
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Reset all data input" icon="pi pi-times" class="p-button-text"
+            (click)="resetAllInput()"></button>
+        <!-- <p-toast></p-toast> -->
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveNewListSOS($event)"></button>
+    </ng-template>
+</p-dialog>
+<p-confirmDialog></p-confirmDialog>

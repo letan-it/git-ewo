@@ -1,0 +1,107 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<table id="check">
+    <tr>
+        <th class="text-center">Thông tin</th>
+        <th class="text-center">Thông tin kiểm tra</th>
+        <th class="text-center" style="width: 10%;">Kết quả</th>
+        <th class="text-center">Thông tin ghi nhận</th>
+        <!-- <th class="text-center">Action</th> -->
+    </tr>
+
+    <tr *ngFor="let item of inValue.data_checkShop.list">
+        <td>{{ item.key }} </td>
+        <td>{{ item.data_check }} </td>
+        <td class="text-center">
+            <p-tag [value]="item.result == 1 ? 'Đúng' : 'Sai' " [severity]="getSeverity(item.result)"></p-tag>
+        </td>
+        <td> {{ item.value_string }} </td>
+    </tr>
+
+    <tr *ngIf="inValue.data_checkShop.listphoto && inValue.data_checkShop.listphoto.length > 0">
+        <td> <i class="pi pi-image"></i> Ảnh tổng quan </td>
+
+        <td class="text-center">
+            <p-image (click)="openImageDbClick(inValue.data_checkShop.listphoto[0], inValue.data_checkShop.listphoto)"
+                [src]="inValue.data_checkShop.listphoto[0].src" alt="Image" width="100px" height="100px"></p-image>
+        </td>
+
+        <td class="text-center">
+            <p-tag [value]="inValue.data_checkShop.listphoto[0].result == 1 ? 'Đúng' : 'Sai' "
+                [severity]="getSeverity(inValue.data_checkShop.listphoto[0].result)"></p-tag>
+        </td>
+        <td>
+
+            <div class="card"
+                *ngIf="inValue.data_checkShop.listphotoImage && inValue.data_checkShop.listphotoImage.length > 0">
+                <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Total:
+                    {{inValue.data_checkShop.listphotoImage.length}}</span>
+                <p-carousel [value]="inValue.data_checkShop.listphotoImage" [numVisible]="3" [numScroll]="1"
+                    [responsiveOptions]="responsiveOptions">
+                    <ng-template let-image pTemplate="item">
+                        <div class="product-item">
+                            <div class="product-item-content">
+                                <div class="mb-3 text-center">
+                                    <p-image (click)="openImageDbClick(image, inValue.data_checkShop.listphotoImage)"
+                                        [src]="image.src" alt="Image" width="100px" height="100px"></p-image>
+                                    <div>
+                                        <h6 class="mt-2 mb-3 font-bold"> {{image._index}} </h6>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-carousel>
+            </div>
+        </td>
+    </tr>
+
+    <!-- *ngFor="let location of inValue.data_checkShop.listLocation" -->
+    <tr *ngIf="inValue.data_checkShop.listLocation && inValue.data_checkShop.listLocation.length>0">
+        <td> <i class="pi pi-map-marker"></i> Vị trí cửa hàng </td>
+        <td>
+            <p class="text-center font-bold">
+                MAP
+                <p-image
+                    (click)="mapPopup( inValue.data_checkShop.listLocation[0].data_check, inValue.data_checkShop.listLocation[1].data_check )"
+                    src="/assets/demo/images/works/marker_red.png" alt="Image" width="20px"></p-image>
+            </p>
+            <p class="text-center">
+                <p-image
+                    (click)="openImageDbClick(inValue.data_checkShop.listLocation[0], inValue.data_checkShop.listLocation)"
+                    [src]="inValue.data_checkShop.listLocation[0].src" alt="Image" width="580px"
+                    height="300px"></p-image>
+            </p>
+
+        </td>
+        <td class="text-center">
+            <p-tag [class]="inValue.data_checkShop.listLocation[0].result == 0 ? 'cursor_pointer' : ''"
+                (click)="showDialog(inValue.data_checkShop.listLocation[0].result)"
+                [icon]="inValue.data_checkShop.listLocation[0].result == 0 ? 'pi pi-external-link' : ''"
+                [value]="inValue.data_checkShop.listLocation[0].result == 1 ? 'Đúng' : 'Sai' "
+                [severity]="getSeverity(inValue.data_checkShop.listLocation[0].result)"></p-tag>
+
+            <p-dialog header="Khoảng cách" [(visible)]="visible" [maximizable]="true">
+                <p>
+                    Khoảng cách giữa hai tọa độ GPS là: ~{{inValue.data_checkShop.listLocation[0].haversine}} km
+                </p>
+            </p-dialog>
+
+        </td>
+        <td>
+            <p class="text-center font-bold">
+                MAP
+                <p-image
+                    (click)="mapPopup( inValue.data_checkShop.listLocation[0].value_string, inValue.data_checkShop.listLocation[1].value_string )"
+                    src="/assets/demo/images/works/marker_red.png" alt="Image" width="20px"></p-image>
+            </p>
+            <p class="text-center">
+                <p-image
+                    (click)="openImageDbClick(inValue.data_checkShop.listLocation[1], inValue.data_checkShop.listLocation)"
+                    [src]="inValue.data_checkShop.listLocation[1].src" alt="Image" width="580px"
+                    height="300px"></p-image>
+
+            </p>
+        </td>
+    </tr>
+</table>

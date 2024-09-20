@@ -1,0 +1,16 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ng-container *ngIf="listCategory && isLoadForm == 0 && selectMulti == false">
+    <p-dropdown [options]="listCategory" [showClear]="true" (onChange)="returnValue(selectedCategory)" [filter]="true"
+        display="chip" filterBy="name" [style]="inputStyle" [(ngModel)]="selectedCategory"
+        placeholder="Select a Category" optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+
+
+<!-- [panelStyle]="{'width':'50%'}" -->
+<ng-container *ngIf="listCategory && isLoadForm == 0 && selectMulti == true">
+    <p-multiSelect [showClear]="true" (onChange)="returnValue(selectedCategory)" display="chip" [filter]="true"
+        filterBy="name" [style]="inputStyle" [options]="listCategory" [(ngModel)]="selectedCategory" optionLabel="name"
+        appendTo="body" placeholder="Select Category" (onClear)="resetSelection()" class="p-fluid"></p-multiSelect>
+</ng-container>
+
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm == 1"></p-skeleton>

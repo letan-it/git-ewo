@@ -1,0 +1,359 @@
+<div class="mb-2">
+    <p-breadcrumb class="max-w-full" [model]="items_menu" [home]="home"></p-breadcrumb>
+</div>
+
+<div *ngIf="project_id != 19 && checkUserCUS() == false">
+    <!-- POSM VALUES -->
+    <div class="grid" *ngIf="false">
+        <div class="md:col-12">
+            <div class="card">
+                <div class="flex justify-content-end align-items-center gap-2">
+                    <div class="p-input-icon-right flex flex-column gap-2">
+                        <app-control-posm-list [multiSelect]="true" (outList)="listPOSM($event)"
+                            (outValue)="selectPOSM($event)"></app-control-posm-list>
+                    </div>
+                    <div class="p-input-icon-right flex flex-column gap-2">
+                    </div>
+                </div>
+
+                <div id="dataPOSM" style="width:100%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="grid" *ngIf="false">
+        <div class="md:col-12">
+            <div class="card">
+                <div id="dataPOSMReason"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- <app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu> -->
+    <p-sidebar [(visible)]="sidebarVisible" position="right">
+        <!-- <ng-template pTemplate="header">Header Content</ng-template> -->
+        <ng-template pTemplate="content">
+            <div class="row">
+                <h6>Month:</h6>
+                <p-dropdown [options]="ListMonth" [showClear]="true" [filter]="true" filterBy="name"
+                    [style]="{ minWidth: '100%' }" [(ngModel)]="selectMonth" [placeholder]="
+                    selectMonth ? selectMonth.name : 'Select a Month'
+                " optionLabel="name" (onChange)="onChooseMonth()" appendTo="body"></p-dropdown>
+            </div>
+        </ng-template>
+        <!-- <ng-template pTemplate="footer">Footer Content</ng-template> -->
+    </p-sidebar>
+
+    <p-toolbar>
+        <div class="p-toolbar-group-left flex flex-wrap"></div>
+        <div class="p-toolbar-group-right">
+            <p-button (click)="sidebarVisible = true" icon="pi pi-filter"></p-button>
+        </div>
+    </p-toolbar>
+
+    <div class="grid mt-2" *ngIf="dataAudit2">
+        <div class="col-12 md:col-3 xl:col-3">
+            <div class="card">
+                <span class="font-semibold text-xl">SL Cửa hàng khảo sát</span>
+                <div class="flex align-items-start mt-3">
+                    <div class="w-6"></div>
+                    <div class="w-6" style="text-align: right;">
+                        <span class="text-4xl font-bold text-xs" *ngIf="summaryShop !== 0">{{summaryShop| number:
+                            '1.0-0'}}
+                            CH</span>
+                        <div class="text-green-500">
+                            <span class="font-medium">.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 md:col-3 xl:col-3" *ngFor="let item of dataAudit2">
+            <div class="card">
+                <span class="font-semibold text-xl">{{item.label}}</span>
+                <div class="flex align-items-start mt-3">
+                    <div class="w-6"></div>
+                    <div class="w-6" style="text-align: right;">
+                        <span class="text-4xl font-bold text-xs">{{item.value| number: '1.0-0'}} CH</span>
+                        <div class="text-green-500">
+                            <span class="font-medium">{{item.y}}%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-12 md:col-3 xl:col-3">
+            <div class="card">
+                <span class="font-semibold text-xl">SL Nhân viên khảo sát</span>
+                <div class="flex align-items-start mt-3">
+                    <div class="w-6"></div>
+                    <div class="w-6" style="text-align: right;">
+                        <span class="text-4xl font-bold text-xs">{{totalEmployee}} NV</span>
+                        <div class="text-green-500">
+                            <span class="font-medium">.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- pie  -->
+    <div class="grid mt-2">
+        <div class="col-12 lg:col-4 z-5" *ngIf="false">
+            <div class="card">
+                <!-- <div class="flex align-items-center justify-content-around"> 
+                <div></div>
+                <h5 class="text-center p-0 m-0">{{label}}</h5>
+                <p-button (click)="actionTable(1)"  *ngIf="!showTable1" icon="pi pi-table"  severity="help"></p-button>
+                <p-button (click)="actionTable(1)"  *ngIf="showTable1" icon="pi pi-chart-pie"   severity="help"></p-button>
+            </div> -->
+                <div class="relative mt-4 height-loading-chart">
+                    <app-pie *ngIf="pie !== undefined" [pie]="pie" [tablePie]="tablePie1"
+                        [showTable]="showTable1"></app-pie>
+                    <div *ngIf="dataAudit2 === undefined"
+                        class="absolute flex align-items-center justify-content-center bg-white top-0 bottom-0 left-0 right-0">
+                        <p-progressSpinner></p-progressSpinner>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 lg:col-5 z-5">
+            <div class="card">
+                <!-- <div class="flex align-items-center justify-content-around"> 
+                <div></div>
+                <h5 class="text-center p-0 m-0">{{label2}}</h5>
+                <p-button (click)="actionTable(2)" *ngIf="!showTable2" icon="pi pi-table"></p-button>
+                <p-button (click)="actionTable(2)" *ngIf="showTable2" icon="pi pi-chart-pie"></p-button> -->
+
+                <!-- </div> -->
+                <div class="relative mt-4 height-loading-chart">
+                    <app-pie *ngIf="pie2 !== undefined" [pie]="pie2" [tablePie]="tablePie2"
+                        [showTable]="showTable2"></app-pie>
+                    <div *ngIf="dataAuditTC === undefined"
+                        class="absolute flex align-items-center justify-content-center bg-white top-0 bottom-0 left-0 right-0">
+                        <p-progressSpinner></p-progressSpinner>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 lg:col-7 z-5">
+            <div class="card">
+                <!-- <div class="flex align-items-center justify-content-around"> 
+                <div></div>
+                <h5 class="text-center p-0 m-0">{{label3}}</h5>
+                <p-button (click)="actionTable(3)" *ngIf="!showTable3" icon="pi pi-table"></p-button>
+                <p-button (click)="actionTable(3)" *ngIf="showTable3" icon="pi pi-chart-pie"></p-button> -->
+
+                <!-- </div> -->
+                <div class="relative mt-4 height-loading-chart">
+                    <app-pie *ngIf="pie3 !== undefined" [pie]="pie3" [tablePie]="tablePie3"
+                        [showTable]="showTable3"></app-pie>
+                    <div *ngIf="dataAuditKTC === undefined"
+                        class="absolute flex align-items-center justify-content-center bg-white top-0 bottom-0 left-0 right-0">
+                        <p-progressSpinner></p-progressSpinner>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- column -->
+    <div class="grid mt-2">
+        <div class="col-12 z-5">
+            <p-card>
+                <div class="flex justify-content-end align-items-center gap-2">
+                    <!-- <p-dropdown class="w-4rem" [options]="optionTop" (onSelect)="handleSelectTop()" [(ngModel)]="top"
+                    optionValue="value" optionLabel="value" placeholder="Select a Top"></p-dropdown> -->
+                    <div class="p-input-icon-right flex flex-column gap-2">
+                        <h6 class="text-sm font-medium m-0">Top</h6>
+                        <p-dropdown [options]="optionTop" [(ngModel)]="chooseTop" optionLabel="value" optionValue="key"
+                            (onChange)="handleSearchTop()"></p-dropdown>
+                    </div>
+                    <div class="p-input-icon-right flex flex-column gap-2">
+                        <h6 class="text-sm font-medium m-0">Date</h6>
+
+                        <input pInputText id="dateEnd" min="{{ dateMin }}" max="{{ dateMax }}" name="party"
+                            (change)="handleSearchEnd()" class="text-center font-bold mr-2" type="date"
+                            [(ngModel)]="dateChartEnd" />
+                    </div>
+                </div>
+                <h5 class="text-center p-0 m-0">
+                    TỔNG HỢP TÌNH TRẠNG BÁO CÁO {{ monthSelect }}
+                </h5>
+                <div class="relative">
+                    <app-barchart [barChart]="barChart" (isShowDt)="addChart($event)"></app-barchart>
+                    <div *ngIf="barChart === undefined"
+                        class="absolute flex align-items-center justify-content-center bg-white top-0 bottom-0 left-0 right-0">
+                        <p-progressSpinner></p-progressSpinner>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+    </div>
+
+    <!-- bar-column -->
+
+    <div class="grid mt-2" *ngIf="isShowDetail">
+        <div class="col-12 z-5">
+            <p-card>
+                <div class="flex justify-content-end px-4 align-item-center gap-3">
+                    <!-- <p-dropdown class="w-4rem" [options]="optionTop" (onSelect)="handleSelectTop()" [(ngModel)]="top"
+                    optionValue="value" optionLabel="value" placeholder="Select a Top"></p-dropdown> -->
+
+                    <div class="p-input-icon-right bg-white flex flex-column gap-2">
+                        <span class="text-sm h-1rem"> </span>
+                        <p-toggleButton class="p-1" [(ngModel)]="checkEye" [onIcon]="icon_eye" offIcon="pi pi-eye"
+                            (onChange)="handleEye()"></p-toggleButton>
+                    </div>
+                    <div class="p-input-icon-right bg-white flex flex-column gap-2">
+                        <span class="text-sm font-medium">Top</span>
+                        <p-dropdown [options]="optionTopBarChart" [(ngModel)]="topBarChart" optionLabel="value"
+                            optionValue="key" (onChange)="handleSearchTopBarChart()"></p-dropdown>
+                    </div>
+                    <div class="p-input-icon-right bg-white flex flex-column gap-2">
+                        <span class="text-sm text-sm font-medium">Sort</span>
+                        <p-toggleButton [(ngModel)]="checked" [onIcon]="icon_sort" offIcon="pi pi-sort-numeric-up-alt"
+                            (onChange)="handleSort()"></p-toggleButton>
+                    </div>
+                </div>
+                <h5 class="text-center p-0 m-0">
+                    TỔNG HỢP TÌNH TRẠNG BÁO CÁO THEO NHÂN VIÊN (Ngày:
+                    {{ dataDetailDateTime }})
+                </h5>
+                <div class="relative">
+                    <app-bar [dataBarChart]="dataBarChart"></app-bar>
+                    <!-- <div *ngIf="barChart === undefined "
+                    class="  absolute flex align-items-center justify-content-center bg-white  top-0 bottom-0 left-0 right-0 ">
+                    <p-progressSpinner></p-progressSpinner>
+                </div> -->
+                </div>
+            </p-card>
+        </div>
+    </div>
+
+    <!-- template -->
+    <div class="grid mt-2" *ngIf="false">
+        <div class="col-12 xl:col-4">
+            <div class="card">
+                <h5 class="text-center">
+                    TIẾN ĐỘ THỰC HIỆN
+                    {{ selectMonth === null ? monthToday : selectMonth.month }}
+                </h5>
+
+                <!-- <div class="card flex justify-content-center" *ngIf="data_progress.data != undefined" > 
+                    <p-chart type="doughnut"  [data]="dataProgress" [options]="optionsProgress" >  </p-chart>    
+                    <div class="donut-inner text-center"  >
+                        <h5>Tổng : {{data_progress.total}} CH</h5> 
+                    </div>  
+                </div> -->
+
+                <div style="float: left; position: relative" *ngIf="data_progress.data !== undefined">
+                    <div style="
+                        width: 100%;
+                        height: 40px;
+                        position: absolute;
+                        top: 58%;
+                        left: 0;
+                        margin-top: -20px;
+                        line-height: 19px;
+                        text-align: center;
+                        z-index: 9;
+                    ">
+                        <h5>Tổng : {{ data_progress.total }} CH</h5>
+                    </div>
+                    <p-chart type="doughnut" [data]="dataProgress" [options]="optionsProgress">
+                    </p-chart>
+                </div>
+                <div class="card flex justify-content-center" *ngIf="data_progress.data === undefined"
+                    style="height: 450px">
+                    <p-progressSpinner class="text-center"></p-progressSpinner>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 xl:col-4">
+            <div class="card">
+                <h5 class="text-center">TỔNG HỢP TÌNH TRẠNG BÁO CÁO</h5>
+
+                <!-- <div class="card flex justify-content-center" *ngIf="data_status.data != undefined">
+                <p-chart type="doughnut" [data]="dataStatus" [options]="optionsStatus"></p-chart>
+                <div class="donut-inner text-center">
+                    <h5>Tổng : {{data_status.total}} CH</h5>
+                </div>
+            </div> -->
+
+                <div style="float: left; position: relative" *ngIf="data_status.data !== undefined">
+                    <div style="
+                        width: 100%;
+                        height: 40px;
+                        position: absolute;
+                        top: 58%;
+                        left: 0;
+                        margin-top: -20px;
+                        line-height: 19px;
+                        text-align: center;
+                        z-index: 9;
+                    ">
+                        <h5>Tổng : {{ data_status.total }} CH</h5>
+                    </div>
+                    <p-chart type="doughnut" [data]="dataStatus" [options]="optionsStatus"></p-chart>
+                </div>
+                <div class="card flex justify-content-center" *ngIf="data_status.data === undefined"
+                    style="height: 450px">
+                    <p-progressSpinner class="text-center"></p-progressSpinner>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 xl:col-4">
+            <div class="card">
+                <h5 class="text-center">TỔNG HỢP CÁC LÝ DO BÁO CÁO KTC</h5>
+                <!-- <div class="card flex justify-content-center" *ngIf="data_reason.data != undefined">
+                <p-chart type="doughnut" [data]="dataReason" [options]="optionsReason"></p-chart>
+                <div class="donut-inner text-center">
+                    <h5>Tổng : {{data_reason.total}} BC</h5>
+                </div>
+            </div> -->
+
+                <div style="float: left; position: relative" *ngIf="data_reason.data !== undefined">
+                    <div style="
+                        width: 100%;
+                        height: 40px;
+                        position: absolute;
+                        top: 58%;
+                        left: 0;
+                        margin-top: -20px;
+                        line-height: 19px;
+                        text-align: center;
+                        z-index: 9;
+                    ">
+                        <h5>Tổng : {{ data_reason.total }} CH</h5>
+                    </div>
+                    <p-chart type="doughnut" [data]="dataReason" [options]="optionsReason"></p-chart>
+                </div>
+
+                <div class="card flex justify-content-center" *ngIf="data_reason.data === undefined"
+                    style="height: 450px">
+                    <p-progressSpinner class="text-center"></p-progressSpinner>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="project_id == 19 && checkUserCUS() == false">
+    <iframe src='https://erp.acacy.vn/public/pbirp?AppShare=eyJFcnBVc2VyTmFtZSIgOiAiZGVtb3BiaXNiYyIgfQ%3D%3D'
+        frameborder='0' style='border: 1px solid #e5f5ff;height: 900px; width: 100%' controls
+        referrerpolicy="unsafe-url"></iframe>
+    <!-- <iframe src="https://erp.spiral.com.vn/public/pbirp?AppShare=eyJFcnBVc2VyTmFtZSIgOiAiZGVtb3NiY3BiaSIgfQ==" title="Recruitment"    style='border: 1px solid #e5f5ff;height: 900px; width: 100%' ></iframe> -->
+
+    <!-- sandbox="allow-scripts" -->
+
+    <!-- <iframe src="https://erp.acacy.com.vn//powerbi/?id=2ff2384c-e13f-46da-8cc0-8ff472b3dbf6&amp;token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiYjFmNzRmM2M2MTU3NDBmNGJlNmQ3ODIzNjlkMTk3YzUiLCJ1c2VybmFtZSI6ImRlbW9wYmlzYmMiLCJyZXBvcnRfaWQiOiJyZXBvcnRfaWQiLCJleHBpcmVzIjoxNzA5MTU3MjIwLjY4OTc1N30.uMQ7G8_1Nmp8HM0JQr9GibPGa0cIzIJmKuwdJqrfCY8" width="100%" height="100%" referrerpolicy="unsafe-url"></iframe> -->
+</div>

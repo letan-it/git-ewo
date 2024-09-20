@@ -1,0 +1,264 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid ">
+    <div class="col-12 ">
+
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap ">
+                <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-sm mr-2"
+                    (click)="openNew()"></button>
+                <button type="button" class="p-button-sm p-button-info mr-2" (click)="export()" label="Raw data" pButton
+                    pRipple icon="pi pi-file-excel" style="float: right;"></button>
+
+                <!-- <a [href]="template_clone">
+                    <button pButton pRipple label="Get Template Clone Question" icon="pi pi-file-export"
+                        class="p-button-sm p-button-info mr-2"></button>
+                </a> -->
+            </div>
+        </p-toolbar>
+    </div>
+
+</div>
+
+
+
+
+<div class="card">
+    <p-toast></p-toast>
+    <!--  'system_code', 'configuration', 'description', -->
+    <p-table #dt [value]="listOOLList" [rows]="10" [paginator]="true" [filterDelay]="0" [globalFilterFields]="['ool_id', '_ool_type', 'ool_code', 'ool_name', 'min_image', 'max_image',
+    '_status', '_is_comment', 'order']" [tableStyle]="{ 'min-width': '75rem' }" [rowHover]="true" dataKey="ool_id"
+        aria-sort="ascending" sortField="order"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>
+                    <!-- <p-tableHeaderCheckbox></p-tableHeaderCheckbox> -->
+                </th>
+
+                <th class="text-center"> ID <p-columnFilter type="text" field="ool_id" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <!-- <th class="text-center"> Type <p-columnFilter type="text" field="_ool_type" display="menu"
+                        class="ml-auto"></p-columnFilter> </th> -->
+
+                <th class="text-center">
+                    <div class="flex justify-content-between align-items-center">
+                        Type
+                        <p-columnFilter field="representative" matchMode="in" display="menu" [showMatchModes]="false"
+                            [showOperator]="false" [showAddButton]="false">
+                            <ng-template pTemplate="header">
+                                <div class="px-3 pt-3 pb-0">
+                                    <!-- <span class="font-bold">Type</span> -->
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                <p-multiSelect [ngModel]="value" [options]="representatives" placeholder="Any"
+                                    (onChange)="filter($event.value)" optionLabel="name" appendTo="body">
+                                    <ng-template let-option pTemplate="item">
+                                        <div class="inline-block vertical-align-middle">
+                                            <span class="ml-1 mt-1">{{ option.name }}</span>
+                                        </div>
+                                    </ng-template>
+                                </p-multiSelect>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+
+                <th class="text-center"> Code <p-columnFilter type="text" field="ool_code" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center"> Name <p-columnFilter type="text" field="ool_name" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+
+                <!-- <th class="text-center" *ngIf="checkUser() == true"> System Code <p-columnFilter type="text"
+                        field="system_code" display="menu" class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center" *ngIf="checkUser() == true"> Configuration <p-columnFilter type="text"
+                        field="configuration" display="menu" class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center" *ngIf="checkUser() == true"> Description <p-columnFilter type="text"
+                        field="description" display="menu" class="ml-auto"></p-columnFilter> </th> -->
+
+                <th class="text-center"> Min Image <p-columnFilter type="numeric" field="min_image" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center"> Max Image <p-columnFilter type="numeric" field="max_image" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center"> Status <p-columnFilter type="boolean" field="_status" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center"> Comment <p-columnFilter type="boolean" field="_is_comment" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center"> Order <p-columnFilter type="numeric" field="order" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center">Action</th>
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <!-- [pTooltip]="item._toolTipUpdate" tooltipPosition="top" -->
+            <tr>
+                <td>
+
+                    <button type=" button" dataKey="ool_id" pButton pRipple [pRowToggler]="item"
+                        class="p-button-text p-button-rounded p-button-plain" (click)="onDisplay()"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                </td>
+                <td class="text-center">{{item.ool_id}} </td>
+                <td><span class="font-bold" style="color: green;">[{{item.ool_type}}]</span> - {{item.NameVN}}</td>
+
+                <td>{{item.ool_code}} </td>
+                <td>{{item.ool_name}} </td>
+
+                <!-- <td *ngIf="checkUser() == true">{{item.system_code}} </td>
+                <td *ngIf="checkUser() == true">{{item.configuration}} </td>
+                <td *ngIf="checkUser() == true">{{item.description}} </td> -->
+
+                <td class="text-center">{{item.min_image}} </td>
+                <td class="text-center">{{item.max_image}} </td>
+                <td class="text-center">
+                    <i class="pi"
+                        [ngClass]="{ 'text-green-500 pi-check-circle': item._status, 'text-red-500 pi-times-circle': !item._status }"></i>
+                </td>
+                <td class="text-center">
+                    <i class="pi"
+                        [ngClass]="{ 'text-green-500 pi-check-circle': item._is_comment, 'text-red-500 pi-times-circle': !item._is_comment }"></i>
+                </td>
+                <td class="text-center font-bold" style="color: green;">{{item.order}} </td>
+
+                <td class="text-center">
+                    <button class="p-button-rounded p-button-text" style="font-size: 2.5rem" title="Edit" 
+                        (click)="editOOL(item)" pButton pRipple type="button" icon="pi pi-pencil"></button>
+                        <button class="p-button-rounded p-button-danger p-button-text" style="font-size: 2.5rem" title="Delete" (click)="deleteOOL(item)"
+                        *ngIf="checkUser() == true" pButton pRipple type="button" icon="pi pi-trash"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">In total there are {{ listOOLList ?
+                listOOLList.length : 0 }} list OOL.</div>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-item>
+
+            <tr>
+                <td colspan="100%">
+                    <div class="col-12">
+                        <app-ool-item [inValue]="item" [action]="'view'"></app-ool-item>
+                    </div>
+                </td>
+            </tr>
+
+        </ng-template>
+
+    </p-table>
+</div>
+<p-dialog [(visible)]="oolListDialog" [style]="{ width: '850px' }" header="OOL Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <!-- <div class="field">
+            <label for="id">ID</label>
+            <p-inputNumber id="id" [(ngModel)]="ool.ool_id"></p-inputNumber>
+        </div> -->
+        <div class="field">
+            <label for="ool_type">Type<span class="font-bold" style="color: red;"> *</span></label>
+            <p-dropdown [options]="oolTypeList" [(ngModel)]="ool._item_ool_type" optionLabel="name" [filter]="true"
+                filterBy="name" [showClear]="true" placeholder="Select a target type" [style]="{'minWidth':'100%'}"
+                appendTo="body" (onChange)="selectTargetType($event)">
+            </p-dropdown>
+        </div>
+        <div class="field">
+            <label for="ool_code">Code<span class="font-bold" style="color: red;"> *</span></label>
+            <input [disabled]="( itemAction == 'create' ) == true ? false : true" type="text" pInputText id="ool_code"
+                [class]="itemAction == 'create' ? '' : 'font-bold'" [(ngModel)]="ool.ool_code" />
+        </div>
+        <div class="field">
+            <label for="ool_name">Name<span class="font-bold" style="color: red;"> *</span></label>
+            <input type="text" pInputText id="ool_name" [(ngModel)]="ool.ool_name" />
+        </div>
+
+        <div class="field" *ngIf="itemAction != 'create'">
+            <label for="system_code">System <Code></Code></label>
+            <input type="text" pInputText id="system_code" [(ngModel)]="ool.system_code" />
+        </div>
+
+        <div class="field" *ngIf="itemAction != 'create' && checkConfig() == true">
+            <label for="configuration">Configuration</label>
+
+            <div class="grid">
+                <div class="col-6">
+                    <ace-editor [(text)]="ool.configuration" mode="json" style="height:300px;"></ace-editor>
+                    <label style="color:red" *ngIf="checksomeObject(ool.configuration) == 1">JSON format
+                        error
+                        config</label>
+
+                </div>
+                <div class="col-6">
+                    <ngx-json-viewer [json]="someObject(ool.configuration)" [depth]="3"></ngx-json-viewer>
+                </div>
+            </div>
+        </div>
+
+        <div class="field" *ngIf="itemAction != 'create' && checkUser() == true">
+
+            <div class="flex align-items-center gap-4">
+                <label class="mr-2" for="description">Description</label>
+                <button pButton type="button" pTooltip="Hide" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" tooltipPosition="top" icon="pi pi-eye-slash"
+                    class=" p-button-success p-button-sm" (click)="showDescript()"
+                    [ngStyle]="{'display': !showDescription ?'none':'flex'}"></button>
+
+                <button pButton type="button" pTooltip="Show" tooltipPosition="top" icon="pi pi-eye"
+                    class="p-button-warning p-button-sm" pStyleClass=".box" leaveActiveClass="fadeoutup"
+                    leaveToClass="hidden" (click)="showDescript()"
+                    [ngStyle]="{'display': showDescription?'none':'flex'}">
+                </button>
+            </div>
+            <div *ngIf="showDescription" class="animation-duration-500 box">
+                <angular-editor class="overflow-y-scroll" placeholder='Enter text here...' [(ngModel)]="ool.description"
+                    [config]='editorConfig'></angular-editor>
+            </div>
+
+        </div>
+
+
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="min_image">Min Image</label>
+                <p-inputNumber id="min_image" [(ngModel)]="ool.min_image"></p-inputNumber>
+            </div>
+            <div class=" field col">
+                <label for="max_image">Max Image</label>
+                <p-inputNumber id="max_image" [(ngModel)]="ool.max_image"></p-inputNumber>
+            </div>
+        </div>
+
+        <!-- <div class="field">
+            <label for="order">Order</label>
+            <p-inputNumber id="order" [(ngModel)]="ool.order"></p-inputNumber>
+        </div> -->
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="order" class="mr-2">Order</label>
+                <p-inputNumber id="order" [(ngModel)]="ool.order"></p-inputNumber>
+            </div>
+            <div class="field col">
+                <label for="status" class="mr-2">Status</label>
+                <p-checkbox [(ngModel)]="ool._status" [binary]="true" inputId="binary"></p-checkbox>
+            </div>
+            <div class="field col">
+                <label for="_is_comment" class="mr-2">Comment</label>
+                <p-checkbox [(ngModel)]="ool._is_comment" [binary]="true" inputId="binary"></p-checkbox>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+
+        <!-- *ngIf="checksomeObject(ool.configuration) == 0"  -->
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveOOLList()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

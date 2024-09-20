@@ -1,0 +1,132 @@
+<div class="wrapper flex flex-column w-full h-fit p-3">
+    <div pRipple class="employee flex flex-row w-full h-fit gap-3 p-3 bg-white mb-3 shadow-5" *ngFor="let item of employeeList">
+        <p-avatar *ngIf="item.image"
+            image="{{item.image}}" 
+            size="xlarge"
+            shape="circle" />
+        <p-skeleton shape="circle" size="4rem" styleClass="mr-2" *ngIf="!item.image" />
+
+        <div class="flex flex-column align-items-start justify-content-start gap-2">
+            <p *ngIf="item.employee_name" class="text-base font-bold m-0" style="color: #0000AE">{{item.employee_name}}</p>
+            <p-skeleton width="5rem" styleClass="mb-2" *ngIf="!item.employee_name" />
+
+            <div class="flex flex-row align-items-start justify-content-center gap-3">
+                <p *ngIf="item.employee_code" class="text-sm m-0">{{item.employee_code}}</p>
+                <p-skeleton height="2rem" styleClass="mb-2" *ngIf="!item.employee_code" />
+
+                <i class="pi pi-circle-fill" style="font-size: 0.3rem; align-self: center;"></i>
+
+                <p *ngIf="item.employee_type_name" class="text-sm m-0">{{item.employee_type_name}}</p>
+                <p-skeleton height="2rem" styleClass="mb-2" *ngIf="!item.employee_type_name" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="wrapper flex flex-column justify-content-between w-full h-full">
+    <div class="flex flex-row align-items-center justify-content-between w-full h-fit m-2">
+        <div class="flex align-items-center justify-content-center w-8">
+            <span class="text-2xl font-semibold m-0" *ngIf="userProfile?.employee_type === 8">Danh sách nhân viên</span>
+            <span class="text-2xl font-semibold m-0" *ngIf="userProfile?.employee_type === 7">Thống kê chấm công</span>
+        </div>
+        <div class="w-2"></div>
+    </div>
+
+    <div class="w-full">
+        <ng-container *ngFor="let item of listDataSubordinate">
+            <div class="flex flex-column w-full h-fit p-3 bg-white shadow-4 border-round mb-2">
+                <div class="flex flex-row align-items-center justify-content-between w-full h-fit mb-2 gap-3">
+                    <div class="flex flex-row w-fit h-fit align-items-center justify-content-between w-full gap-3">
+                        <div class="wrapper-avatar flex flex-row w-5rem h-4rem align-items-center gap-4" *ngIf="item?.image">
+                            <img class="w-full h-full border-circle" [src]="item?.image" alt="">
+                        </div>
+                        <div class="flex flex-column align-items-start justify-content-between w-full h-fit gap-1" (click)="routeToWorkdayDetail(item)">
+                            <span class="employee-name text-xl"><b>{{item.employee_name}}</b></span>
+                            <span><i class="pi pi-envelope"
+                                style="font-size: 1rem; margin-right: 0.5rem"></i>{{item.email}}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row align-items-center justify-content-between w-fit h-fit">
+                        <i class="pi pi-phone" style="font-size: 1.5rem; color: #1ABC9C;"
+                            pTooltip="{{item.mobile}}"></i>
+                    </div>
+                </div>
+
+                <div class="flex flex-column w-full justify-content-center">
+                    <p-accordion [multiple]="false" (onOpen)="openTasks($event, item.tasks)">
+                        <p-accordionTab>
+                            <ng-template pTemplate="header">
+                                <div
+                                    class="flex flex-column w-full h-fit align-items-start justify-content-between text-base">
+                                    <p><b>Danh sách chấm công tại các quán:</b></p>
+                                </div>
+                            </ng-template>
+                            <p-accordion [activeIndex]="[0]" *ngFor="let element of item.tasks">
+                                <p-accordionTab>
+                                    <ng-template pTemplate="header">
+                                        <span>Ngày {{element.title}}</span>
+                                    </ng-template>
+                                    <p-accordion [activeIndex]="[0]" *ngFor="let child of element.date">
+                                        <div class="flex flex-column w-full h-fit align-items-start justify-content-center gap-1">
+                                            <span><b>{{child?.shop_code}} - {{child?.shop_name}}</b></span>
+                                            <span><b>{{child?.note}}</b></span>
+                                            <div
+                                                class="flex flex-row align-items-center justify-content-between w-full h-fit">
+                                                <div
+                                                    class="flex flex-column w-full h-fit align-items-start justify-content-center gap-1">
+                                                    <span>{{child?.atd_time_ci === null ? "Chưa CHECK IN" : "- Thời gian CHECK IN:"}}</span>
+                                                    <span
+                                                        class="ml-3">{{child?.atd_time_ci === null ? "00:00:00" : child?.atd_time_ci}}</span>
+                                                </div>
+                                                <div>
+                                                    <p-image 
+                                                        [src]="child?.atd_photo_ci"  
+                                                        alt="Image check in" 
+                                                        width="40" 
+                                                        loading="lazy"
+                                                        [preview]="true">
+                                                            <ng-template pTemplate="indicator">
+                                                                <i class="pi pi-eye"></i>
+                                                            </ng-template>
+                                                    </p-image>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                class="flex flex-row align-items-center justify-content-between w-full h-fit">
+                                                <div
+                                                    class="flex flex-column w-full h-fit align-items-start justify-content-center gap-1">
+                                                    <span>{{child?.atd_time_co === null ? "Chưa CHECK OUT" : "- Thời gian CHECK OUT:"}}</span>
+                                                    <span
+                                                        class="ml-3">{{child?.atd_time_co === null ? "00:00:00" : child?.atd_time_co}}</span>
+                                                </div>
+                                                <ng-container *ngIf="isLoadForm === 0">
+                                                    <p-image 
+                                                        [src]="child?.atd_photo_co"  
+                                                        alt="Image check out" 
+                                                        width="40" 
+                                                        loading="lazy"
+                                                        [preview]="true">
+                                                            <ng-template pTemplate="indicator">
+                                                                <i class="pi pi-eye"></i>
+                                                            </ng-template>
+                                                    </p-image>
+                                                </ng-container>
+                                                <p-skeleton size="4rem" *ngIf="isLoadForm === 1" styleClass="mr-2" />
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    </p-accordion>
+                                </p-accordionTab>
+                            </p-accordion>
+
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div> -->

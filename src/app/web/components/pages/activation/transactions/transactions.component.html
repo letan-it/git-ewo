@@ -1,0 +1,533 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+
+<div class="card animation-duration-500 box">
+    <div class="row">
+        <div [class]="checkUser() == true ? 'md:col-2' : 'md:col-3'">
+            <h6>Start Date - End Date</h6>
+            <p-calendar inputId="date" [(ngModel)]="rangeDates" selectionMode="range" placeholder="yy/mm/dd - yy/mm/dd"
+                appendTo="body" dateFormat="yy/mm/dd" [readonlyInput]="true" class="mr-2" [showButtonBar]="true"
+                class="p-fluid"></p-calendar>
+        </div>
+
+        <div [class]="checkUser() == true ? 'md:col-3' : 'md:col-4'">
+            <h6>Create</h6>
+            <app-control-employee-list (outValue)="selectCreate($event)" [placeholder]="'Select a create by'"
+                [inputStyle]="{'minWidth':'200px' ,'margin-top':'0.5rem'}" [employee_type_id]="'1 3'"
+                [project_id]="project_id" class="p-fluid"></app-control-employee-list>
+        </div>
+
+        <div [class]="checkUser() == true ? 'md:col-3' : 'md:col-4'" *ngIf="checkUser() == true">
+            <h6>From</h6>
+            <app-control-employee-list (outValue)="selectAdmin($event, 'filter')" [placeholder]="'Select a admin'"
+                [inputStyle]="{'minWidth':'200px','maxWidth':'100%','margin-top':'0.5rem'}" [employee_type_id]="'3'"
+                [project_id]="project_id" class="p-fluid"></app-control-employee-list>
+        </div>
+
+        <div [class]="checkUser() == true ? 'md:col-3' : 'md:col-4'">
+            <h6>To</h6>
+            <app-control-employee-list (outValue)="selectLeader($event, 'filter')"
+                [placeholder]="'Leader - Quản lý nhân viên'"
+                [inputStyle]="{'minWidth':'200px','maxWidth':'100%','margin-top':'0.5rem'}" [employee_type_id]="'8'"
+                [project_id]="project_id" class="p-fluid"></app-control-employee-list>
+        </div>
+
+        <div class="md:col-1">
+            <h6>ID</h6>
+            <p-inputNumber id="transaction_id" [(ngModel)]="transaction_id" class="p-fluid"
+                [inputStyle]="{ 'maxWidth':'100%' }"></p-inputNumber>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="md:col-3">
+            <h6>UUID</h6>
+            <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="uuid" placeholder="UUID" />
+        </div>
+
+        <div class="md:col-3">
+            <h6>Type</h6>
+            <!-- [(ngModel)]="item_transType" -->
+            <p-dropdown [options]="transTypeList" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true"
+                placeholder="Select a type" [style]="{'minWidth':'100%'}" appendTo="body"
+                (onChange)="selectTransType($event)">
+            </p-dropdown>
+        </div>
+        <div class="md:col-3">
+            <h6>Type Bill</h6>
+            <p-dropdown [options]="transBillList" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true"
+                placeholder="Select a bill" [style]="{'minWidth':'100%'}" appendTo="body"
+                (onChange)="selectTransBill($event, 'filter')">
+
+                <ng-template let-item pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div>
+                            <p-tag [severity]="getSeverityBill(item.code)" [value]="item.name"></p-tag>
+                        </div>
+                    </div>
+                </ng-template>
+
+            </p-dropdown>
+        </div>
+
+        <div class="md:col-3">
+            <h6>Status</h6>
+            <p-dropdown [options]="transStatusList" optionLabel="name" [filter]="true" filterBy="name"
+                [showClear]="true" placeholder="Select a status" [style]="{'minWidth':'100%'}" appendTo="body"
+                (onChange)="selectTransStatus($event)">
+
+                <ng-template let-item pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div>
+                            <p-tag [severity]="getSeverityStatus(item.code)" [value]="item.name"></p-tag>
+                        </div>
+                    </div>
+                </ng-template>
+
+            </p-dropdown>
+        </div>
+    </div>
+
+</div>
+
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+        <button [loading]="loading" pButton pRipple label="Filter" icon="pi pi-search" class="p-button-sm mr-2"
+            (click)="loadData(1)"></button>
+
+        <i class="pi pi-bars p-toolbar-separator align-middle"></i>
+        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
+            (click)="openNew( null, 'transaction')"></button>
+
+        <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+            enterActiveClass="fadeinup" (click)="showFilter()" tooltipPosition="top" icon="pi pi-eye"
+            class=" p-button-success p-button-sm mr-2" [ngStyle]="{'display': showFiter ?'none':'flex'}"></button>
+
+        <button pButton type="button" pTooltip="Hide Filter" (click)="showFilter()" tooltipPosition="top"
+            icon="pi pi-eye-slash" class="p-button-warning p-button-sm mr-2" pStyleClass=".box"
+            leaveActiveClass="fadeoutup" leaveToClass="hidden"
+            [ngStyle]="{'display': !showFiter?'none':'flex'}"></button>
+
+    </ng-template>
+
+    <ng-template pTemplate="right">
+
+    </ng-template>
+</p-toolbar>
+
+<div class="card">
+    <p-toast></p-toast>
+
+    <!--   [paginator]="true" [showCurrentPageReport]="true" -->
+    <p-table #dt [value]="listTransactions" [rows]="10" [loading]="loading" [paginator]="true"
+        [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedTransactions" [rowHover]="true"
+        dataKey="transaction_id" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 20, 50]" [showCurrentPageReport]="true" editMode="row">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 5rem"></th>
+
+                <th class="text-center" pSortableColumn="transaction_id">ID <p-sortIcon
+                        field="transaction_id"></p-sortIcon>
+
+                    <!-- <th class="text-center" pSortableColumn="UUID">UUID <p-sortIcon field="UUID"></p-sortIcon> -->
+                </th>
+                <th *ngIf="checkUser() == true" class="text-center" pSortableColumn="_transaction_from">From <p-sortIcon
+                        field="_transaction_from"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="_transaction_to">To <p-sortIcon
+                        field="_transaction_to"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="transaction_type">Type <p-sortIcon
+                        field="transaction_type"></p-sortIcon>
+                </th>
+
+                <th class="text-center" pSortableColumn="note">Note <p-sortIcon field="note"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="transaction_status_name">Status <p-sortIcon
+                        field="transaction_status_name"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="bill_type_name">Type Bill <p-sortIcon
+                        field="bill_type_name"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="created_date_Str">Create Date <p-sortIcon
+                        field="created_date_Str"></p-sortIcon>
+                </th>
+
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+
+
+
+        <ng-template pTemplate="body" let-item let-expanded="expanded" let-editing="editing" let-ri="rowIndex">
+            <tr [pTooltip]="item._created_by" tooltipPosition="top" class="cursor_pointer" style="padding: 0px;"
+                [pEditableRow]="item">
+                <td>
+                    <button type="button" pButton pRipple [pRowToggler]="item"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="expanded ? 'pi pi-schevron-down' : 'pi pi-chevron-right'"
+                        (click)="getTransactionDetails(item.transaction_id, item)"></button>
+                </td>
+                <td class="text-center font-bold" style="color: green;padding: 0px;">{{
+                    item.transaction_id }}
+                </td>
+                <!-- <td>{{ item.UUID }}</td> -->
+                <td *ngIf="checkUser() == true"><span class="font-bold"
+                        style="color: green;">[{{item.transaction_from}}]</span> -
+                    {{item.from_code}} -
+                    {{item.from_name}}</td>
+
+                <td><span class="font-bold" style="color: green;">[{{item.transaction_to}}]</span> -
+                    {{item.to_code}} -
+                    {{item.to_name}}</td>
+
+                <td class="text-center">
+                    <p-tag [severity]="getSeverityType(item.transaction_type)" [value]="item.transaction_type"></p-tag>
+                </td>
+
+                <td>{{ item.note }}</td>
+
+                <td class="text-center">
+
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+
+                            <p-dropdown [options]="transStatusList" optionLabel="name" [filter]="true" filterBy="name"
+                                [showClear]="true" placeholder="Select a status" [style]="{'minWidth':'100%'}"
+                                [(ngModel)]="item.transaction_status_item" appendTo="body"
+                                (onChange)="selectChangeStatus($event, item)">
+
+                                <ng-template let-item pTemplate="item">
+                                    <div class="flex align-items-center gap-2">
+                                        <div>
+                                            <p-tag [severity]="getSeverityStatus(item.code)"
+                                                [value]="item.name"></p-tag>
+                                        </div>
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            <p-tag [severity]="getSeverityStatus(item.transaction_status_code)"
+                                [value]="item.transaction_status_name"></p-tag>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td class="text-center">
+                    <p-tag [severity]="getSeverityBill(item.bill_type)" [value]="item.bill_type_name"></p-tag>
+                </td>
+
+                <td class="text-center">{{ item.created_date_Str }}</td>
+
+                <td class="text-center" [style]="{width : '120px'}">
+
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            class="p-button-rounded p-button-warning mr-2" (click)="onClickChangeStatus(item)"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="changeTranStatus(item )"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            class="p-button-rounded p-button-text p-button-danger"
+                            (click)="onRowEditCancelStatus(item)"></button>
+
+                        <!-- *ngIf="checkUser() == true" => Vào chỉ hiện transaction của mình -->
+                        <button pButton pRipple icon="pi pi-trash"
+                            (click)="deleteItem( $event, item, 'delete', 'transaction')"
+                            class="p-button-rounded p-button-danger"></button>
+
+                    </div>
+
+
+
+                </td>
+            </tr>
+        </ng-template>
+
+
+        <ng-template pTemplate="rowexpansion" let-item>
+            <tr>
+                <td colspan="100%">
+                    <div class="p-3">
+                        <button pButton pRipple label="Item" icon="pi pi-plus"
+                            class="p-button-success p-button-sm mr-2 mb-2" (click)="openNew(item,'item')"></button>
+
+                        <button pButton pRipple label="File" icon="pi pi-plus"
+                            class="p-button-success p-button-sm mr-2 mb-2" (click)="openNew(item,'file')"></button>
+
+                        <button
+                            *ngIf="item.listDetails && item.listDetails.transaction_file && item.listDetails.transaction_file.length > 0"
+                            pButton pRipple label="View File" icon="pi pi-file" class="p-button-sm mr-2 mb-2"
+                            (click)="op.toggle($event)"></button>
+
+                        <p-overlayPanel #op [showCloseIcon]="true">
+                            <ng-template pTemplate="content">
+                                <div class="flex col-12 flex-column max-w-full gap-2 ">
+                                    <div class="flex align-items-center "
+                                        *ngFor="let item of item.listDetails.transaction_file">
+                                        <i class="pi pi-paperclip"></i>
+                                        <div class="text-900 font-semibold block ml-2"><a target="_blank"
+                                                [href]="item.url">{{item.file_name}}
+                                            </a></div>
+
+
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-overlayPanel>
+
+
+                        <p-table
+                            *ngIf="item.listDetails && item.listDetails.transaction_detail  && item.listDetails.transaction_detail.length > 0"
+                            [value]="item.listDetails.transaction_detail" dataKey="id" class="mt-2" editMode="row"
+                            [globalFilterFields]="['_item','', 'item_type_name', 'quantity', 'created_date', '']">
+                            <ng-template pTemplate="header">
+
+            <tr>
+                <th class="text-center" pSortableColumn="_item"> Item
+                    <!-- <p-columnFilter type="text" field="_item" display="menu"></p-columnFilter> -->
+                    <p-sortIcon field="_item"></p-sortIcon>
+                </th>
+                <th class="text-center"> Item Image </th>
+
+                <th class="text-center" pSortableColumn="item_type_name">Type Name
+                    <p-sortIcon field="item_type_name"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="quantity">Quantity
+                    <!-- <p-columnFilter type="numeric" field="balance" display="menu" currency="USD"></p-columnFilter> -->
+                    <p-sortIcon field="quantity"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="created_date">Create Date
+                    <p-sortIcon field="created_date"></p-sortIcon>
+                </th>
+                <th class="text-center"> Action</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="item">
+
+                <td *ngIf="item.item_type == 'PRODUCT'"><span class="font-bold"
+                        style="color: green;">[{{item.item_id}}]</span> -
+                    {{item.product_code}} -
+                    {{item.product_name}}</td>
+
+                <td *ngIf="item.item_type == 'GIFT'"><span class="font-bold"
+                        style="color: green;">[{{item.item_id}}]</span>
+                    -
+                    {{item.gift_code}} -
+                    {{item.gift_name}}</td>
+
+                <td class="text-center">
+                    <p-image [src]="item.item_type == 'PRODUCT' ? item.product_image : item.gift_image"
+                        [alt]="item.item_type == 'PRODUCT' ? item.product_name : item.gift_name" width="50" height="50"
+                        class="shadow-4 m-auto" [preview]="true"></p-image>
+                </td>
+                <td class="text-center">
+                    <p-tag [severity]="getSeverityItemType(item.item_type)" [value]="item.item_type_name"></p-tag>
+                </td>
+
+                <!-- <td class="text-center font-bold" style="color: red;">{{item.quantity}}</td> -->
+
+                <td class="text-center font-bold" style="color: red;">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <p-inputNumber id="quantity" [(ngModel)]="item.quantity" class="font-bold"></p-inputNumber>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{item.quantity}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td class="text-center">{{ item.created_date }}</td>
+
+
+                <td class="text-center" [style]="{width : '150px'}">
+                    <!-- <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"></button> -->
+
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            class="p-button-rounded p-button-warning mr-2"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(item, 'create.update.web')"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            class="p-button-rounded p-button-text p-button-danger" (click)="onRowEditCancel()"></button>
+
+                        <!-- *ngIf="checkUser() == true"  -->
+                        <button pButton pRipple icon="pi pi-trash"
+                            (click)="deleteItem( $event, item, 'delete.web', 'item')"
+                            class="p-button-rounded p-button-danger"></button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+        </ng-template>
+
+
+        <!-- <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">There are no order for this product yet.</td>
+            </tr>
+        </ng-template> -->
+    </p-table>
+
+</div>
+
+
+</td>
+</tr>
+</ng-template>
+</p-table>
+
+</div>
+
+
+
+<p-dialog [(visible)]="transactionDialog" [style]="{ width: '550px' }"
+    [header]="transaction.actionView == 'transaction' ? 'Transaction Details' : 'Item Details'" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <!-- <div class="field">
+            <label for="transaction_id" class="font-bold text-center"
+                style="color: green;">{{transaction.transaction_id}}</label>
+        </div> -->
+
+        <div class="" *ngIf="transaction.actionView == 'transaction'">
+
+            <div class="formgrid grid" *ngIf="false">
+                <div class="field col">
+                    <div *ngFor="let item of transTypeList" class="field-checkbox">
+                        <p-radioButton class="text-center" [inputId]="item.code" name="transaction_type" [value]="item"
+                            [(ngModel)]="transaction.transaction_type"></p-radioButton>
+                        <label [for]="item.code" class="ml-2">{{ item.name }}</label>
+                    </div>
+                </div>
+
+                <div class="field col">
+                    <label for="bill_type">Type Bill<span class="font-bold" style="color: red;"> *</span></label>
+                    <p-dropdown [options]="transBillList" optionLabel="name" [filter]="true" filterBy="name"
+                        [showClear]="true" placeholder="Select a bill" [style]="{'minWidth':'100%'}" appendTo="body"
+                        (onChange)="selectTransBill($event, transaction.action)">
+
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>
+                                    <p-tag [severity]="getSeverityBill(item.code)" [value]="item.name"></p-tag>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+
+
+            <div class="field" *ngIf="checkUser() == true">
+                <label for="transaction_from">From<span class="font-bold" style="color: red;"> *</span></label>
+                <app-control-employee-list (outValue)="selectAdmin($event, 'create')" [placeholder]="'Select a admin'"
+                    [inputStyle]="{'minWidth':'200px','maxWidth':'100%','margin-top':'0.5rem'}" [employee_type_id]="'3'"
+                    [project_id]="project_id" class="p-fluid"></app-control-employee-list>
+            </div>
+
+            <div class="field">
+                <label for="transaction_to">To<span class="font-bold" style="color: red;"> *</span></label>
+                <app-control-employee-list (outValue)="selectLeader($event, 'create')"
+                    [placeholder]="'Leader - Quản lý nhân viên'"
+                    [inputStyle]="{'minWidth':'200px','maxWidth':'100%','margin-top':'0.5rem'}" [employee_type_id]="'8'"
+                    [project_id]="project_id" class="p-fluid"></app-control-employee-list>
+            </div>
+
+
+            <div class="field">
+                <label for="note">Note</label>
+                <input type="text" pInputText id="note" [(ngModel)]="transaction.note" />
+            </div>
+
+        </div>
+
+
+
+        <div class="formgrid grid">
+            <div class="field col" *ngIf="transaction.actionView == 'file'">
+                <div class="card">
+                    <div class="field ">
+                        <input pInputText [style]="{'minWidth':'100%'}" class="text-center font-bold mr-2 mb-2"
+                            [(ngModel)]="filename" placeholder="File name" />
+
+                        <input id="file" [style]="{'minWidth':'100%'}" class="form-control form-control-sm" #myInput
+                            (change)="onUploadFile($event)" type="file" />
+                    </div>
+
+                    <div class="flex col-12 flex-column max-w-full gap-2 ">
+                        <div class="flex align-items-center " *ngFor="let item of list_file">
+                            <i class="pi pi-paperclip"></i>
+                            <div class="text-900 font-semibold block ml-2"><a target="_blank"
+                                    [href]="item.url">{{item.file_name}} </a></div>
+                            <i (click)="removeItem(item.url)" class="pi pi-trash cursor_pointer ml-4"
+                                style="color: red;"></i>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="field col" *ngIf="transaction.actionView == 'item'">
+                <div class="card">
+                    <div class="field text-center">
+
+
+                        <div *ngFor="let item of itemTypeList" class="field-checkbox text-center">
+                            <p-radioButton [inputId]="item.code" name="transaction_type" [value]="item"
+                                [(ngModel)]="transaction.item_type" (ngModelChange)="changeTypeItem()"></p-radioButton>
+                            <label [for]="item.code" class="ml-2">{{ item.name }}</label>
+
+                        </div>
+                    </div>
+
+
+                    <div class="field">
+                        <label *ngIf="transaction.item_type" for="item_id">Item<span class="font-bold"
+                                style="color: red;"> *</span></label>
+                        <div *ngIf="transaction.item_type && transaction.item_type.code == 'PRODUCT'">
+                            <app-control-osa-product (outValue)="selectItemId($event)"></app-control-osa-product>
+                        </div>
+                        <div *ngIf="transaction.item_type && transaction.item_type.code == 'GIFT'">
+                            <app-control-gift (outValue)="selectItemId($event)"></app-control-gift>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="quantity">Quantity<span class="font-bold" style="color: red;"> *</span></label>
+                        <p-inputNumber id="quantity" [(ngModel)]="transaction.quantity"
+                            class="font-bold"></p-inputNumber>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </ng-template>
+
+
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+    </ng-template>
+
+
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

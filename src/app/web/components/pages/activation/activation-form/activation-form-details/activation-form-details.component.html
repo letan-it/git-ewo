@@ -1,0 +1,290 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="grid" style="width: 100% !important;">
+    <div class="row">
+        <div class="col-12 md:col-7">
+            <div class="card flex gap-4">
+                <div class="row flex-row" *ngIf="configuration">
+                    <div class="col-6">
+                        <ace-editor [(text)]="configuration" mode="json" style="height:300px;"></ace-editor>
+                        <label style="color:red" *ngIf="checksomeObject(configuration) == 1">JSON format error
+                            config</label>
+
+                    </div>
+                    <div class="col-6">
+                        <ngx-json-viewer [json]="someObject(configuration)" [depth]="3"></ngx-json-viewer>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="md:col-5 col-12">
+            <div class="card flex gap-4">
+                <div class=" col-12 flex gap-2 py-0 align-items-center justify-content: space-between">
+                    <h6 class="font-bold m-0">Create:</h6>
+                    <h6 class="m-0">{{create_name}}</h6>
+                    <h6 class="font-bold m-0 ml-4"> <i class="pi pi-clock"></i> </h6>
+                    <h6 class="m-0">{{created_date}}</h6>
+                </div>
+                <div *ngIf=" create_name !== update_name && update_name"
+                    class=" col-12 flex py-0  align-items-center justify-content: space-between">
+                    <h6 class="font-bold m-0"> Update : </h6>
+                    <h6 class="m-0 ml-1">{{update_name}}</h6>
+                    <h6 class="font-bold m-0 ml-4"> <i class="pi pi-clock"></i> </h6>
+                    <h6 class="m-0 ml-1">{{update_date}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" *ngIf="form_decription">
+            <div class="card flex-col gap-4">
+                <div class="flex align-items-center gap-4">
+                    <p-chip class="font-bold " label="Description"></p-chip>
+                    <button pButton type="button" pTooltip="Hide Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="showDescript()" tooltipPosition="top"
+                        icon="pi pi-eye-slash" class=" p-button-success p-button-sm"
+                        [ngStyle]="{'display': !showDescription ?'none':'flex'}"></button>
+                    <button pButton type="button" pTooltip="Show Filter" (click)="showDescript()" tooltipPosition="top"
+                        icon="pi pi-eye" class="p-button-warning p-button-sm" pStyleClass=".box"
+                        leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                        [ngStyle]="{'display': showDescription?'none':'flex'}">
+                    </button>
+                </div>
+                <div *ngIf="showDescription" class="animation-duration-500 box">
+                    <angular-editor class="overflow-y-scroll" placeholder='Enter text here...'
+                        [(ngModel)]="form_decription" [config]='editorConfig'></angular-editor>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- detail -->
+        <div class="col-12">
+            <div class="card">
+                <div class="w-full mb-4">
+                    <button type="button" label="Create" pButton pRipple icon="pi pi-plus" style="float: right"
+                        (click)="editDialog({}, 'create.update', 1)"
+                        class="p-button-success p-button-sm mr-2"></button>
+
+                    <button *ngIf="false" type="button" (click)="ShowHideTemplate(1)" label="Import Excel" pButton
+                        pRipple class="p-button-sm" icon="pi pi-upload"></button>
+
+                    <div class="mt-5" *ngIf="showTemplate === 1">
+                        <p-toolbar>
+                            <div class="p-toolbar-group-start">
+                                <div class="text-center" class="mr-2">
+                                    <input class="form-control" type="file" (change)="onChange($event)" #myInputFile />
+                                </div>
+
+                                <button pButton pRipple label="Get Template" icon="pi pi-file-export"
+                                    (click)="getTemplate()" class="p-button-sm p-button-info mr-2"></button>
+                                <button pButton pRipple (click)="importTemplate()" class="ml-2" label="Upload File"
+                                    icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+                            </div>
+                        </p-toolbar>
+
+                        <hr *ngIf="dataError">
+
+                        <div class="card" *ngIf="dataError">
+                            <p-table #dt [columns]="cols" [value]="dataError" selectionMode="multiple"
+                                [exportHeader]="'customExportHeader'" [tableStyle]="{ 'min-width': '50rem' }">
+                                <ng-template pTemplate="caption">
+                                    <div class="flex">
+                                        <button type="button" pButton pRipple icon="pi pi-file-excel"
+                                            (click)="exportExcel()" class="p-button-success ml-auto" pTooltip="XLS"
+                                            tooltipPosition="bottom"></button>
+                                    </div>
+                                </ng-template>
+
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns">
+                                            {{ col.header }}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                    <tr [pSelectableRow]="rowData">
+                                        <td *ngFor="let col of columns">
+                                            <p>{{ rowData[col.field] }} </p>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+
+                        <hr *ngIf="dataMessError">
+                        <div class="card" *ngIf="dataMessError">
+                            <div class=" col-12">
+                                <div class="grid">
+                                    <div class="col-1 font-bold">
+                                        Error Name :
+                                    </div>
+                                    <div class="col-11">
+                                        {{dataMessError}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p-tabView (onChange)="onChangeTab($event)" styleClass="tabview-custom">
+                    <p-tabPanel>
+                        <ng-template pTemplate="header">
+                            <i class="pi pi-calendar"></i>
+                            <span class="ml-2">List Item</span>
+                        </ng-template>
+
+                        <div class="w-full mb-4" *ngIf="false">
+                            <p-toolbar>
+                                <div class="w-full flex gap-2 align-items-center flex-wrap ">
+                                    <div class="flex justify-content-center">
+                                        <div class="flex flex-wrap gap-3">
+                                            {{formItem|json}}
+                                            <div *ngFor="let item of type" class="field-checkbox">
+                                                <p-radioButton [inputId]="item.key" name="category" [value]="item"
+                                                    [(ngModel)]="formItem.type_form"></p-radioButton>
+                                                <label [for]="item.key" class="ml-2">{{ item.name }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i class="pi pi-bars p-toolbar-separator"></i>
+                                    <p-splitButton label="Action" [model]="buttons"
+                                        styleClass="p-button-success p-button-sm">
+                                    </p-splitButton>
+                                </div>
+                            </p-toolbar>
+                        </div>
+
+                        <p-table [value]="sourceItem" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true"
+                            [rows]="10" [showCurrentPageReport]="true" aria-sort="ascending" sortField="orders"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                            (onPage)="pageChange($event)" [rowsPerPageOptions]="[10, 25, 50]">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Type Form</th>
+                                    <th class="text-center">Survey</th>
+                                    <th class="text-center">Formula File</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Orders</th>
+                                    <th class="text-center">Action</th>
+                                    <th class="text-center">Edit</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-item let-columns="columns">
+                                <tr [pTooltip]="item.tooltip" tooltipPosition="left">
+                                    <td class="text-center font-bold" style="color: green;">{{ item.id }}</td>
+                                    <td class="text-center"> <p-tag [severity]="getSeverity(item.type_form)"
+                                            [value]="item.type_form"></p-tag></td>
+                                    <td>
+                                        <label *ngIf="item.survey_id">
+                                            <span class="font-bold" style="color: green;">
+                                                [{{ item.survey_id }}]
+                                            </span> - {{ item.survey_name }}
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <a [href]="item.formula_file" target="_blank">{{item.formula_file}}</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <i *ngIf="item.status !== 0" class="pi text-green-500 pi-check-circle"></i>
+                                        <i *ngIf="item.status === 0" class="pi text-red-500 pi-times-circle"></i>
+                                    </td>
+                                    <td class="text-center font-bold" style="color: green;">{{ item.orders }}</td>
+                                    <td class="text-center">{{ item.action }}</td>
+                                    <td class="text-center" style="width: 120px;">
+                                        <button class="p-button-rounded p-button-text" pButton pRipple type="button" icon="pi pi-pencil"
+                                            (click)="editDialog(item, 'create.update', 2)"></button>
+                                        <button class="p-button-rounded p-button-danger p-button-text" pButton pRipple type="button" icon="pi pi-trash"
+                                            (click)="deleteItem($event, item, 'delete')"></button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-tabPanel>
+                </p-tabView>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  -->
+<p-toast></p-toast>
+<p-dialog [(visible)]="formDialog" [style]="{ width: '750px' }" header="Form Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field text-center"
+            *ngIf="formItem && formItem._type_form && action == 'create.update' && formItem.key == 2">
+            <p-tag [severity]="getSeverity(formItem._type_form.key)" [value]="formItem._type_form.name"
+                class="mr-4"></p-tag>
+        </div>
+
+        <div class="field" *ngIf="action == 'create.update' && formItem.key == 1">
+            <label for="_type_form">Type Form<span class="font-bold" style="color: red;"> *</span></label>
+            <div class="flex justify-content-center">
+                <div class="flex flex-wrap gap-3">
+                    <div *ngFor="let item of type" class="field-checkbox">
+                        <p-radioButton [inputId]="item.key" name="category" [value]="item"
+                            [(ngModel)]="formItem._type_form" class="mr-2"></p-radioButton>
+                        <p-tag [severity]="getSeverity(item.key)" [value]="item.name" class="mr-4"></p-tag>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field" *ngIf="formItem && formItem._type_form && formItem._type_form.key == 'SURVEY'">
+            <label for="survey">Survey<span class="font-bold" style="color: red;"> *</span></label>
+            <app-control-survey-list (outValue)="selectSurvey($event)" [typeSurvey]="[4]" [statusAction]="statusAction"
+                [itemSurvey]="formItem.survey_id"></app-control-survey-list>
+        </div>
+
+        <div class="formgrid grid" *ngIf="formItem && formItem._type_form && (formItem._type_form.key == 'GIFT' || formItem._type_form.key == 'GAME')">
+            <div class="field col">
+                <label for="formula_file">Formula File<span class="font-bold" style="color: red;"> *</span></label>
+                <p>
+                    <input id="formulaFile" #myInputFormulaFile type="file" (change)="onUploadFormulaFile($event)"
+                        accept=".js" />
+                </p>
+            </div>
+
+            <div class="field col">
+                <p *ngIf="formItem && formItem.formula_file">
+                    <i class="pi pi-file mr-2"></i> <span> <a [href]="formItem.formula_file"
+                        target="_blank">{{formItem.formula_file}}</a></span>
+                </p>
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col-5">
+                <label for="orders">Orders</label>
+                <p-inputNumber id="orders" [(ngModel)]="formItem.orders"></p-inputNumber>
+            </div>
+
+            <div class="field col-1">
+                <label for="_status">Status</label>
+                <p>
+                    <p-checkbox [(ngModel)]="formItem._status" [binary]="true" inputId="binary"></p-checkbox>
+                </p>
+            </div>
+
+            <div class="field col-6">
+                <label for="orders">Action</label>
+                <div class="field">
+                    <input [style]="{'minWidth':'100%'}" placeholder="Type action..." pInputText id="tag"
+                        [(ngModel)]="formItem.action" type="text" />
+                    <hr>
+                    <span *ngFor="let item of infoActionArr" class="ml-2 cursor_pointer" (click)="GetChip(item)"><p-chip
+                        [label]="item"></p-chip></span>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveForm()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

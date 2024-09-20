@@ -1,0 +1,73 @@
+
+<p-toast></p-toast>
+<section class="layout-content">
+    <div class="ng-star-inserted">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-5"  #targetEl>
+                <span class="text-900 text-xl font-semibold"><h1>Report</h1></span>
+            
+                <div>
+                    <button pbutton="" pripple="" icon="pi pi-refresh" (click)="loadData()"
+                        class="p-element p-ripple p-button-outlined font-semibold p-button p-component mr-2">
+                        <span class="p-button-icon p-button-icon-left pi pi-refresh" aria-hidden="true"></span>
+                        <span  class="p-button-label">Refresh</span><span class="p-ink"></span>
+                    </button>
+                </div>
+            </div>
+        
+            
+            <div class="card">
+                <p-table [value]="report" [tableStyle]="{'min-width': '60rem'}"  [paginator]="true"  [showCurrentPageReport]="true"  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowsPerPageOptions]="[5, 10, 20]"
+                [rows]="5">
+                    <ng-template pTemplate="caption">
+                        <div class="flex align-items-center justify-content-between">
+                            #
+                            
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Shop Code</th>
+                            <th class="text-center">Shop name</th>
+                            <th class="text-center">Promotion name</th>
+                            <th class="text-center">Customer Code</th>
+                            <th class="text-center">Customer Mobile</th>
+                            <th class="text-center">Customer Name</th>
+                            <th class="text-center">#Gift</th>
+                            <th class="text-center">Time to receive gifts</th>
+                            <th class="text-center">Face</th>
+                            <th class="text-center">Stauts</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td class="text-center"> <p-chip [label]="item.code" pTooltip="Copy ID" (click)="copyText(item.code,'')" class="cursor_pointer" icon="pi pi-hashtag"></p-chip></td>
+                            <td class="text-center">{{item.shopId}}</td>
+                            <td class="text-center">{{item.shopName}}</td>
+                            <td class="text-center">{{item.promotion_name}}</td>
+                            <td class="text-center">{{item.userFakeCode}}</td>
+                            <td class="text-center">{{item.mobile}}</td>
+                            <td class="text-center">{{item.customer_name}}</td>
+                            <td class="text-center">{{item.SL}}</td>
+                            <td class="text-center">{{item.status_date_update}}</td>
+                            <td class="text-center"><img     [src]="item.image"  width="100" class="shadow-4" /></td>
+                            <td class="text-center">
+                                <p-tag *ngIf="item.status_!=undefined" severity="danger" [value]="item.status_"></p-tag>
+                            </td>
+                              
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="flex align-items-center justify-content-between">
+                            In total there are {{report ? report.length : 0 }} report.
+                        </div>
+                    </ng-template>
+                </p-table>
+            </div>
+            
+            
+        </div>
+    </div>
+</section>

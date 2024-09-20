@@ -1,0 +1,355 @@
+<p-toast></p-toast>
+
+<div *ngIf="inValue.data_sellIn && inValue.data_sellIn.result && inValue.data_sellIn.result.length > 0">
+    <p-panel [toggleable]="true" *ngFor="let tab of inValue.data_sellIn.result" class="p-fluid">
+
+        <ng-template pTemplate="header">
+            <div class="flex align-items-center gap-2">
+                <p-tag [icon]="getIconTag(tab.result)" [severity]="getSeverity(tab.result)" [value]="tab.result_name"
+                    class="mr-2" [pTooltip]="tab.result_name" tooltipPosition="top"></p-tag>
+                <span pTooltip="SellOut ID : {{tab.sellout_id}}" tooltipPosition="top"
+                    class="font-bold">{{tab.Guid}}</span>
+            </div>
+            <div class="flex align-items-end" *ngIf="tab.note">
+                <i [pTooltip]="tab.note" tooltipPosition="top" class="pi pi-comment cursor_pointer ml-2"></i>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer" *ngIf="tab.master && tab.master.length > 0">
+
+            <p-toolbar *ngIf="tab.master && tab.master.length > 0">
+                <div class=" p-toolbar-group-left flex flex-wrap">
+                    <span class="p-float-label">
+                        <!-- {{result.notenew|json}} -->
+                        <textarea id="float-input" rows="1" cols="100%" [(ngModel)]="tab.comfirm_note"
+                            pInputTextarea></textarea>
+                        <label for="float-input">Note</label>
+                    </span>
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <div class="flex flex-wrap gap-3 justify-content-center">
+                        <ng-container *ngFor="let item of tab.master">
+                            <p-button *ngIf="item.show == 1" [label]="item.NameVN" [styleClass]="item.style"
+                                [disabled]="item.disible" [icon]="item.Code" (click)="chooseConfirm(item, tab)">
+                            </p-button>
+                        </ng-container>
+                    </div>
+
+                    <i class="pi pi-bars p-toolbar-separator" *ngIf="tab.comfirm_by"></i>
+                    <span class="font-bold" style="color: green;" *ngIf="tab.comfirm_by">[{{tab.comfirm_by}}] -
+                        {{tab.comfirm_code}}
+                        - {{tab.comfirm_name}}</span>
+                </div>
+
+
+                <div class="p-toolbar-group-right">
+                    <button (click)="op.toggle($event)" pTooltip="History Confirm" tooltipPosition="top" pButton pRipple
+                        type="button" icon="pi pi-history" class="p-button-text"></button>
+
+                    <!-- HISTORY CONFIRM-->
+                    <p-overlayPanel #op [style]="{'width': '550px'}" [showCloseIcon]="true">
+                        <ng-template pTemplate="content">
+                            <p-table [value]="tab.history_confirm" selectionMode="single" [paginator]="true" [rows]="3"
+                                responsiveLayout="scroll">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-center">Confirm By</th>
+                                        <th class="text-center">Confirm</th>
+                                        <th class="text-center">Note</th>
+                                        <th class="text-center">Confirm Date</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-his>
+                                    <tr [pSelectableRow]="rowData">
+                                        <td class="font-bold" style="color: green;">
+                                            [{{his.comfirm_by}}] - {{his.comfirm_code}} - {{his.comfirm_name}}
+                                        </td>
+                                        <td>{{his.comfirm_status_nameVN}}</td>
+                                        <td>{{his.comfirm_note}}</td>
+                                        <td class="text-center">{{his.comfirm_date}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </ng-template>
+                    </p-overlayPanel>
+
+                </div>
+            </p-toolbar>
+
+        </ng-template>
+
+        <ng-template pTemplate="icons">
+            <button pButton pRipple label="" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
+                *ngIf="inValue.data_sellIn.is_edit_data == 1 && tab.comfirm_status == null"
+                (click)="openNew(tab,tab.details)" pTooltip="Add Image" tooltipPosition="top"></button>
+            <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
+        </ng-template>
+
+
+        <div class="grid">
+            <div class="md:col-7">
+
+                <p-table [value]="tab.details" [loading]="loading" [filterDelay]="0"
+                    [globalFilterFields]="['category_name', 'product_name', 'quantity', 'price', 'total']"
+                    scrollHeight="510px" dataKey="id" editMode="row">
+
+                    <ng-template pTemplate="header">
+                        <tr>
+
+                            <th class="text-center" pSortableColumn="category_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    Category
+                                    <p-sortIcon field="category_name"></p-sortIcon>
+                                    <p-columnFilter type="text" field="category_name" display="menu"
+                                        class="ml-auto"></p-columnFilter>
+                                </div>
+                            </th>
+
+                            <th class="text-center" pSortableColumn="product_name">
+                                <div class="flex justify-content-between align-items-center">
+                                    Product
+                                    <p-sortIcon field="product_name"></p-sortIcon>
+                                    <p-columnFilter type="text" field="product_name" display="menu"
+                                        class="ml-auto"></p-columnFilter>
+                                </div>
+                            </th>
+                            <th class="text-center" pSortableColumn="quantity">
+                                <div class="flex justify-content-between align-items-center">
+                                    Quantity
+                                    <p-sortIcon field="quantity"></p-sortIcon>
+                                    <p-columnFilter type="text" field="quantity" display="menu"
+                                        class="ml-auto"></p-columnFilter>
+                                </div>
+                            </th>
+                            <th class="text-center" pSortableColumn="price">
+                                <div class="flex justify-content-between align-items-center">
+                                    Price
+                                    <p-sortIcon field="price"></p-sortIcon>
+                                    <p-columnFilter type="text" field="price" display="menu"
+                                        class="ml-auto"></p-columnFilter>
+                                </div>
+                            </th>
+                            <th class="text-center" pSortableColumn="total">
+                                <div class="flex justify-content-between align-items-center">
+                                    Total
+                                    <p-sortIcon field="total"></p-sortIcon>
+                                    <p-columnFilter type="text" field="total" display="menu"
+                                        class="ml-auto"></p-columnFilter>
+                                </div>
+                            </th>
+                            <th class="text-center"> Action</th>
+                        </tr>
+
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+
+                        <tr [pEditableRow]="item">
+                            <td [pTooltip]="item._category" tooltipPosition="top">
+                                {{item.category_name}}
+
+                            <td (click)="op1.toggle($event)" [pTooltip]="item._product" tooltipPosition="top"
+                                class="cursor_pointer">
+                                <p-overlayPanel #op1>
+                                    <p-image
+                                        [src]=" item.product_image ? item.product_image
+                            : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEjbot8iMZv8bsuEqntHBglMD2BTCB1MlxLqd5Kr8aqw&s'"
+                                        alt=" avatar" width="150px"></p-image>
+                                </p-overlayPanel>
+
+                                {{item.product_name}}
+                            </td>
+
+
+
+                            <td class="text-center">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber id="quantity" [(ngModel)]="item.quantity"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.quantity}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td class="text-center">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber id="price" [(ngModel)]="item.price"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.price | number: '1.0-0'}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td class="text-center font-bold" style="color: red;">{{item.total | number: '1.0-0'}}</td>
+                            <td>
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <button
+                                        *ngIf="!editing && inValue.data_sellIn.is_edit_data == 1 && tab.comfirm_status == null"
+                                        pTooltip="Edit Details" tooltipPosition="top" pButton pRipple type="button"
+                                        pInitEditableRow icon="pi pi-pencil"
+                                        class="p-button-warning p-button-text"></button>
+                                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
+                                        icon="pi pi-check" (click)="onRowEditSave(item, tab)"
+                                        class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
+                                        icon="pi pi-times"
+                                        class="p-button-rounded p-button-text p-button-danger"></button>
+
+
+                                    <button *ngIf="item.history && item.history.length > 0" pTooltip="History Details"
+                                        tooltipPosition="top" pButton pRipple type="button" icon="pi pi-history"
+                                        (click)="op1.toggle($event)" class="p-button-text"></button>
+
+
+                                    <!-- HISTORY DETAILS-->
+                                    <p-overlayPanel #op1 [style]="{'width': '550px'}" [showCloseIcon]="true">
+                                        <ng-template pTemplate="content">
+                                            <p-table [value]="item.history" selectionMode="single" [paginator]="true"
+                                                [rows]="3" responsiveLayout="scroll">
+                                                <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center">Update By</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center">Update Date</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-his>
+                        <tr [pSelectableRow]="rowData">
+                            <td class="font-bold" style="color: green;">
+                                [{{his.update_by}}] - {{his.update_code}} - {{his.update_name}}
+                            </td>
+                            <td class="text-center">{{his.quantity}}</td>
+                            <td class="text-center">{{his.price | number: '1.0-0'}}</td>
+                            <td class="text-center font-bold" style="color: red;">{{his.total | number: '1.0-0'}}</td>
+                            <td class="text-center">{{his.update_time}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </ng-template>
+                </p-overlayPanel>
+
+            </div>
+            </td>
+            </tr>
+            </ng-template>
+
+
+            <ng-template pTemplate="footer">
+                <tr>
+                    <td colspan="4" class="font-bold">Sum Total</td>
+                    <td colspan="1" class=" text-center font-bold" style="color: red;">
+                        <span *ngIf="tab.details && tab.details.sumTotal"> {{tab.details.sumTotal | number:
+                            '1.0-0'}}</span>
+
+                    </td>
+                    <td colspan="1"></td>
+                </tr>
+
+            </ng-template>
+
+            </p-table>
+        </div>
+
+
+        <div class="md:col-5">
+
+            <div class="card" *ngIf="tab.image && tab.image.listphotoImage && tab.image.listphotoImage.length > 0">
+
+                <div class="flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                    <div class="flex align-items-center gap-2">
+                        <h6> <span class="font-bold">Total : </span> {{tab.image.listphotoImage.length| json}} </h6>
+                    </div>
+                    <span class="p-text-secondary">
+                    </span>
+                </div>
+
+
+                <p-galleria [value]="tab.image.listphotoImage" [responsiveOptions]="responsiveOptions"
+                    [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+
+                    <ng-template pTemplate="item" let-item>
+                        <img *ngIf="item" [src]="item.src" style="width: 100%;height: 400px;" />
+                    </ng-template>
+
+                    <ng-template pTemplate="caption" let-item>
+                        <div *ngIf="item">
+                            <h6 class="mb-2 font-bold" style="color: white;" *ngIf="item.product">{{item.product}}</h6>
+                            <p-tag [value]="item.type"></p-tag>
+                            <p>{{item.alt}}</p>
+                            <p>
+                                <p-button type="button" styleClass="p-button-danger p-button-sm mr-2 mt-2"
+                                    icon="pi pi-check" (onClick)="deleteImageDetails($event,tab)" label="Delete photo"
+                                    *ngIf="deleteImage == true && item.delete == 1 && inValue.data_sellIn.is_edit_data == 1 && tab.comfirm_status == null"></p-button>
+                            </p>
+
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="thumbnail" let-item>
+                        <div class="grid grid-nogutter justify-content-center"
+                            (click)="clickImage(item,tab.image.listphotoImage)">
+                            <img (dblclick)="openImageDbClick(item, tab.image.listphotoImage)" width="45px"
+                                [src]="item.src" />
+                        </div>
+
+                    </ng-template>
+                </p-galleria>
+
+            </div>
+        </div>
+
+</div>
+</p-panel>
+</div>
+
+<div class="">
+    <app-qc-result-sellin [KPI]="'SELLIN'" [inValue]=" inValue.report_id"></app-qc-result-sellin>
+</div>
+
+
+<!-- ADD IMAGE -->
+<p-dialog [(visible)]="addImageDialog" [style]="{ width: '600px' }" header="Add Images Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="image_type">Image Type<span class="font-bold" style="color: red;"> *</span></label>
+            <p-dropdown [options]="listDetails.listImageType" [(ngModel)]="selectedImageType" optionLabel="name"
+                [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a image type"
+                (onChange)="selectImageType($event)" appendTo="body" class="p-fluid">
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="selectedImageType">
+                        <div>{{ selectedImageType.name }}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="field" *ngIf="checkImageType == true">
+            <label for="product">Product<span class="font-bold" style="color: red;"> *</span></label>
+            <p-dropdown [options]="listDetails.listProduct" [(ngModel)]="selectedProduct" optionLabel="name"
+                [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Product"
+                (onChange)="selectProductData($event)" appendTo="body" class="p-fluid">
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="selectedProduct">
+                        <div>{{ selectedProduct.name }}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="field">
+            <label for="image">Image<span class="font-bold" style="color: red;"> *</span></label>
+            <input id="sellOutFile" #myInputImage type="file" (change)="onUploadImge($event)"
+                accept=".png, .jpg, .jpeg" />
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveImage()"></button>
+    </ng-template>
+</p-dialog>

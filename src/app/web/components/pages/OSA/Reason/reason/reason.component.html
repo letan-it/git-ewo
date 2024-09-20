@@ -1,0 +1,164 @@
+  
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+
+ 
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+                <button
+                    type="button"
+                 
+                    (click)="export()"
+                    label="Raw data"
+                    pButton
+                    pRipple
+                    icon="pi pi-file-excel"
+                    style="float: right"
+                    class="p-button-sm mr-2"
+                ></button>
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+
+
+<div class="card"> 
+    <h6><b>Total Item: {{ListReason.length}}</b></h6>
+    <p-table [globalFilterFields]="['reason_name', 'created_date', 'employee_code', 'employee_name', 'status']"
+        [value]="ListReason" dataKey="reason_id" editMode="row" [tableStyle]="{'min-width': '50rem'}">
+
+        <ng-template pTemplate="header">
+            <tr> 
+                <th>Reason Name</th>  
+                <th>Employee Code</th>
+                <th>Employee Name</th>
+                <th class="text-center">Status</th>
+                <th>Create Date</th>
+                <th></th>
+            </tr>
+
+            <tr> 
+                <th>
+                    <p-columnFilter  [matchMode]="'contains'"  type="text" field="reason_name"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter  [matchMode]="'contains'"  type="text" field="employee_code"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter  [matchMode]="'contains'"  type="text" field="employee_name"></p-columnFilter>
+                </th>
+                <th> 
+                    <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)" 
+                            placeholder="Select a status" appendTo="body" [showClear]="true"> 
+                            </p-dropdown>
+                        </ng-template>
+                    </p-columnFilter> 
+
+                </th>
+                <th> 
+                </th> 
+                
+                <th class="text-center" >
+                    <button type="button" pButton pRipple icon="pi pi-plus" 
+                    (click)="createListReason()"></button>
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-reason let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="reason">
+ 
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="reason.reason_name">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{reason.reason_name}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <!-- <input pInputText type="text" [(ngModel)]="reason.employee_code"> -->
+                            {{reason.employee_code}}
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{reason.employee_code}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <!-- <input pInputText type="text" [(ngModel)]="reason.employee_name"> -->
+                            {{reason.employee_name}}
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{reason.employee_name}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+  
+                <td class="text-center">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input"> 
+                            <!-- {{reason._status}} -->
+                            <p-checkbox  name="group1" [binary]="true"  [(ngModel)]="reason._status"  [inputId]="reason.reason_id">
+                            </p-checkbox>
+
+                        </ng-template>
+                        <ng-template pTemplate="output"> 
+                            <i class="pi" 
+                            [ngClass]="{'true-icon pi-check-circle text-green-500': reason.status == 1, 
+                            'false-icon pi-times-circle text-pink-500': reason.status == 0}"></i> 
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            {{reason.created_date}}
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{reason.created_date}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td> 
+
+                <td>
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(reason)"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">No store router found.</td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<p-dialog header="Create Reason" [modal]="true" [(visible)]="ListReasonCreate" 
+[style]="{width: '25vw'}" [maximizable]="true"> 
+    <app-reason-details [clearMess]="clearMess" (newItemEvent)="addItem($event)"
+    [inValue]="ListReason" [action]="'create'"></app-reason-details>
+
+</p-dialog> 
+ 

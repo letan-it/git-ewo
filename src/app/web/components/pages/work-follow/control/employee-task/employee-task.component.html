@@ -1,0 +1,24 @@
+
+
+
+<p-dropdown *ngIf="control === ''" [showClear]="true" [filter]="true" filterBy="name" appendTo="body"
+[style]="{'minWidth':'100%'}"  (onChange)="onSelectItem(select_item)" [options]="list_data" [(ngModel)]="select_item"  placeholder="Select a assignees"
+optionLabel="name">
+</p-dropdown>
+
+
+
+
+<p-multiSelect  (onChange)="onSelectItem(select_item)"  *ngIf="control === 'team-follow'" [options]="list_data" [showToggleAll]="false" [showClear]="true" [filter]="true"
+filterBy="name" [virtualScroll]="true" display="chip" [filter]="true" [virtualScrollItemSize]="43"
+class="multiselect-custom-virtual-scroll p-fluid" 
+[(ngModel)]="select_item" optionLabel="name" placeholder="Select a team follow" appendTo="body">
+
+
+<ng-template let-item pTemplate="item">
+    <div class="flex align-items-center gap-2">
+        <div>{{item.name}}</div>
+    </div>
+</ng-template>
+
+</p-multiSelect>

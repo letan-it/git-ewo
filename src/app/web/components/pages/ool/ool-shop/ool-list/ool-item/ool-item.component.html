@@ -1,0 +1,163 @@
+<div class="card">
+    <!-- <p-toast></p-toast> -->
+    <!--  'system_code', 'configuration', 'description', -->
+
+    <p-table #dt [value]="listOOLItem" [rows]="10" [paginator]="true" [filterDelay]="0" [globalFilterFields]="['ool_item_id', 'item_name', 'unit', 
+    'system_code', 'question_master.name', 'min_data',  'max_data', '_status', '_is_allow', 'order']"
+        [tableStyle]="{ 'min-width': '75rem' }" [rowHover]="true" dataKey="ool_item_id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center">
+                    <button pButton pRipple icon="pi pi-plus" class="p-button-sm mr-2" (click)="openNew()"></button>
+                </th>
+                <th class="text-center">ID </th>
+                <th class="text-center">Name </th>
+                <th class="text-center">Unit </th>
+                <th class="text-center">System Code </th>
+                <th class="text-center">Question Master </th>
+                <th class="text-center">Min Data </th>
+                <th class="text-center">Max Data </th>
+                <th class="text-center">Status </th>
+                <th class="text-center">Allow </th>
+                <th class="text-center">Orders </th>
+
+                <th class="text-center" style="width: 4rem">Action</th>
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <!-- [pTooltip]="item._toolTipUpdate" tooltipPosition="top" -->
+            <tr>
+                <!-- <td>
+
+                    <button type="button" dataKey="survey_id" pButton pRipple [pRowToggler]="item"
+                        class="p-button-text p-button-rounded p-button-plain" (click)="onDisplay()"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                </td> -->
+
+                <!-- (click)="onDisplay()" -->
+                <td class="text-center">
+                    <button *ngIf="checkDisplayAnswer(item.support_data, item.question_type, item.typeOf) == 7 ||
+                    checkDisplayAnswer(item.support_data, item.question_type, item.typeOf) == 8" type="button"
+                        dataKey="item.ool_item_id" pButton pRipple [pRowToggler]="item"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                </td>
+                <td class=" text-center">{{ item.ool_item_id }}</td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.unit }}</td>
+                <td>{{ item.system_code }}</td>
+
+                <td>
+                    <label *ngIf="item.question_master && item.question_master.name">{{ item.question_master.name
+                        }}</label>
+                </td>
+
+                <td class="text-center">{{ item.min_data}}</td>
+                <td class="text-center">{{ item.max_data}}</td>
+                <td class="text-center">
+                    <i class="pi"
+                        [ngClass]="{ 'text-green-500 pi-check-circle': item._status, 'text-red-500 pi-times-circle': !item._status }"></i>
+                </td>
+                <td class="text-center">
+                    <i class="pi"
+                        [ngClass]="{ 'text-green-500 pi-check-circle': item._is_allow, 'text-red-500 pi-times-circle': !item._is_allow }"></i>
+                </td>
+
+                <td class="text-center font-bold" style="color: green;">{{ item.order}}</td>
+                <td class="text-center">
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button pButton icon="pi pi-pencil" class="p-button-icon p-button-success mr-2"
+                            (click)="editOOLItem(item)"></button>
+                        <button pButton icon="pi pi-trash" class="p-button-icon p-button-danger"
+                            (click)="deleteOOLItem(item)"></button>
+                    </div>
+
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">In total there are {{ listOOLItem ?
+                listOOLItem.length : 0 }} OOL Item.</div>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-item>
+
+            <tr>
+                <td colspan="100%">
+                    <div class="col-12">
+                        <app-ool-item-answers [inValue]="item" [action]="'view'"></app-ool-item-answers>
+                    </div>
+                </td>
+            </tr>
+
+        </ng-template>
+
+    </p-table>
+</div>
+
+
+<p-dialog [(visible)]="oolItemDialog" [style]="{ width: '850px' }" header="OOL Item Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="item_name">Name<span class="font-bold" style="color: red;"> *</span></label>
+            <input type="text" pInputText id="item_name" [(ngModel)]="oolItem.item_name" />
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="unit">Unit</label>
+                <input type="text" pInputText id="unit" [(ngModel)]="oolItem.unit" />
+            </div>
+            <div class=" field col">
+                <label for="system_code">System Code</label>
+                <input type="text" pInputText id="system_code" [(ngModel)]="oolItem.system_code" />
+            </div>
+
+        </div>
+
+        <div class="field">
+            <label for="question_master">Question Master<span class="font-bold" style="color: red;"> *</span></label>
+            <p-dropdown [options]="listItemMaster" [(ngModel)]="oolItem.question_master" optionLabel="name"
+                [showClear]="true" (onChange)="selectQuestionMaster($event)" placeholder="Select a question master"
+                appendTo="body" [filter]="true" filterBy="name"></p-dropdown>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="min_data">Min Data</label>
+                <p-inputNumber id="min_data" [(ngModel)]="oolItem.min_data"></p-inputNumber>
+            </div>
+            <div class=" field col">
+                <label for="max_data">Max Data</label>
+                <p-inputNumber id="max_data" [(ngModel)]="oolItem.max_data"></p-inputNumber>
+            </div>
+            <div class=" field col">
+                <label for="order">Order</label>
+                <p-inputNumber id="order" [(ngModel)]="oolItem.order"></p-inputNumber>
+            </div>
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="status" class="mr-2">Status</label>
+                <p-checkbox [(ngModel)]="oolItem._status" [binary]="true" inputId="binary"></p-checkbox>
+            </div>
+            <div class=" field col">
+                <label for="_is_allow" class="mr-2">Allow</label>
+                <p-checkbox [(ngModel)]="oolItem._is_allow" [binary]="true" inputId="binary"></p-checkbox>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveOOLItem()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog> -->

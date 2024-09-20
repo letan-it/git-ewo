@@ -1,0 +1,97 @@
+<p-panel [toggleable]="true" [collapsed]="true" *ngFor="let item of employeeList" 
+    [style]="{'margin-bottom': '1rem', 'box-shadow': 'rgba(149, 157, 165, 0.2) 0px 8px 24px;'}">
+    <ng-template pTemplate="header">
+        <div class="employee flex flex-row w-full h-fit gap-3" >
+            <p-avatar *ngIf="item.image"
+                image="{{item.image}}" 
+                size="xlarge"
+                shape="circle" />
+            <p-skeleton shape="circle" size="4rem" styleClass="mr-2" *ngIf="!item.image" />
+
+            <div class="flex flex-column align-items-start justify-content-start gap-2">
+                <p *ngIf="item.employee_name" class="text-base font-bold m-0" style="color: #0000AE">{{item.employee_name}}</p>
+                <p-skeleton width="5rem" styleClass="mb-2" *ngIf="!item.employee_name" />
+
+                <div class="flex flex-row align-items-start justify-content-center gap-3">
+                    <p *ngIf="item.employee_code" class="text-sm m-0">{{item.employee_code}}</p>
+                    <p-skeleton height="2rem" styleClass="mb-2" *ngIf="!item.employee_code" />
+
+                    <i class="pi pi-circle-fill" style="font-size: 0.3rem; align-self: center;"></i>
+
+                    <p *ngIf="item.employee_type_name" class="text-sm m-0">{{item.employee_type_name}}</p>
+                    <p-skeleton height="2rem" styleClass="mb-2" *ngIf="!item.employee_type_name" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <p class="m-0 p-0">
+        <span><b>Thông tin chi tiết</b></span>
+    </p>
+    <ng-template pTemplate="content">
+        <div class="m-0">
+            <p-scrollPanel [style]="{ width: '100%', height: 'fit-content', padding: '0px', margin: '0px', backgroundColor: '#fff' }">
+                <div class="container w-10 h-fit pt-6" *ngIf="menuItem?.length > 0">
+                    <div pRipple
+                        class="item flex flex-column align-items-center justify-content-center gap-3 w-full shadow-4 p-3"
+                        *ngFor="let item of menuItem" (click)="showDialog(item.function_name)">
+                        <img style="width: 50%" [src]="item.image" alt="">
+                        <p class="text-base font-bold m-0">{{item.function_name}}</p>
+                    </div>
+                </div>
+                <div class="container w-10 h-fit" *ngIf="menuItem === undefined">
+                    <p-skeleton styleClass="m-2 w-full h-full border-round-3xl" />
+                    <p-skeleton styleClass="m-2 w-full h-full border-round-3xl" />
+                    <p-skeleton styleClass="m-2 w-full h-full border-round-3xl" />
+                </div>
+                <div class="w-full h-full text-lg font-bold mt-3" *ngIf="menuItem?.length === 0">
+                    <p class="text-center">Chưa được phân quyền</p>
+                </div>
+            </p-scrollPanel>
+        </div>
+    </ng-template>
+</p-panel>
+
+<!-- Employees -->
+<p-sidebar [(visible)]="dialogEmployee" [fullScreen]="true" [showCloseIcon]="false" appendTo="body"
+    [style]="{ width: '100vw', height: '100vh', padding: '0px', margin: '0px', backgroundColor: '#F1F5FF' }">
+    <ng-template pTemplate="header">
+        <div class="flex flex-row w-full h-fit align-items-start justify-content-between mt-5">
+            <i class="pi pi-angle-left" style="font-size: 2rem" (click)="closeDialogEmployee()"></i>
+            <p class="text-center text-2xl font-bold">Danh sách nhân viên</p>
+            <i class="pi pi-bell" style="font-size: 2rem; color: transparent;"></i>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="headless" class="w-full">
+        <app-employees-report></app-employees-report>
+    </ng-template>
+</p-sidebar>
+
+<!-- Attendance Report -->
+<p-sidebar [(visible)]="dialogAttendanceReport" [fullScreen]="true" [showCloseIcon]="false" appendTo="body"
+    [style]="{ width: '100vw', height: '100vh', padding: '0px', margin: '0px', backgroundColor: '#F1F5FF' }">
+    <ng-template pTemplate="header">
+        <div class="flex flex-row w-full h-fit align-items-start justify-content-between mt-5">
+            <i class="pi pi-angle-left" style="font-size: 2rem" (click)="closeDialogAttendanceReport()"></i>
+            <p class="text-center text-2xl font-bold">Báo cáo chấm công</p>
+            <i class="pi pi-bell" style="font-size: 2rem; color: transparent;"></i>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="headless" class="w-full">
+        <app-attendance-report></app-attendance-report>
+    </ng-template>
+</p-sidebar>
+
+<!-- Sellout Report -->
+<p-sidebar [(visible)]="dialogSelloutReport" [fullScreen]="true" [showCloseIcon]="false" appendTo="body"
+    [style]="{ width: '100vw', height: '100vh', padding: '0px', margin: '0px', backgroundColor: '#F1F5FF' }">
+    <ng-template pTemplate="header">
+        <div class="flex flex-row w-full h-fit align-items-start justify-content-between mt-5">
+            <i class="pi pi-angle-left" style="font-size: 2rem" (click)="closeDialogSellOutReport()"></i>
+            <p class="text-center text-2xl font-bold">Báo cáo bán hàng</p>
+            <i class="pi pi-bell" style="font-size: 2rem; color: transparent;"></i>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="headless" class="w-full">
+        <app-sellout-report></app-sellout-report>
+    </ng-template>
+</p-sidebar>

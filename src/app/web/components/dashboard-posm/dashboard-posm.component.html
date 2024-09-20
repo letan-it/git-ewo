@@ -1,0 +1,177 @@
+<p-toast></p-toast>
+<div class="mb-2">
+    <p-breadcrumb
+        class="max-w-full"
+        [model]="items_menu"
+        [home]="home"
+    ></p-breadcrumb>
+</div>
+
+<div class="styleSearch">
+    <p-toolbar>
+        <div class="grid">
+            <div class="row">
+                <div class="col-2">
+                    <h6 class="text-sm font-medium m-0">
+                        Start Date - End Date
+                    </h6>
+                    <p-calendar
+                        inputId="date"
+                        [(ngModel)]="rangeDates"
+                        selectionMode="range"
+                        placeholder="yy/mm/dd - yy/mm/dd"
+                        appendTo="body"
+                        dateFormat="yy/mm/dd"
+                        [readonlyInput]="true"
+                        class="mr-2"
+                        [style]="{ minWidth: '200px', maxWidth: '300px' }"
+                        [showButtonBar]="true"
+                    ></p-calendar>
+                </div>
+                <div class="col-2">
+                    <h6 class="text-sm font-medium m-0">Area</h6>
+                    <p-multiSelect
+                        [options]="listArea"
+                        [(ngModel)]="selectedArea"
+                        placeholder="Select area"
+                        optionLabel="name"
+                        display="chip"
+                        [showClear]="true"
+                        appendTo="body"
+                        class="mr-2"
+                        [filter]="true"
+                        filterBy="name"
+                        (onChange)="selectArea($event)"
+                        [style]="{ minWidth: '200px', maxWidth: '300px' }"
+                        (onClear)="clearSelectArea()"
+                    ></p-multiSelect>
+                </div>
+                <div class="col-3">
+                    <h6 class="text-sm font-medium m-0">Province</h6>
+                    <app-control-province
+                        [style]="{ minWidth: '200px', maxWidth: '300px' }"
+                        (outValue)="selectProvince($event)"
+                    ></app-control-province>
+                </div>
+
+                <div class="col-3">
+                    <h6 class="text-sm font-medium m-0">Shop Type</h6>
+                    <app-control-shop-type
+                        [multiSelect]="true"
+                        (outValue)="selectShopType($event)"
+                        (outClear)="clearSelectShopType($event)"
+                        [style]="{ minWidth: '200px', maxWidth: '300px' }"
+                    ></app-control-shop-type>
+                </div>
+                <div class="col-2" *ngIf="checkManager == true">
+                    <h6 class="text-sm font-medium m-0">Manager</h6>
+                    <app-control-employee-list
+                        (outValue)="selectManager($event)"
+                        class="mr-2"
+                        [inputStyle]="{ minWidth: '200px', maxWidth: '300px' }"
+                        [employee_type_id]="'8'"
+                        [project_id]="project_id"
+                        [multiSelect]="true"
+                        [placeholder]="'Select manager'"
+                        (outClear)="clearSelectManager($event)"
+                    ></app-control-employee-list>
+                </div>
+                <div class="col-2" *ngIf="checkManager == true">
+                    <h6 class="text-sm font-medium m-0">Employee</h6>
+                    <app-control-employee-list
+                        (outValue)="selectEmployee($event)"
+                        class="mr-2"
+                        [inputStyle]="{ minWidth: '200px', maxWidth: '300px' }"
+                        [employee_type_id]="'7'"
+                        [project_id]="project_id"
+                        [multiSelect]="true"
+                        [placeholder]="'Select employee'"
+                        (outClear)="clearSelectEmployee($event)"
+                    ></app-control-employee-list>
+                </div>
+                <div class="col-3">
+                    <h6 class="text-sm font-medium m-0">POSM</h6>
+                    <app-control-posm-list
+                        [style]="{ minWidth: '200px', maxWidth: '300px' }"
+                        (outValue)="selectPOSM($event)"
+                        [multiSelect]="true"
+                    ></app-control-posm-list>
+                </div>
+            </div>
+        </div>
+        <div class="p-toolbar-group-end">
+            <p-button (onClick)="getData()" class="mt-4"
+                ><span class="pi pi-search"></span
+            ></p-button>
+        </div>
+    </p-toolbar>
+</div>
+
+<div>
+    <!-- <div class="card">
+        <figure class="highcharts-figure">
+            <div id="container"></div>
+        </figure>
+    </div> -->
+
+    <div class="card">
+        <figure
+            class="highcharts-figure"
+            [ngClass]="{ 'hide-loadding': loading.totalPOSMAreas == true }"
+        >
+            <div id="SalesReportAreaQuantity"></div>
+        </figure>
+        <p-skeleton
+            width="100%"
+            height="400px"
+            *ngIf="loading.totalPOSMAreas == true"
+        >
+        </p-skeleton>
+    </div>
+
+    <div class="card">
+        <figure
+            class="highcharts-figure"
+            [ngClass]="{ 'hide-loadding': loading.listProvince == true }"
+        >
+            <div id="SalesReportProvinceQuantity"></div>
+        </figure>
+        <p-skeleton
+            width="100%"
+            height="400px"
+            *ngIf="loading.listProvince == true"
+        >
+        </p-skeleton>
+    </div>
+
+    <div class="card">
+        <figure
+            class="highcharts-figure"
+            [ngClass]="{ 'hide-loadding': loading.listShopType == true }"
+        >
+            <div id="SalesReportShopTypeQuantity"></div>
+        </figure>
+        <p-skeleton
+            width="100%"
+            height="400px"
+            *ngIf="loading.listShopType == true"
+        >
+        </p-skeleton>
+    </div>
+    <div class="card">
+        <figure
+            class="highcharts-figure"
+            [ngClass]="{
+                'hide-loadding': loading.listEmployee == true
+            }"
+        >
+            <div id="SalesReportEmpQuantity"></div>
+        </figure>
+        <p-skeleton
+            width="100%"
+            height="400px"
+            *ngIf="loading.listEmployee == true"
+        >
+        </p-skeleton>
+    </div>
+</div>

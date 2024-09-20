@@ -1,0 +1,23 @@
+<div class="card w-full" *ngIf="inValue.Body !== null">
+    <div class="flex flex-row align-items-center justify-content-between w-full h-fit">
+        <p class="text-2xl font-bold">Body</p>        
+        <i class="text-end pi pi-copy cursor-pointer" style="font-size: 3rem" pTooltip="Click to copy Body!" (click)="handleCopy(inValue.Body)"></i>
+    </div>
+
+    <p>{{inValue.Body}}</p>
+</div>
+
+<div class="card w-full" *ngIf="inValue.Response !== null">
+    <div class="flex flex-row align-items-center justify-content-between w-full h-fit">
+        <p class="text-2xl font-bold">Response</p>
+        <i class="text-end pi pi-copy cursor-pointer" style="font-size: 3rem" pTooltip="Click to copy Response!" (click)="handleCopy(inValue.Response)"></i>
+    </div>
+
+    <p>{{inValue.Response}}</p>
+</div>
+
+<div class="card w-full" *ngIf="inValue.message !== null">
+    <p class="text-2xl font-bold">Message</p>
+
+    <p>{{inValue.message}}</p>
+</div>

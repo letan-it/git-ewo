@@ -1,0 +1,39 @@
+ 
+<div *ngIf="action =='create'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-12 mb-3">
+
+                    <div class="card mt-3">    
+                        <div class="field p-fluid">
+                            <h6>Reason Name<span style="color: red; font-weight: bold;"> *</span></h6>
+                            <p>
+                                <input pInputText id="reason_name" [(ngModel)]="reason_name" type="text" />
+                            </p>
+                        </div>  
+
+                        <div class="field p-fluid">
+                            <h6>Status</h6>
+                            <p>  
+                                <p-checkbox  name="group1" [binary]="true"  [(ngModel)]="_status" >
+                                </p-checkbox>
+                            </p>
+                        </div>
+ 
+                        <div class="field p-fluid">
+                            <p-button label="Save" (click)="createReasonList()" styleClass="p-button-success p-button-sm"></p-button>
+                            <!-- <p-messages *ngIf="clearMess == true" [value]="msgsInfo"></p-messages> -->
+                        </div>
+
+                    </div>
+                </div> 
+                
+            </div>
+
+        </div>
+    </div>
+</div> 

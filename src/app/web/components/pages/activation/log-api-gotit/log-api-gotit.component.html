@@ -1,0 +1,147 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-4">
+                    <h6>UUID</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="uuid" placeholder="UUID">
+                </div>
+                <div class="md:col-4">
+                    <h6>Guid name</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="guid" placeholder="Guid name">
+                </div>
+                <div class="md:col-4">
+                    <h6>URL</h6>
+                    <input [style]="{'minWidth':'100%'}" type="text" pInputText [(ngModel)]="url" placeholder="URL">
+                </div>
+            </div>
+            <div class="row">
+                <div class="md:col-4">
+                    <h6>{{GetLanguage("f_start_date")}}</h6>
+                    <input pInputText id="start_time" class="text-center font-bold mr-2 w-full" type="date"
+                        [(ngModel)]="start_time" placeholder="{{currentDate}}" />
+                </div>
+                <div class="md:col-4">
+                    <h6>{{GetLanguage("f_end_date")}}</h6>
+                    <input pInputText id="end_time" class="text-center font-bold mr-2 w-full" type="date"
+                        [(ngModel)]="end_time" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button " label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData(1)" class="p-button-sm mr-2 mt-2"></button>
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                        class=" p-button-success mr-2 mt-2"
+                        [ngStyle]="{'display' : showFilter === 1 ? 'none' : 'flex'}"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()"
+                        tooltipPosition="top" icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box" leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                        [ngStyle]="{'display' : showFilter === 0 ? 'none' : 'flex'}"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card" *ngIf="is_loadForm === 1">
+    <p-toast></p-toast>
+
+    <p-table #dt2 [value]="listLogApiGotit" *ngIf="listLogApiGotit && listLogApiGotit.length > 0" [globalFilterFields]="['RowNum', 'uuid', 'GuidName', 'url', 'start_time', 'end_time', 'created_date', 'created_by']"
+        [rowHover]="true" dataKey="RowNum" styleClass="p-datatable-gridlines"
+    >
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                    [totalRecords]="totalRecords" [rowsPerPageOptions]="[20, 50, 100]"></p-paginator>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th style="width: 5rem"></th>
+                <th class="text-center" pSortableColumn="RowNum">
+                    ID <p-sortIcon field="RowNum"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="uuid">
+                    UUID<p-sortIcon field="uuid"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="GuidName">
+                    Guid Name<p-sortIcon field="GuidName"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="url">
+                    URL<p-sortIcon field="url"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="start_time">
+                    Start Time <p-sortIcon field="send_time"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="end_time">
+                    End Time <p-sortIcon field="send_time"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="created_date">
+                    Created date <p-sortIcon field="created_date"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="created_by">
+                    Created by<p-sortIcon field="created_by"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <tr class="text-lg">
+                <td>
+                    <button type="button" pButton pRipple [pRowToggler]="item" 
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.RowNum }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.UUID }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.Guid }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.url }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.start_time }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.end_time }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.created_date }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium">{{ item.created_name }}</span>
+                </td>
+            </tr>  
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-item>
+            <tr>
+                <td colspan="100% w-full">
+                    <div class="p-3 w-full">
+                        <app-detail-log-api [inValue]="item" [action]="'view'"></app-detail-log-api>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center "
+        *ngIf="listLogApiGotit && listLogApiGotit.length === 0" style="float: right;">
+        <h5>No data</h5>
+    </div>
+</div>

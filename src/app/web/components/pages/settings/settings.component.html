@@ -1,0 +1,358 @@
+<div class="grid">
+
+
+    <div class="col-12" style="z-index: 9;">
+        <p-fieldset legend="Config RawData Report" [toggleable]="true">
+            <div class="main-menu flex align-content-center justify-content-start max-w-full border-round-sm gap-2"
+                style="flex-flow: column wrap; max-height: 20rem; min-height: 20rem; height: auto;">
+
+                <div class="flex flex-wrap gap-3">
+                    <div class="flex align-items-center" *ngFor="let item of listRawData">
+                        <div class="card field-checkbox mr-4">
+                            <i class='pi {{ item.icon }}' style="font-size: 1.5rem;" class="mr-1"></i>
+                            <span>
+                                <label [for]="item.key" class="mb-2">
+                                    {{ item.name }}
+                                </label>
+                            </span>
+
+                            <p-checkbox [(ngModel)]="item._check" [binary]="true" inputId="binary"
+                                (click)="onSaveReportProject(item)" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </p-fieldset>
+    </div>
+
+    <div class="col-12" style="z-index: 9;">
+        <!-- ==================================== Menu =================================== -->
+
+        <p-fieldset legend="Config Menu" [toggleable]="true">
+
+            <p-toast></p-toast>
+
+            <div class="main-menu flex align-content-center justify-content-start max-w-full border-round-sm gap-2"
+                style="flex-flow: column wrap; max-height: 88rem; min-height: 50rem; height: auto;">
+                <!-- <p-megaMenu [model]="megaMenuItems" [style]="{'width':'full', 'padding': '2rem 0'}" orientation="horizontal"></p-megaMenu> -->
+
+                <div *ngFor="let itemMenu of arrMenu;" class="mb-2 border-round-lg border-3 border-300 border-solid"
+                    style="width: calc(100%/6); min-width: 17rem; height: fit-content;">
+                    <div *ngIf="itemMenu[0].parent_menu === null; else normalMenu">
+                        <div class="title flex flex-row w-full surface-300 p-3 mr-2 align-items-center gap-2">
+                            <i class='pi pi-bars' style="font-size: 2rem;"></i>
+                            <p class="text-xl font-bold">Main Menu</p>
+                        </div>
+                    </div>
+                    <ng-template #normalMenu>
+                        <div
+                            class="title flex flex-row w-full surface-100 border-round-md border-noround-bottom p-3 mr-2">
+                            <div *ngFor="let itemParentMenu of arrMenuFirstElement;">
+                                <div *ngIf="itemMenu[0].parent_menu === itemParentMenu.menu_id">
+                                    <p class="text-xl font-bold">{{ itemParentMenu.label }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <div *ngFor="let item of itemMenu" class="gap-2 p-2">
+                        <div class="wrapper-item flex flex-row align-items-center justify-content-between gap-5">
+                            <div class="wrapper-icon-name flex flex-row gap-3">
+                                <i class='pi {{ item.icon }}' style="font-size: 1.5rem;"></i>
+                                <p class="h-full text-center text-lg">{{ item.label }}</p>
+                            </div>
+
+                            <p-checkbox [binary]="true" [(ngModel)]="item.check" inputId="1"
+                                (click)="onRowEditSave(item)"></p-checkbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </p-fieldset>
+    </div>
+
+
+    <div class="col-12" style="z-index: 9;">
+        <p-fieldset legend="Config Project" [toggleable]="true">
+
+            <p-table #dt [value]="currentUser.projects" [tableStyle]="{ 'min-width': '75rem' }" [rowHover]="true"
+                dataKey="id">
+                <ng-template pTemplate="body" let-project>
+                    <tr>
+                        <th>Project Id</th>
+                        <td colspan="2">
+                            {{ currentUser.projects[0].project_id }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Project Code</th>
+                        <td colspan="2">
+                            {{ currentUser.projects[0].project_code }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Project Name</th>
+                        <td colspan="2">
+                            {{ currentUser.projects[0].project_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td colspan="2">
+                            {{ currentUser.projects[0].project_desc }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Image</th>
+                        <td colspan="2">
+                            <p-image [src]="currentUser.projects[0].image" [alt]="
+                                            currentUser.projects[0].project_name
+                                        " width="100" class="shadow-4" [preview]="true"></p-image>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Configuration</th>
+                        <td style="vertical-align: top; width: 60%">
+                            <!-- <p-scrollPanel [style]="{ width: '100%', height: '400px' }" styleClass="custombar1">
+                            <textarea [disabled]="true" rows="10" style="width: 100%; " pInputTextarea
+                                [autoResize]="true" [(ngModel)]="currentUser.projects[0].configuration"></textarea>
+                        </p-scrollPanel> -->
+                            <!-- <ace-editor [(text)]="currentUser.projects[0].configuration" mode="json" style="height:900px;"></ace-editor> -->
+
+                            <ngx-json-viewer [json]="
+                                            someObject(
+                                                currentUser.projects[0]
+                                                    .configuration
+                                            )
+                                        " [depth]="2"></ngx-json-viewer>
+                        </td>
+                        <td></td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="summary">
+                    <p-toolbar>
+                        <div class="p-toolbar-group-start"></div>
+                        <div class="p-toolbar-group-end">
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                                (click)="editProject()"></button>
+                        </div>
+                    </p-toolbar>
+                </ng-template>
+            </p-table>
+
+        </p-fieldset>
+    </div>
+
+
+    <div class="col-12" style="z-index: 9;">
+        <!-- ==================================== QUERY =================================== -->
+
+        <p-fieldset legend="Query Support" [toggleable]="true">
+
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4 gap-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                        (click)="openQuerySupport()"></button>
+                    <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+                    (click)="deleteSelectedProducts1()"
+                    [disabled]="!selectedProducts1 || !selectedProducts1.length"></button> -->
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import"
+                        chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table *ngIf="listQuerySupport && listQuerySupport.length > 0" #dt [value]="listQuerySupport" [rows]="10"
+                [paginator]="true" [globalFilterFields]="[
+                            'RowNum',
+                            'isDownload',
+                            'employee_code',
+                            'employee_name',
+                            'plan_date',
+                            'query_string'
+                        ]" [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedProducts1" [rowHover]="true"
+                dataKey="RowNum" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center">RowNum</th>
+                        <th class="text-center" pSortableColumn="isDownload">
+                            Is Download
+                            <p-sortIcon field="isDownload"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="employee_code">
+                            Employee Code
+                            <p-sortIcon field="employee_code"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="employee_name">
+                            Employee Name
+                            <p-sortIcon field="employee_name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="plan_date">
+                            Plan Date
+                            <p-sortIcon field="plan_date"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="query_string">
+                            Query String
+                            <p-sortIcon field="query_string"></p-sortIcon>
+                        </th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>
+                            <p-columnFilter field="isDownload" matchMode="equals" [showMenu]="false">
+                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                    <p-dropdown [ngModel]="value" [options]="isDownloads" (onChange)="
+                                                    filter($event.value)
+                                                " placeholder="Any" [showClear]="true" appendTo="body">
+                                    </p-dropdown>
+                                </ng-template>
+                            </p-columnFilter>
+                        </th>
+                        <th>
+                            <p-columnFilter type="text" [matchMode]="'contains'" field="employee_code"></p-columnFilter>
+                        </th>
+                        <th>
+                            <p-columnFilter type="text" [matchMode]="'contains'" field="employee_name"></p-columnFilter>
+                        </th>
+                        <th>
+                            <p-columnFilter type="text" [matchMode]="'contains'" field="plan_date"></p-columnFilter>
+                        </th>
+                        <th>
+                            <p-columnFilter type="text" [matchMode]="'contains'" field="query_string"></p-columnFilter>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-query>
+                    <tr>
+
+                        <td class="text-center">{{ query.RowNum }}</td>
+                        <td class="text-center">
+                            <i class="pi" [ngClass]="{
+                                            'true-icon pi-check-circle text-green-500':
+                                                query.isDownload === 1,
+                                            'false-icon pi-times-circle text-pink-500':
+                                                query.isDownload === 0
+                                        }"></i>
+                        </td>
+                        <td>{{ query.employee_code }}</td>
+                        <td>{{ query.employee_name }}</td>
+                        <td>{{ query.plan_date }}</td>
+                        <td>{{ query.query_string }}</td>
+
+                        <td class="text-center">
+                            <!-- <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"
+                            (click)="editQuerySupport(query)"></button> -->
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                (click)="deleteQuerySupport(query)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are
+                        {{
+                        listQuerySupport
+                        ? listQuerySupport.length
+                        : 0
+                        }}
+                        query support.
+                    </div>
+                </ng-template>
+            </p-table>
+        </p-fieldset>
+    </div>
+</div>
+
+<p-dialog [maximizable]="true" [(visible)]="projectDialog" [style]="{ width: '850px' }" header="Project Details"
+    [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="flex align-items-center justify-content-center gap-2">
+            <p-image [src]="currentUser.projects[0].image" [alt]="currentUser.projects[0].project_name" width="100"
+                class="block m-auto pb-3" *ngIf="currentUser.projects[0].image" [preview]="true"></p-image>
+        </div>
+
+        <div class="project_id">
+            <label for="project_id">Project Id</label>
+            <p-inputNumber id="project_id" [(ngModel)]="currentUser.projects[0].project_id" [disabled]="true"
+                class="font-bold"></p-inputNumber>
+        </div>
+
+        <div class="field">
+            <label for="project_code">Project Code</label>
+            <input type="text" pInputText id="project_code" [(ngModel)]="currentUser.projects[0].project_code"
+                class="font-bold" [disabled]="true" />
+        </div>
+
+        <div class="field">
+            <label for="project_name">Project Name<span style="color: red"> *</span></label>
+            <input type="text" pInputText id="project_name" [(ngModel)]="currentUser.projects[0].project_name" />
+        </div>
+
+        <div class="field">
+            <label for="project_desc">Description</label>
+            <input type="text" pInputText id="project_desc" [(ngModel)]="currentUser.projects[0].project_desc" />
+        </div>
+
+        <div class="field">
+            <label for="image">Image</label>
+            <input class="form-control" type="file" (change)="onChangeImage($event)" #myInputFile />
+        </div>
+
+        <div class="field">
+            <label for="configuration">Configuration</label>
+            <!-- <textarea rows="10" style="width: 100%;" [autoResize]="true" pInputTextarea
+                    [(ngModel)]="currentUser.projects[0].configuration"  ></textarea> -->
+
+            <ace-editor [(text)]="currentUser.projects[0].configuration" mode="json" style="height: 600px"></ace-editor>
+            <!-- <p-scrollPanel [style]="{ width: '100%', height: '400px' }" styleClass="custombar1">
+                
+            </p-scrollPanel> -->
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProject()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="queryDialog" [style]="{ width: '750px' }" header="Query Support Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="Employee">Employee<span style="color: red"> *</span></label>
+            <app-control-employee-list (outValue)="selectEmployee($event)" [placeholder]="'Select a Employee'"
+                [employee_type_id]="'7'" [inputStyle]="{ minWidth: '200px', maxWidth: '708px' }"
+                [project_id]="currentUser.projects[0].project_id"></app-control-employee-list>
+        </div>
+        <div class="field">
+            <label for="plan_date">Plan Date<span style="color: red"> *</span></label>
+            <input pInputText id="plan_date" class="text-center font-bold mr-2" type="date" [(ngModel)]="datePlan" />
+        </div>
+        <div class="field">
+            <label for="query_string">Query String<span style="color: red"> *</span></label>
+            <textarea pInputTextarea id="query_string" [(ngModel)]="query.query_string" required autofocus rows="10"
+                cols="20"></textarea>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog1()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveQuerySupport()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

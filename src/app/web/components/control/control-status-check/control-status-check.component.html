@@ -1,0 +1,6 @@
+<div *ngIf="status === 1; else zero">
+    <i class="pi pi-check-circle" style="font-size: 1.4rem; color: green;"></i>
+</div>
+<ng-template #zero>
+    <i class="pi pi-times-circle" style="font-size: 1.4rem; color: red"></i>
+</ng-template>

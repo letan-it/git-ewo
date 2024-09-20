@@ -1,0 +1,561 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-2 p-fluid">
+                    <h6>Start day</h6>
+                    <input
+                        pInputText
+                        id="dateStart"
+                        class="text-center font-bold mr-2"
+                        type="date"
+                        [(ngModel)]="dateStart"
+                    />
+                </div>
+                <div class="md:col-2 p-fluid">
+                    <h6>End date</h6>
+                    <input
+                        pInputText
+                        id="dateEnd"
+                        class="text-center font-bold mr-2"
+                        type="date"
+                        [(ngModel)]="dateEnd"
+                    />
+                </div>
+
+                <div class="md:col-2">
+                    <h6>Router</h6>
+                    <app-control-shop-router
+                        (outValue)="selectShopRouter($event)"
+                    ></app-control-shop-router>
+                </div>
+                <div class="md:col-3" *ngIf="userProfile.employee_type_id != 7">
+                    <h6>Manager</h6>
+                    <app-control-employee-list
+                        (outValue)="selectASM($event)"
+                        [project_id]="project_id"
+                        [placeholder]="'Select a Manager '"
+                        [disabled]="
+                            userProfile.employee_type_id == 8 ? true : false
+                        "
+                        [itemManagerCode]="
+                            userProfile.employee_type_id == 8
+                                ? userProfile.employee_id
+                                : 0
+                        "
+                    ></app-control-employee-list>
+                </div>
+
+                <div class="md:col-3" *ngIf="userProfile.employee_type_id != 7">
+                    <h6>Employee</h6>
+                    <app-control-employee-list
+                        (outValue)="selectSS($event)"
+                        [project_id]="project_id"
+                        [placeholder]="'Select a Employee'"
+                        [employee_type_id]="'7'"
+                    ></app-control-employee-list>
+                </div>
+            </div>
+            <div class="row">
+                <div class="md:col-3" style="display: none">
+                    <h6>Status</h6>
+                    <p-dropdown
+                        [options]="ListStatus"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="name"
+                        [style]="{ minWidth: '100%' }"
+                        [(ngModel)]="selectStatus"
+                        placeholder="Select a Status"
+                        optionLabel="name"
+                    ></p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>Province</h6>
+                    <app-control-province
+                        (outValue)="selectProvince($event)"
+                    ></app-control-province>
+                </div>
+                <div class="md:col-3">
+                    <h6>District</h6>
+                    <app-control-district
+                        [inValue]="item_Province"
+                        [inValueProvince]="item_Province"
+                        (outValue)="selectDistrict($event)"
+                    ></app-control-district>
+                </div>
+                <div class="md:col-3">
+                    <h6>Ward</h6>
+                    <app-control-ward
+                        [inValue]="item_District"
+                        [inValueProvince]="item_Province"
+                        [inValueDistrict]="item_District"
+                        (outValue)="selectWard($event)"
+                    ></app-control-ward>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="md:col-2">
+                    <h6>ShopType</h6>
+                    <app-control-shop-type
+                        (outValue)="selectShopType($event)"
+                    ></app-control-shop-type>
+                </div>
+                <div class="md:col-2">
+                    <h6>Channel</h6>
+                    <app-control-channel
+                        (outValue)="selectedChannel($event)"
+                    ></app-control-channel>
+                </div>
+                <div class="md:col-2">
+                    <h6>Shop Code</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="shop_code"
+                        placeholder="Shop Code"
+                    />
+                </div>
+                <div class="md:col-3">
+                    <h6>Project Shop Code</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="project_shop_code"
+                        placeholder="Project Shop Code"
+                    />
+                </div>
+                <div class="md:col-3">
+                    <h6>Customer Shop Code</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="customer_shop_code"
+                        placeholder="Customer Shop Code"
+                    />
+                </div>
+
+                <div class="md:col-6">
+                    <h6>report_id / uuid</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="uuid"
+                        placeholder="id/uuid list"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+                <button
+                    pButton
+                    type="button"
+                    label="Filter"
+                    [loading]="isLoading_Filter"
+                    icon="pi pi-search"
+                    (click)="filter(1)"
+                    class="p-button-sm mr-2"
+                ></button>
+
+                <p-splitButton
+                    *ngIf="totalRecords > 0"
+                    label="Raw data"
+                    icon="pi pi-file-export"
+                    styleClass="p-button-sm mr-2"
+                    [model]="itemsData"
+                ></p-splitButton>
+
+                <i class="pi pi-bars p-toolbar-separator"></i>
+
+                <button
+                    pButton
+                    type="button"
+                    pTooltip="Show Filter"
+                    pStyleClass=".box"
+                    enterClass="hidden"
+                    enterActiveClass="fadeinup"
+                    (click)="ShowHideFiter()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye"
+                    class="p-button-success mr-2 mt-2"
+                    [ngStyle]="{ display: showFiter == 1 ? 'none' : 'flex' }"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    pTooltip="Hide Filter"
+                    (click)="ShowHideFiter()"
+                    tooltipPosition="top"
+                    icon="pi pi-eye-slash"
+                    class="p-button-warning mr-2 mt-2"
+                    pStyleClass=".box"
+                    leaveActiveClass="fadeoutup"
+                    leaveToClass="hidden"
+                    [ngStyle]="{ display: showFiter == 0 ? 'none' : 'flex' }"
+                ></button>
+
+                <app-control-survey-list
+                    *ngIf="download_survey == 1 || download_survey == 2"
+                    (outValue)="selectSurvey($event)" [typeSurvey]="[1, 2]"
+                ></app-control-survey-list>
+                <app-control-promotion
+                    *ngIf="download_display == 1"
+                    [dateCode]="selectMonth"
+                    [inputStyle]="{ minWidth: '300px', maxWidth: '708px' }"
+                    (outValue)="selectPromotion($event)"
+                ></app-control-promotion>
+
+                <button
+                    pButton
+                    type="button"
+                    (click)="DefaultDownload()"
+                    *ngIf="download_survey == 1"
+                    label="download"
+                    [loading]="isLoading_Filter"
+                    icon="pi pi-arrow-down"
+                    class="p-button-sm mr-2 ml-2"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    (click)="DisplayDownload()"
+                    *ngIf="download_display == 1"
+                    label="download"
+                    [loading]="isLoading_Filter"
+                    icon="pi pi-arrow-down"
+                    class="p-button-sm mr-2 ml-2"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    (click)="SellOutDownload()"
+                    *ngIf="download_sellout == 1"
+                    label="download"
+                    [loading]="isLoading_Filter"
+                    icon="pi pi-arrow-down"
+                    class="p-button-sm mr-2 ml-2"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    (click)="DefaultPPTDownload()"
+                    *ngIf="download_survey == 2"
+                    label="download"
+                    [loading]="isLoading_Filter"
+                    icon="pi pi-arrow-down"
+                    class="p-button-sm mr-2 ml-2"
+                ></button>
+            </div>
+
+            <div class="p-toolbar-group-end">
+                <button
+                    pButton
+                    type="button"
+                    (click)="OK('display_model')"
+                    *ngIf="project_id == 4"
+                    label="MODEL EDIT"
+                    [loading]="isLoading_Filter"
+                    icon="pi pi-arrow-up"
+                    class="p-button-sm p-button-success mr-2 ml-2"
+                ></button>
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+<hr />
+
+<div class="card" *ngIf="is_loadForm == 1">
+    <p-table [value]="products" responsiveLayout="scroll">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+            <p-paginator
+                (onPageChange)="onPageChange($event)"
+                [first]="first"
+                [rows]="rows"
+                [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[20, 50, 100]"
+            ></p-paginator>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 5rem"></th>
+                <th class="text-center">RowNum</th>
+                <th class="text-center">Report Date</th>
+                <th class="text-center">project shop code</th>
+                <th class="text-center">Shop</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">Shop Type</th>
+                <th class="text-center">Channel</th>
+                <th class="text-center">Province</th>
+                <th class="text-center">Employee</th>
+                <th class="text-center">Manager</th>
+                <!-- <th class="text-center">Report Status</th> -->
+                <th class="text-center" style="width: 15px">#</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td>
+                    <p-skeleton
+                        shape="circle"
+                        size="2rem"
+                        styleClass="mr-2"
+                    ></p-skeleton>
+                </td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton></p-skeleton></td>
+                <td><p-skeleton size="2rem" styleClass="mr-2"></p-skeleton></td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div class="card" *ngIf="is_loadForm == 0">
+    <!-- dataKey="report_id" -->
+    <p-table
+        selectionMode="single"
+        dataKey="report_id"
+        *ngIf="ListReport && ListReport.length > 0"
+        [value]="ListReport"
+        styleClass="p-datatable-gridlines"
+        [tableStyle]="{ 'min-width': '50rem' }"
+    >
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+            <p-paginator
+                (onPageChange)="onPageChange($event)"
+                [first]="first"
+                [rows]="rows"
+                [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[20, 50, 100]"
+            ></p-paginator>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 5rem"></th>
+                <th class="text-center">RowNum</th>
+                <th class="text-center">Report Date</th>
+                <th class="text-center">project shop code</th>
+                <th class="text-center">Shop</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">Shop Type</th>
+                <th class="text-center">Channel</th>
+                <th class="text-center">Province</th>
+                <th class="text-center">Employee</th>
+                <th class="text-center">Manager</th>
+                <th class="text-center">Report Status</th>
+
+                <!-- <th class="text-center">Promotion</th> -->
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-report let-expanded="expanded">
+            <tr>
+                <td>
+                    <button
+                        type="button"
+                        pButton
+                        pRipple
+                        [pRowToggler]="report"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="
+                            expanded
+                                ? 'pi pi-chevron-down'
+                                : 'pi pi-chevron-right'
+                        "
+                    ></button>
+                </td>
+                <td
+                    [pTooltip]="'Report Id : ' + report.report_id"
+                    tooltipPosition="top"
+                >
+                    {{ report.RowNum }}
+                </td>
+                <td>{{ report.report_date | date : "dd/MM/yyyy" }}</td>
+                <td>{{ report.project_shop_code }}</td>
+
+                <td (click)="op1.toggle($event)">
+                    <p-overlayPanel #op1>
+                        <p-image
+                            [src]="
+                                report.image
+                                    ? report.image
+                                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEjbot8iMZv8bsuEqntHBglMD2BTCB1MlxLqd5Kr8aqw&s'
+                            "
+                            alt="avatar"
+                            width="150px"
+                        ></p-image>
+                    </p-overlayPanel>
+
+                    <label
+                        *ngIf="
+                            report.shop_code != null &&
+                            report.shop_name != null &&
+                            report.shop_address != null
+                        "
+                    >
+                        <b style="color: green"> {{ report.shop_code }} </b> -
+                        {{ report.shop_name }}
+                    </label>
+                </td>
+                <td>{{ report.shop_address }}</td>
+                <td>
+                    <label
+                        *ngIf="
+                            report.shop_type_code != null &&
+                            report.shop_type_name != null
+                        "
+                    >
+                        {{ report.shop_type_code }} -
+                        {{ report.shop_type_name }}
+                    </label>
+                </td>
+                <td>
+                    <label
+                        *ngIf="
+                            report.channel_code != null &&
+                            report.channel_name != null
+                        "
+                    >
+                        {{ report.channel_code }} - {{ report.channel_name }}
+                    </label>
+                </td>
+                <td
+                    [pTooltip]="report.ward_name + ', ' + report.district_name"
+                    tooltipPosition="top"
+                >
+                    <label>
+                        {{ report.province_name }}
+                    </label>
+                </td>
+
+                <td (click)="op.toggle($event)">
+                    <p-overlayPanel #op>
+                        <img
+                            width="150px"
+                            [src]="report.employee_image"
+                            alt="avatar"
+                        />
+                    </p-overlayPanel>
+
+                    <label
+                        *ngIf="
+                            report.employee_name != null &&
+                            report.employee_code != null
+                        "
+                    >
+                        <b style="color: green"> {{ report.employee_code }} </b
+                        >- {{ report.employee_name }}
+                    </label>
+                </td>
+                <td>
+                    <label *ngIf="report.manager_code != null">
+                        <b style="color: green"> {{ report.manager_code }} </b>-
+                        {{ report.manager_name }}
+                    </label>
+                </td>
+                <!-- <td class="text-center">
+                    <label
+                        *ngIf=" report.promotion_id != null && report.promotion_code != null && report.promotion_name != null">
+                        <b style="color: green;"> [{{report.promotion_id}}] </b> - {{report.promotion_code}} -
+                        {{report.promotion_name}}
+                    </label>
+                </td> -->
+                <td class="text-center">
+                    <p-tag
+                        *ngIf="
+                            report.report_status_name &&
+                            report.report_status_name != null
+                        "
+                        [value]="report.report_status_name"
+                        [severity]="getStatusReport(report.report_status_name)"
+                    ></p-tag>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-report>
+            <tr style="text-align: center">
+                <td colspan="100%">
+                    <div class="p-3" style="width: 100% !important">
+                        <app-works-inventory-details
+                            [inValue]="report"
+                            [action]="'view'"
+                            [FilterSurvey]="item_SurveyReport"
+                        ></app-works-inventory-details>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="summary">
+            <p-paginator
+                (onPageChange)="onPageChange($event)"
+                [first]="first"
+                [rows]="rows"
+                [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[20, 50, 100]"
+            ></p-paginator>
+        </ng-template>
+    </p-table>
+    <div
+        class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="ListReport && ListReport.length == 0"
+        style="float: right"
+    >
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog
+    header="Notification"
+    [(visible)]="display"
+    [modal]="true"
+    showEffect="fade "
+    [style]="{ width: '30vw' }"
+    [breakpoints]="{ '960px': '75vw' }"
+>
+    <p class="line-height-3 m-1">
+        {{ message }}
+    </p>
+    <ng-template pTemplate="footer" class="p-toolbar-group-right">
+        <button
+            pButton
+            icon="pi pi-check"
+            (click)="OK('display')"
+            label="Ok"
+            class="p-button-outlined float-right"
+            style="margin-right: 0%"
+        ></button>
+    </ng-template>
+</p-dialog>

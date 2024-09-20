@@ -1,0 +1,118 @@
+<section class="my-body">
+
+    <p-sidebar [(visible)]="sidebarVisible" styleClass="h-100" position="top">
+        <div class="row">
+            <div class="col-12">
+                <h6>{{GetLanguage("f_mobile_start_date")}}</h6>
+                <input pInputText id="dateStart" class="text-center font-bold w-100"   type="date"
+                    [(ngModel)]="dateStart" />
+            </div>
+            <div class="col-12">
+                <h6>{{GetLanguage("f_mobile_end_date")}}</h6>
+                <input pInputText id="dateEnd" class="text-center font-bold w-100" type="date"
+                    [(ngModel)]="dateEnd" />
+            </div>
+          
+    
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <p-button [label]="GetLanguage('action_mobile_filter')" (click)="filter()" size="small" icon="pi pi-filter"  ></p-button>
+                </div>
+                <div class="p-toolbar-group-right">
+                     
+                </div>
+            </p-toolbar>
+         
+        </div>
+    </p-sidebar>
+    <p-toolbar>
+        <div class="p-toolbar-group-left flex flex-wrap">
+            <p-button (click)="back()" [label]="GetLanguage('action_mobile_back')"  size="small"  ></p-button>
+        </div>
+        <div class="p-toolbar-group-right">
+            <p-button (click)="sidebarVisible = true" size="small" icon="pi pi-filter"  ></p-button>
+        </div>
+    </p-toolbar>
+
+    <div class="row mt-4">
+        <p-table [value]="ListData"  class="w-100">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th colspan="2">{{GetLanguage("tb_header_shop_name")}}</th>
+                     
+                </tr>
+                <tr>
+                    <th  class="text-center"  colspan="2">
+                        <p-columnFilter [style]="{'minWidth':'100%'}" type="text" field="label_filter"  [showMenu]="false"
+                        [matchMode]="'contains'"></p-columnFilter>
+                    </th>
+               </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr (click)="openDetail(item)" [ngStyle]="{'background-color': item.detail == 1?'gainsboro':''}">
+                    <td style="text-align: left;">
+                        <div class="sm:align-items-start gap-3">
+                            <div class="text-2xl font-bold text-900">{{ item.shop_name}}</div>
+                           
+                                <span class="">
+                                    {{GetLanguage("lb_address")}} :  <span class="font-semibold">{{ item.shop_address }}</span>
+                                </span>
+                                <br>
+                                <span class="">
+                                    <b> {{GetLanguage("lb_quantity")}}: </b>  <span class="font-semibold">{{ item.quantity }} {{GetLanguage("lb_item")}}  </span>
+                                    <br>
+                                   <div class="sum_amount"><b > {{GetLanguage("lb_mount")}}: </b>  <span class="font-semibold" style="color: blue;">{{ item.price_outlet }}  {{GetLanguage("lb_VND")}} </span></div>
+                                </span>
+                             
+                        </div>
+                   
+                    </td>
+                    <td>
+                        <div class="text-2xl font-bold text-900"></div>
+                            <div class="flex align-items-center gap-3">
+                                <span class="flex align-items-center gap-2">
+                                    <i class="pi pi-shop"></i>
+                                    <span class="font-semibold">{{ item.work_date }}</span>
+                                </span>
+                            </div>
+                    </td>
+                   
+                    
+                </tr>
+                <tr *ngIf="item.detail == 1" [ngStyle]="{'background-color': item.detail == 1?'rgb(195 200 205 / 73%)':''}">
+                    <td colspan="100%">
+                        <div class="card">
+                        <p-table [value]="item.data_detail"  class="w-100">
+                            <ng-template pTemplate="body" let-item>
+                                <tr [ngStyle]="{'background-color': item.color}">
+                                    <td style="width: 40%;">
+                                        <b *ngIf="item.product_id > 0">{{item.product_name}}</b><br>
+                                        <b *ngIf="item.product_id == 0">{{item.type_sku}}</b><br>
+                                        <b> {{GetLanguage("lb_quantity")}}: </b>  <span class="font-semibold"> {{item.quantity}} {{GetLanguage("lb_item")}}  </span><br>
+    
+                                    </td>
+                                    <td>
+                                        <b> {{GetLanguage("lb_price_system")}}: </b>  <span class="font-semibold"> {{item.price_system}} {{GetLanguage("lb_VND")}}  </span><br>
+                                        <b> {{GetLanguage("lb_price_outlet")}}: </b>  <span class="font-semibold"> {{item.price_outlet}} {{GetLanguage("lb_VND")}}  </span><br>
+                                        <div class="sum_amount" *ngIf="item.product_id == 0">   
+                                            <b> {{GetLanguage("lB_GAP_price")}}: </b> 
+                                             <span style="color: red;" class="font-semibold"> {{item.price_gap}} {{GetLanguage("lb_VND")}} </span>
+                                        </div>
+                                        <div   *ngIf="item.product_id > 0">   
+                                            <b> {{GetLanguage("lB_GAP_price")}}: </b> 
+                                             <span   class="font-semibold"> {{item.price_gap}} {{GetLanguage("lb_VND")}} </span>
+                                        </div>
+                                           
+                                        
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+</section>

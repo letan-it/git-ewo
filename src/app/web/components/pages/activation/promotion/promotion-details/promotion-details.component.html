@@ -1,0 +1,314 @@
+<div class="grid">
+    <div class="col-12 md:col-7">
+        <div class="card">
+            <div class="row flex-row">
+
+                <div class="col-12 md:col-8" *ngIf="checkAction === true">
+                    <h6>Formula File</h6>
+                    <a [href]="formula" target="_blank">{{formula}}</a>
+                </div>
+                <div class=" col-12 md:col-4" *ngIf="checkAction === true">
+                    <input id="formulaFile" #myInputFormulaFile type="file"
+                        (change)="onUploadFormulaFile($event, promotion_id, promotion_Code)" accept=".js" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="md:col-5 col-12">
+        <!-- <div class="card">
+            <div class="row  flex-wrap ">
+                <div class=" col-12 flex justify-content-between align-items-center">
+                    <h6>Image</h6>
+                    <p-image [src]="desc_image" alt="Image" width="100" [preview]="true"></p-image>
+                    <div></div>
+                </div>
+            </div>
+        </div> -->
+        <div class="card flex gap-4">
+            <div class=" col-12 flex gap-2 py-0 align-items-center justify-content: space-between">
+                <h6 class="font-bold m-0">Create :</h6>
+                <h6 class="m-0">{{create_name}}</h6>
+                <h6 class="font-bold m-0 ml-4"> <i class="pi pi-clock"></i> </h6>
+                <h6 class="m-0">{{created_date}}</h6>
+            </div>
+            <div *ngIf=" create_name !== update_name && update_name"
+                class=" col-12 flex py-0  align-items-center justify-content: space-between">
+                <h6 class="font-bold m-0"> Update : </h6>
+                <h6 class="m-0 ml-1">{{update_name}}</h6>
+                <h6 class="font-bold m-0 ml-4"> <i class="pi pi-clock"></i> </h6>
+                <h6 class="m-0 ml-1">{{update_date}}</h6>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-12" *ngIf="description">
+        <div class="card flex-col gap-4">
+            <div class="flex align-items-center gap-4">
+                <p-chip class="font-bold " label="Description"></p-chip>
+                <button pButton type="button" pTooltip="Hide Filter" pStyleClass=".box" enterClass="hidden"
+                    enterActiveClass="fadeinup" (click)="showDescript()" tooltipPosition="top" icon="pi pi-eye-slash"
+                    class=" p-button-success p-button-sm"
+                    [ngStyle]="{'display': !showDescription ?'none':'flex'}"></button>
+
+                <button pButton type="button" pTooltip="Show Filter" (click)="showDescript()" tooltipPosition="top"
+                    icon="pi pi-eye" class="p-button-warning p-button-sm" pStyleClass=".box"
+                    leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                    [ngStyle]="{'display': showDescription?'none':'flex'}">
+                </button>
+            </div>
+            <div *ngIf="showDescription" class="animation-duration-500 box">
+                <angular-editor class="overflow-y-scroll" placeholder='Enter text here...' [(ngModel)]="description"
+                    [config]='editorConfig'></angular-editor>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- detail -->
+    <div class="col-12">
+
+        <div class="card">
+
+            <div class="w-full mb-4">
+                <button *ngIf="false" type="button" (click)="ShowHideTemplate(1)" label="Import Excel" pButton pRipple
+                    class="p-button-sm" icon="pi pi-upload"></button>
+
+                <div class="mt-5" *ngIf="showTemplate === 1">
+                    <p-toolbar>
+                        <div class="p-toolbar-group-start">
+                            <div class="text-center" class="mr-2">
+                                <input class="form-control" type="file" (change)="onChange($event)" #myInputFile />
+                            </div>
+
+                            <button pButton pRipple label="Get Template" icon="pi pi-file-export"
+                                (click)="getTemplate()" class="p-button-sm p-button-info mr-2"></button>
+                            <button pButton pRipple (click)="importTemplate()" class="ml-2" label="Upload File"
+                                icon="pi pi-upload" class="p-button-sm p-button-success"></button>
+                        </div>
+                    </p-toolbar>
+
+                    <hr *ngIf="dataError">
+
+                    <div class="card" *ngIf="dataError">
+                        <p-table #dt [columns]="cols" [value]="dataError" selectionMode="multiple"
+                            [exportHeader]="'customExportHeader'" [tableStyle]="{ 'min-width': '50rem' }">
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <button type="button" pButton pRipple icon="pi pi-file-excel"
+                                        (click)="exportExcel()" class="p-button-success ml-auto" pTooltip="XLS"
+                                        tooltipPosition="bottom"></button>
+                                </div>
+                            </ng-template>
+
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{ col.header }}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr [pSelectableRow]="rowData">
+                                    <td *ngFor="let col of columns">
+                                        <p>{{ rowData[col.field] }} </p>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+                    </div>
+
+                    <hr *ngIf="dataMessError">
+                    <div class="card" *ngIf="dataMessError">
+                        <div class=" col-12">
+                            <div class="grid">
+                                <div class="col-1 font-bold">
+                                    Error Name :
+                                </div>
+                                <div class="col-11">
+                                    {{dataMessError}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <p-tabView (onChange)="onChangeTab($event)" styleClass="tabview-custom">
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <i class="pi pi-calendar"></i>
+                        <span class="ml-2">List Product</span>
+                    </ng-template>
+
+
+                    <div class="w-full mb-4">
+                        <p-toolbar>
+                            <div class="w-full flex gap-2 align-items-center flex-wrap ">
+                                <input id="enter" class="p-inputtext-sm" [style]="{'minWidth':'40%'}" type="text"
+                                    pInputText [(ngModel)]="inputAction"
+                                    placeholder="Product list code (product01 product02)">
+                                <i class="pi pi-bars p-toolbar-separator"></i>
+                                <p-splitButton label="Action" [model]="buttons"
+                                    styleClass="p-button-success p-button-sm">
+                                </p-splitButton>
+                            </div>
+                        </p-toolbar>
+                    </div>
+
+
+                    <p-table [value]="targetProducts" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true"
+                        [rows]="10" [showCurrentPageReport]="true" aria-sort="ascending" sortField="order"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        (onPage)="pageChange($event)" [rowsPerPageOptions]="[10, 25, 50]">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">Code</th>
+                                <th class="text-center">Name</th>
+                                <th class="text-center">Image</th>
+                                <th class="text-center">Price</th>
+                            </tr>
+
+                        </ng-template>
+                        <ng-template pTemplate="body" let-product let-columns="columns">
+                            <tr [pTooltip]="product.tooltip" tooltipPosition="left">
+                                <td class="text-center">{{ product.product_id }}</td>
+                                <td class="font-bold" style="color: green;">{{ product.product_code }}</td>
+                                <td>{{ product.product_name }}</td>
+                                <td class="text-center">
+                                    <p-image
+                                        [src]="product.image ? product.image : 
+                                    'https://files-api.acacy.vn/202310/NOIMAGE/b1a33483-b244-4ac1-bf80-5d32fcbab1c7.png'"
+                                        [alt]="product.product_name" width="50" height="50" class="shadow-4 m-auto"
+                                        [preview]="true"></p-image>
+                                </td>
+                                <td class="text-center font-bold" style="color: red;">{{ product.price | number:
+                                    '1.0-0'
+                                    }}</td>
+
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+
+                    <div class="card" *ngIf="false">
+
+                        <p-pickList [source]="sourceProducts" [target]="targetProducts" sourceHeader="Available"
+                            targetHeader="Selected" [dragdrop]="true" [responsive]="true"
+                            [sourceStyle]="{ height: '30rem' }" [targetStyle]="{ height: '30rem' }"
+                            filterBy="product_name" sourceFilterPlaceholder="Search by name"
+                            targetFilterPlaceholder="Search by name" breakpoint="1400px">
+
+                            <ng-template let-item pTemplate="item" (change)="clickProductAction($event)">
+
+                                <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                    <img class="w-4rem h-4rem shadow-2 flex-shrink-0 border-round" [src]="item.image"
+                                        [alt]="item.product_name" />
+                                    <div class="flex-1 flex flex-column gap-2">
+                                        <span class="font-bold">{{ item.product_name }}</span>
+                                        <div class="flex align-products-center gap-2">
+                                            <i class="pi pi-tag text-sm"></i>
+                                            <span class="font-bold" style="color: green;">{{ item.product_code }}</span>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold" style="color: red">
+                                        {{item.price | number: '1.0-0'}}</span>
+                                </div>
+                            </ng-template>
+                        </p-pickList>
+                    </div>
+
+                </p-tabPanel>
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <i class="pi pi-gift"></i>
+                        <span class="ml-2">List Gift</span>
+                    </ng-template>
+
+                    <div class="w-full mb-4">
+                        <p-toolbar>
+                            <div class="w-full flex gap-2 align-items-center flex-wrap ">
+                                <input id="enter" class="p-inputtext-sm" [style]="{'minWidth':'40%'}" type="text"
+                                    pInputText [(ngModel)]="inputAction" placeholder="Gift list code (gift01 gift02)">
+                                <i class="pi pi-bars p-toolbar-separator"></i>
+                                <p-splitButton label="Action" [model]="buttons"
+                                    styleClass="p-button-success p-button-sm">
+                                </p-splitButton>
+                            </div>
+                        </p-toolbar>
+                    </div>
+
+                    <p-table [value]="targetGifts" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true"
+                        [rows]="10" [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        (onPage)="pageChange($event)" [rowsPerPageOptions]="[10, 20, 50]">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">Code</th>
+                                <th class="text-center">Name</th>
+                                <th class="text-center">Type</th>
+                                <th class="text-center">Image</th>
+                                <th class="text-center">Price</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-item let-columns="columns">
+                            <tr [pTooltip]="item.tooltip" tooltipPosition="left">
+                                <td class="text-center">{{ item.gift_id }}</td>
+                                <td class="font-bold" style="color: green;">{{ item.gift_code }}</td>
+                                <td>{{ item.gift_name }}</td>
+                                <td class="text-center"> {{ item.gift_type }}</td>
+                                <td class="text-center">
+                                    <p-image
+                                        [src]="item.gift_image ? item.gift_image : 
+                                    'https://files-api.acacy.vn/202310/NOIMAGE/b1a33483-b244-4ac1-bf80-5d32fcbab1c7.png'"
+                                        [alt]="item.gift_name" width="50" height="50" class="shadow-4 m-auto"
+                                        [preview]="true"></p-image>
+                                </td>
+                                <td class="text-center font-bold" style="color: red;">{{ item.amount | number:
+                                    '1.0-0'
+                                    }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                    <div class="card" *ngIf="false">
+                        <p-pickList [source]="sourceGifts" [target]="targetGifts" sourceHeader="Available"
+                            targetHeader="Selected" [dragdrop]="true" [responsive]="true"
+                            [sourceStyle]="{ height: '30rem' }" [targetStyle]="{ height: '30rem' }" filterBy="gift_name"
+                            sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name"
+                            breakpoint="1400px">
+                            <ng-template let-item pTemplate="item">
+                                <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                    <img class="w-4rem h-4rem shadow-2 flex-shrink-0 border-round"
+                                        [src]="item.gift_image" [alt]="item.gift_name" />
+                                    <div class="flex-1 flex flex-column gap-2">
+                                        <span class="font-bold">{{ item.gift_name }}</span>
+                                        <div class="flex align-products-center gap-2">
+                                            <i class="pi pi-tag text-sm"></i>
+                                            <span class="font-bold" style="color: green;">{{ item.gift_code }}</span>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold" style="color: red;">{{item.amount |
+                                        number: '1.0-0' }}</span>
+                                </div>
+                            </ng-template>
+                        </p-pickList>
+                    </div>
+
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+
+    </div>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>

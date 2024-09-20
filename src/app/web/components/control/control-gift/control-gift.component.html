@@ -1,0 +1,25 @@
+<ng-container *ngIf="listGift && isLoadForm == 0 && selectMulti == false">
+    <p-dropdown [options]="listGift" [showClear]="true" (onChange)="returnValue(selectedGift)" [filter]="true"
+        filterBy="name" [style]="inputStyle" [(ngModel)]="selectedGift" placeholder="Select a gift" optionLabel="name"
+        appendTo="body" [disabled]="itemDisPlay">
+    </p-dropdown>
+</ng-container>
+
+
+<!-- [panelStyle]="{'width':'50%'}" -->
+<ng-container *ngIf="listGift && isLoadForm == 0 && selectMulti == true">
+
+    <p-multiSelect [disabled]="itemDisPlay" [showClear]="true" (onChange)="returnValue(selectedGift)" [filter]="true"
+        filterBy="name" [style]="inputStyle" [options]="listGift" [(ngModel)]="selectedGift" optionLabel="name"
+        appendTo="body" placeholder="Select gift" (onClear)="resetSelection()" class="p-fluid">
+        <ng-template let-item pTemplate="item">
+            <div class="flex align-items-center gap-2">
+                <img [src]="item.gift_image" class="flag flag-AU" style="width: 18px" />
+                <div>{{ item.name }}</div>
+            </div>
+        </ng-template>
+
+    </p-multiSelect>
+</ng-container>
+
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

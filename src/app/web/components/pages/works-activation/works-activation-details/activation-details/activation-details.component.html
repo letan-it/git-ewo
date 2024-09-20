@@ -1,0 +1,475 @@
+<div class="card">
+    <p-tabView
+        styleClass="tabview-custom"
+        *ngFor="let result of inValue.data_sos"
+    >
+        <p-tabPanel header="SOS">
+            <ng-template pTemplate="header">
+                <div class="flex align-items-center gap-2">
+                    <p-tag
+                        [value]="result.result_nameVN"
+                        [severity]="getSeverity(result.result_code)"
+                    />
+                    <span
+                        class="font-bold white-space-nowrap m-0"
+                        *ngIf="result.result !== null"
+                    >
+                        <i
+                            class="pi pi-comment"
+                            [pTooltip]="result.result_note"
+                            tooltipPosition="top"
+                        ></i>
+                    </span>
+                </div>
+            </ng-template>
+
+            <div>
+                <div class="row">
+                    <div class="md:col-8">
+                        <p-table
+                            [value]="result.details"
+                            [tableStyle]="{ 'min-width': '50rem' }"
+                            dataKey="id"
+                            editMode="row"
+                            [globalFilterFields]="['sos_id', 'created_date']"
+                        >
+                            <ng-template
+                                pTemplate="caption"
+                                *ngIf="
+                                    result &&
+                                    result.listSOS &&
+                                    result.listSOS.length > 0
+                                "
+                            >
+                                <div class="table-header mt-2">
+                                    <span
+                                        class="p-input-icon-left"
+                                        class="p-fluid"
+                                    >
+                                        <p-columnFilter
+                                            field="representative.value"
+                                            matchMode="equals"
+                                            [showMenu]="false"
+                                            style="margin-top: -10px"
+                                        >
+                                            <ng-template
+                                                pTemplate="filter"
+                                                let-value
+                                                let-filter="filterCallback"
+                                            >
+                                                <p-dropdown
+                                                    [ngModel]="selectedSOS"
+                                                    [options]="result.listSOS"
+                                                    (onChange)="
+                                                        selectSOS_Filter(
+                                                            $event,
+                                                            result
+                                                        )
+                                                    "
+                                                    placeholder="Select a SOS"
+                                                    [showClear]="true"
+                                                    appendTo="body"
+                                                    [showClear]="true"
+                                                    [filter]="true"
+                                                    filterBy="name"
+                                                    optionLabel="name"
+                                                >
+                                                </p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </span>
+                                </div>
+                            </ng-template>
+
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th
+                                        class="text-center text-sm font-bold md:col-5"
+                                        pSortableColumn="sos_id"
+                                    >
+                                        SOS
+                                        <p-sortIcon field="sos_id" />
+                                    </th>
+                                    <th
+                                        class="text-center text-sm font-bold md:col-1"
+                                    >
+                                        Width
+                                    </th>
+                                    <th
+                                        class="text-center text-sm font-bold md:col-1"
+                                    >
+                                        Total Width
+                                    </th>
+                                    <th
+                                        class="text-center text-sm font-bold md:col-1"
+                                    >
+                                        Foot
+                                    </th>
+                                    <th
+                                        class="text-center text-sm font-bold md:col-1"
+                                    >
+                                        Facing
+                                    </th>
+                                    <th
+                                        class="text-center text-sm font-bold md:col-3"
+                                    >
+                                        Note
+                                    </th>
+                                    <th class="text-center text-sm font-bold">
+                                        Action
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="body"
+                                let-item
+                                let-editing="editing"
+                                let-ri="rowIndex"
+                            >
+                                <tr [pEditableRow]="item">
+                                    <td class="text-center text-sm md:col-5">
+                                        <div
+                                            class="flex flex-row flex-wrap align-items-center justify-content-start gap-1 w-full h-full"
+                                        >
+                                            <span
+                                                class="font-bold text-center text-sm m-0"
+                                                style="color: green"
+                                                >{{ item.sos_id }}</span
+                                            >
+                                            <span
+                                                class="text-center text-sm m-0"
+                                                *ngIf="item.sos_type"
+                                                >- {{ item.sos_type }}</span
+                                            >
+                                            <span
+                                                class="text-center text-sm m-0"
+                                                *ngIf="item.sos_code"
+                                                >- {{ item.sos_code }}</span
+                                            >
+                                            <span
+                                                class="text-center text-sm m-0"
+                                                *ngIf="item.sos_name"
+                                                >- {{ item.sos_name }}</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="text-center text-sm font-bold md:col-1"
+                                        style="color: green"
+                                    >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="item.width"
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.width }}{{ item.unit }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td
+                                        class="text-center text-sm font-bold md:col-1"
+                                        style="color: green"
+                                    >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="
+                                                        item.total_width
+                                                    "
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.total_width
+                                                }}{{ item.unit }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td
+                                        class="text-center text-sm font-bold md:col-1"
+                                        style="color: green"
+                                    >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="item.foot"
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.foot }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td
+                                        class="text-center text-sm font-bold md:col-1"
+                                        style="color: green"
+                                    >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="item.facing"
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.facing }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <!-- <td class="text-start md:col-2">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown [options]="reasons" [filter]="true"
+                                                    optionLabel="reason_name" filterBy="reason_name" appendTo="body"
+                                                    [(ngModel)]="reason" [style]="{'width':'100%'}"
+                                                    placeholder="{{ item.reason_name }}">
+                                                    <ng-template let-reason pTemplate="item">
+                                                        <div class="flex align-items-center gap-2">
+                                                            <div *ngIf="reason.reason_name">{{reason.reason_name}}</div>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <p>{{ item.reason_name }}</p>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td> -->
+                                    <td class="text-center text-sm md:col-3">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="item.note"
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.note }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td class="text-center text-sm">
+                                        <div
+                                            class="flex align-items-center justify-content-center"
+                                        >
+                                            <button
+                                                *ngIf="!editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pInitEditableRow
+                                                icon="pi pi-pencil"
+                                                (click)="onRowEditInit(item)"
+                                                class="p-button-rounded p-button-text"
+                                                style="font-size: 1rem"
+                                            ></button>
+
+                                            <button
+                                                (click)="op.toggle($event)"
+                                                *ngIf="
+                                                    !editing &&
+                                                    item &&
+                                                    item.his &&
+                                                    item.his.length > 0
+                                                "
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                icon="pi pi-history"
+                                                (click)="onRowEditInit(item)"
+                                                class="p-button-rounded p-button-text"
+                                                style="font-size: 1rem"
+                                            ></button>
+
+                                            <button
+                                                *ngIf="editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pSaveEditableRow
+                                                icon="pi pi-check"
+                                                (click)="onRowEditSave(item)"
+                                                class="p-button-rounded p-button-text p-button-success mr-1"
+                                                style="font-size: 1rem"
+                                            ></button>
+                                            <button
+                                                *ngIf="editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pCancelEditableRow
+                                                icon="pi pi-times"
+                                                (click)="
+                                                    onRowEditCancel(item, ri)
+                                                "
+                                                class="p-button-rounded p-button-text p-button-danger"
+                                                style="font-size: 1rem"
+                                            ></button>
+                                        </div>
+
+                                        <p-overlayPanel
+                                            #op
+                                            [style]="{ width: '650px' }"
+                                            [showCloseIcon]="true"
+                                        >
+                                            <ng-template pTemplate="content">
+                                                <p-table
+                                                    [value]="item.his"
+                                                    [tableStyle]="{
+                                                        'min-width': '50rem'
+                                                    }"
+                                                    [paginator]="true"
+                                                    [first]="0"
+                                                    [rows]="5"
+                                                    [rowsPerPageOptions]="[
+                                                        5, 10, 20
+                                                    ]"
+                                                >
+                                                    <ng-template
+                                                        pTemplate="header"
+                                                    >
+                                                        <tr>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Width
+                                                            </th>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Total Width
+                                                            </th>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Foot
+                                                            </th>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Facing
+                                                            </th>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Note
+                                                            </th>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Updated By
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template
+                                                        pTemplate="body"
+                                                        let-sos
+                                                    >
+                                                        <tr>
+                                                            <td
+                                                                class="text-center text-xs font-bold"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{ sos.width
+                                                                }}{{
+                                                                    item.unit
+                                                                }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center text-xs font-bold"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{
+                                                                    sos.total_width
+                                                                }}{{
+                                                                    item.unit
+                                                                }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center text-xs font-bold"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{ sos.foot }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center text-xs font-bold"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{ sos.facing }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center text-xs"
+                                                            >
+                                                                {{ sos.note }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center text-xs"
+                                                            >
+                                                                <span
+                                                                    class="font-medium cursor-pointer"
+                                                                    pTooltip="Created at {{
+                                                                        sos.update_date
+                                                                    }}"
+                                                                    [fitContent]="
+                                                                        true
+                                                                    "
+                                                                    tooltipPosition="top"
+                                                                    >{{
+                                                                        sos.update_name
+                                                                    }}</span
+                                                                >
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </ng-template>
+                                        </p-overlayPanel>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <div class="md:col-4">
+                        <app-control-tab-photo
+                            [KPI]="'SOS'"
+                            [fulldata]="inValue"
+                            [SOSconfig]="result.details"
+                            [inValue]="result.image"
+                            [is_edit_data]="inValue.data_sos.is_edit_data"
+                        ></app-control-tab-photo>
+                    </div>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+
+    <div class="grid">
+        <app-qc-result-activation
+            [KPI]="'ACTIVATION'"
+            [inValue]="inValue.report_id"
+        ></app-qc-result-activation>
+    </div>
+</div>

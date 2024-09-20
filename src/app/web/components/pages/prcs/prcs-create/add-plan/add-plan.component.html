@@ -1,0 +1,40 @@
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+
+<p-toast></p-toast>
+<div class="grid">
+    <div class="col-12">
+        <p-accordion
+            [multiple]="true"
+            [activeIndex]="0"
+            (onOpen)="openAccordion($event)"
+        >
+            <p-accordionTab
+                [header]="tab.process_name"
+                *ngFor="let tab of Config.process"
+            >
+                <div class="m-0">
+                    <div *ngFor="let event of tab.step">
+                        <section *ngIf="event.action_id === 1">
+                            <!-- ĐĂNG KÝ -->
+                            <div
+                                *ngIf="
+                                    event.layout_type === 'add_plan_day' ||
+                                    event.layout_type === 'add_plan_week' ||
+                                    event.layout_type === 'add_plan_month'
+                                "
+                            >
+                                <app-add-plan-item
+                                    [Config]="Config"
+                                    [tab]="tab"
+                                ></app-add-plan-item>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+</div>

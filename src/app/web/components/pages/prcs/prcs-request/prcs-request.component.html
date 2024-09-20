@@ -1,0 +1,362 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card" *ngIf="showFilter === 1">
+            <div class="row">
+                <div class="md:col-2 p-fluid">
+                    <h6>{{ GetLanguage("f_start_date") }}</h6>
+                    <input
+                        pInputText
+                        id="dateStart"
+                        class="text-center font-bold mr-2 h-5"
+                        type="date"
+                        [(ngModel)]="limitedFromDate"
+                        min="{{ limitedFromDate }}"
+                        max="{{ limitedMaxDate }}"
+                    />
+                </div>
+                <div class="md:col-2 p-fluid">
+                    <h6>{{ GetLanguage("f_end_date") }}</h6>
+                    <input
+                        pInputText
+                        id="dateEnd"
+                        class="text-center font-bold mr-2 h-5"
+                        type="date"
+                        [(ngModel)]="limitedMaxDate"
+                        min="{{ limitedToDate }}-01"
+                        max="{{ limitedMaxDate }}"
+                    />
+                </div>
+                <div class="md:col-3">
+                    <h6>Process name</h6>
+                    <p-dropdown
+                        [options]="prc_data"
+                        [(ngModel)]="prc_id"
+                        optionLabel="process_name"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="Prc_id"
+                        [style]="{ minWidth: '100%' }"
+                        placeholder="Select process name"
+                    >
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>
+                                    {{ item.Prc_id }} -
+                                    {{ item.process_name }}
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_employee") }}</h6>
+                    <app-control-employee-list
+                        (outValue)="selectEmployee($event)"
+                        [placeholder]="GetLanguage('lb_select_employee')"
+                        [inputStyle]="{
+                            minWidth: '200px',
+                            maxWidth: '100%',
+                            'margin-top': '0.5rem'
+                        }"
+                        [employee_type_id]="employee_type_id"
+                        [project_id]="project_id"
+                    ></app-control-employee-list>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("f_manager") }}</h6>
+                    <app-control-employee-list
+                        (outValue)="selectASM($event)"
+                        [placeholder]="GetLanguage('lb_select_manager')"
+                        [project_id]="project_id"
+                        [itemManagerCode]="
+                            userProfile.employee_type_id == 8
+                                ? userProfile.employee_id
+                                : 0
+                        "
+                    ></app-control-employee-list>
+                </div>
+                <div class="md:col-3">
+                    <h6>Status</h6>
+                    <p-dropdown
+                        [options]="status_data"
+                        [(ngModel)]="action_status"
+                        optionLabel="name"
+                        [showClear]="true"
+                        [filter]="true"
+                        filterBy="name"
+                        [style]="{ minWidth: '100%' }"
+                        placeholder="Select status"
+                    >
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div *ngIf="item.name !== 'Tất cả'; else all">
+                                    {{ item.code }} -
+                                    {{ item.name }}
+                                </div>
+                                <ng-template #all>
+                                    {{ item.name }}
+                                </ng-template>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="md:col-3">
+                    <h6>{{ GetLanguage("transaction_uuid") }}</h6>
+                    <input
+                        class="w-100"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="uuid"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button
+                        pButton
+                        type="button "
+                        label="Filter"
+                        [loading]="isLoading_Filter"
+                        icon="pi pi-search"
+                        (click)="loadData(1)"
+                        class="p-button-sm mr-2 mt-2"
+                    ></button>
+
+                    <!-- <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-sm mr-2 mt-2"
+                        (click)="openNew()"></button> -->
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Show Filter"
+                        pStyleClass=".box"
+                        enterClass="hidden"
+                        enterActiveClass="fadeinup"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye"
+                        class="p-button-success mr-2 mt-2"
+                        [ngStyle]="{
+                            display: showFilter === 1 ? 'none' : 'flex'
+                        }"
+                    ></button>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Hide Filter"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye-slash"
+                        class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box"
+                        leaveActiveClass="fadeoutup"
+                        leaveToClass="hidden"
+                        [ngStyle]="{
+                            display: showFilter === 0 ? 'none' : 'flex'
+                        }"
+                    ></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card" *ngIf="is_loadForm === 1">
+    <p-table
+        #dt
+        [value]="listRequest"
+        *ngIf="listRequest && listRequest.length > 0"
+        [globalFilterFields]="['request_id', 'process_name', 'status']"
+        [rowHover]="false"
+        [paginator]="true"
+        [first]="first"
+        [rows]="20"
+        [rowsPerPageOptions]="[20, 50, 100]"
+        paginatorPosition="top"
+        (onPage)="onPageChange($event)"
+        selectionMode="single"
+        dataKey="request_id"
+        styleClass="p-datatable-gridlines"
+    >
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th style="width: 5rem"></th>
+                <th class="text-center" pSortableColumn="request_id">
+                    Request Id <p-sortIcon field="request_id"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="process_name">
+                    Process name <p-sortIcon field="process_name"></p-sortIcon>
+                </th>
+                <!-- <th class="text-center">Total Step</th> -->
+                <th class="text-center" pSortableColumn="status">
+                    Status <p-sortIcon field="status"></p-sortIcon>
+                </th>
+
+                <th class="text-center">Created date</th>
+                <th class="text-center">Created by</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <tr>
+                <td>
+                    <button
+                        type="button"
+                        pButton
+                        pRipple
+                        [pRowToggler]="item"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="
+                            expanded
+                                ? 'pi pi-chevron-down'
+                                : 'pi pi-chevron-right'
+                        "
+                    ></button>
+                </td>
+                <td class="text-center">
+                    <span class="font-bold">{{ item.request_id }}</span>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.process_name }}</span>
+                </td>
+                <!-- <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.total_step }}</span>
+                </td> -->
+                <td class="text-center w-fits">
+                    <span
+                        class="font-bold"
+                        [ngStyle]="{
+                            color:
+                                item.action_status_code == 'reject'
+                                    ? 'red'
+                                    : item.action_status_code == 'ok'
+                                    ? 'green'
+                                    : 'grey'
+                        }"
+                        >{{ item.action_status }}</span
+                    >
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.created_date }}</span>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.created_by_name }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-item>
+            <tr style="text-align: center">
+                <td colspan="100%" style="background-color: #e9ecef">
+                    <div
+                        class="p-2"
+                        style="width: 100% !important"
+                        *ngIf="item.type_process == 'add_plan'"
+                    >
+                        <!-- max-width: 1450px; -->
+                        <app-prc-working-plan
+                            [inValue]="item"
+                            [type]="1"
+                            out
+                        ></app-prc-working-plan>
+                    </div>
+                    <div
+                        class="p-2"
+                        style="width: 100% !important"
+                        *ngIf="item.type_process == 'remove_plan'"
+                    >
+                        <!-- max-width: 1450px; -->
+                        <app-prc-working-plan
+                            [inValue]="item"
+                            [type]="2"
+                            out
+                        ></app-prc-working-plan>
+                    </div>
+                    <div
+                        class="p-2"
+                        style="width: 100% !important"
+                        *ngIf="item.type_process == 'add_result_plan'"
+                    >
+                        <!-- max-width: 1450px; -->
+                        <app-prc-working-plan
+                            [inValue]="item"
+                            [type]="3"
+                            out
+                        ></app-prc-working-plan>
+                    </div>
+                    <div
+                        class="p-2"
+                        style="width: 100% !important"
+                        *ngIf="item.type_process == 'explanation_plan'"
+                    >
+                        <!-- max-width: 1450px; -->
+                        <app-prc-explanation
+                            [inValue]="item"
+                            out
+                        ></app-prc-explanation>
+                    </div>
+                    <div
+                        class="p-2"
+                        style="width: 100% !important"
+                        *ngIf="item.type_process == 'off_plan'"
+                    >
+                        <!-- max-width: 1450px; -->
+                        <app-prc-working-plan
+                            [inValue]="item"
+                            [type]="4"
+                            out
+                        ></app-prc-working-plan>
+                    </div>
+                    <div
+                        class="p-2"
+                        style="width: 100% !important"
+                        *ngIf="item.type_process == 'ot_plan'"
+                    >
+                        <!-- max-width: 1450px; -->
+                        <app-prc-working-plan
+                            [inValue]="item"
+                            [type]="5"
+                            out
+                        ></app-prc-working-plan>
+                    </div>
+                    <div
+                        class="p-2"
+                        style="width: 100% !important"
+                        *ngIf="item.type_process == 'change_plan'"
+                    >
+                        <!-- max-width: 1450px; -->
+                        <app-prc-working-plan
+                            [inValue]="item"
+                            [type]="6"
+                            out
+                        ></app-prc-working-plan>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div
+        class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="listRequest && listRequest.length === 0"
+        style="float: right"
+    >
+        <h5>No data</h5>
+    </div>
+</div>

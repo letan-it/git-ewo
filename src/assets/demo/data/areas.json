@@ -1,0 +1,69 @@
+{
+    "data" : [
+        {
+            "project_id"    : 2,
+            "areas_code": "South"
+        },
+        {
+            "project_id"    : 2,
+            "areas_code": "North" 
+        },
+        {
+            "project_id"    : 2,
+            "areas_code": "East" 
+        },
+        {
+            "project_id"    : 2,
+            "areas_code": "West" 
+        },
+        {
+            "project_id"    : 3,
+            "areas_code": "South1"
+        },
+
+
+        
+        {
+            "project_id"    : 4,
+            "areas_code": "HA NOI"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "N. EAST"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "N. WEST"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "R.R. DELTA"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "N.C. COAST"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "S.C. COAST"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "C. HIGH"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "N.E. SOUTH"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "HO CHI MINH"
+        },
+        {
+            "project_id"    : 4,
+            "areas_code": "MEKONG"
+        }
+    ]
+}
+ 
+ 

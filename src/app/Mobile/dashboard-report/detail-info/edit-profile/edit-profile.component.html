@@ -1,0 +1,148 @@
+<div class="wrapper flex flex-column justify-content-between w-full h-full">
+    <div class="group-avatar flex flex-row align-items-end justify-content-start gap-1">
+        <div class="avatar w-full h-fit mb-3">
+            <div class="wrapper-avatar flex flex-row w-full h-full align-items-center gap-4" *ngIf="employee_info?.image">
+                <div class="outline w-9rem h-9rem border-circle border-3 p-1" [ngStyle]="{ 'border-color': project?.color}">
+                    <img class="w-full h-full border-circle" [src]="employee_info?.image" alt="">
+                </div>
+            </div>
+    
+            <div class="wrapper-avatar flex flex-row w-full h-full align-items-center gap-4" *ngIf="!employee_info?.image">
+                <div
+                    class="outline flex align-items-center justify-content-center w-9rem h-9rem border-circle border-3 border-gray-500 bg-gray-100 p-1">
+                    <i class="pi pi-user-plus" style="font-size: 4rem; color: #3B82F6;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="avatar w-full h-fit mb-3" *ngIf="employee_info?.image_face_left !== null">
+            <div class="wrapper-avatar flex flex-row w-full h-full align-items-center gap-4" *ngIf="employee_info?.image_face_left">
+                <div class="outline w-9rem h-9rem border-circle border-3 p-1" [ngStyle]="{ 'border-color': project?.color}">
+                    <img class="w-full h-full border-circle" [src]="employee_info?.image_face_left" alt="">
+                </div>
+            </div>
+    
+            <div class="wrapper-avatar flex flex-row w-full h-full align-items-center gap-4" *ngIf="!employee_info?.image_face_left">
+                <div
+                    class="outline flex align-items-center justify-content-center w-9rem h-9rem border-circle border-3 border-gray-500 bg-gray-100 p-1">
+                    <i class="pi pi-user-plus" style="font-size: 4rem; color: #3B82F6;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="avatar w-full h-fit mb-3" *ngIf="employee_info?.image_face_right !== null">
+            <div class="wrapper-avatar flex flex-row w-full h-full align-items-center gap-4" *ngIf="employee_info?.image_face_right">
+                <div class="outline w-9rem h-9rem border-circle border-3 p-1" [ngStyle]="{ 'border-color': project?.color}">
+                    <img class="w-full h-full border-circle" [src]="employee_info?.image_face_right" alt="">
+                </div>
+            </div>
+    
+            <div class="wrapper-avatar flex flex-row w-full h-full align-items-center gap-4" *ngIf="!employee_info?.image_face_right">
+                <div
+                    class="outline flex align-items-center justify-content-center w-9rem h-9rem border-circle border-3 border-gray-500 bg-gray-100 p-1">
+                    <i class="pi pi-user-plus" style="font-size: 4rem; color: #3B82F6;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-column w-full align-items-start gap-3 mt-5 mb-3">
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="name" class="text-xl font-normal gap-1">
+                    <i class="pi pi-user" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Name</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.employee_name}}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="code" class="text-xl font-normal">
+                    <i class="pi pi-code" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Code</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.employee_code}}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="cccd" class="text-xl font-normal">
+                    <i class="pi pi-users" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Gender</span>
+                </p>
+            </div>
+            <div class="w-8">
+                <div class="flex flex-row h-full align-items-center align-content-center justify-content-start gap-3">
+                    <div *ngFor="let item of genders" class="field-checkbox h-fit">
+                        <p-radioButton name="item" [value]="item"
+                            [(ngModel)]="selectedGender" />
+                        <label [for]="item.key" class="text-xl font-semibold text-center">
+                            {{ item.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="cccd" class="text-xl font-normal">
+                    <i class="pi pi-id-card" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>CCCD</span>
+                </p>
+            </div>
+            <div class="w-4 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.card_number}}</p>
+            </div>
+            <div class="w-4 flex flex-row align-items-center justify-content-end gap-3 pl-2 text-xl font-semibold">
+                <i pRipple class="pi pi-id-card" (click)="showImageProduct(employee_info.image_card_before)"
+                    style="font-size: 2.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                <i pRipple class="pi pi-credit-card" (click)="showImageProduct(employee_info.image_card_after)"
+                    style="font-size: 2.5rem; color: #0000AE"></i>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="mobile" class="text-xl font-normal">
+                    <i class="pi pi-mobile" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Mobile</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.mobile}}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="date" class="text-xl font-normal">
+                    <i class="pi pi-calendar-times" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Birthday</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.birthday_date}}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-row w-full align-items-start justify-content-between mb-5" *ngIf="employee_info !== undefined">
+            <div class="w-4 h-full flex flex-row align-items-center">
+                <p htmlFor="email" class="text-xl font-normal">
+                    <i class="pi pi-envelope" style="font-size: 1.5rem; color: #0000AE; margin-right: 1rem;"></i>
+                    <span>Email</span>
+                </p>
+            </div>
+            <div class="w-8 border-bottom-1 border-black-alpha-30 pb-1 text-xl font-semibold">
+                <p>{{employee_info.email}}</p>
+            </div>
+        </div>
+    </div>
+</div>

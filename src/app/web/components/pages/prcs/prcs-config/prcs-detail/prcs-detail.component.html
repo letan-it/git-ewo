@@ -1,0 +1,490 @@
+<div class="card w-full">
+    <div class="flex flex-row justify-items-end w-full"></div>
+    <button
+        pButton
+        pRipple
+        label="New"
+        icon="pi pi-plus"
+        class="p-button-sm w-fit"
+        (click)="openAdd()"
+    ></button>
+    <p-toast></p-toast>
+    <p-steps
+        [model]="items"
+        [readonly]="false"
+        [activeIndex]="activeIndex"
+        (activeIndexChange)="onActiveIndexChange($event)"
+        styleClass="{'cursor': 'pointer'}"
+    ></p-steps>
+    <br />
+    <p-table
+        #dt
+        [value]="listProcessProjectStep"
+        *ngIf="listProcessProjectStep && listProcessProjectStep.length > 0"
+        styleClass="p-datatable-gridlines"
+        dataKey="step_id"
+        selectionMode="single"
+    >
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th class="text-center">Layout Image</th>
+                <th class="text-center">Layout</th>
+                <th class="text-center">Employee Type Action</th>
+                <th class="text-center">Action status</th>
+                <th class="text-center">Notification template</th>
+                <th class="text-center">Order</th>
+                <th class="text-center">Description</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+            <tr>
+                <td class="text-center w-fit">
+                    <i
+                        style="cursor: pointer; font-size: 2rem"
+                        class="pi pi-image"
+                        pTooltip="Model"
+                        tooltipPosition="top"
+                        (click)="showImageProduct(item.layout_image)"
+                    >
+                    </i>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium"
+                        >[{{ item.layout_id }}] - {{ item.layout_name }}</span
+                    >
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium"
+                        >[{{ item.employee_type_action }}] -
+                        {{ item.employee_type_name }}</span
+                    >
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium"
+                        >{{ item.action_desc }} - {{ item.action_type }}</span
+                    >
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.connent }}</span>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.order }}</span>
+                </td>
+                <td class="text-center w-fit">
+                    <span class="font-medium">{{ item.desc }}</span>
+                </td>
+                <td
+                    class="text-center flex flex-row align-items-center justify-content-evenly gap-3 h-full"
+                >
+                    <button
+                        class="p-button-rounded p-button-text"
+                        style="font-size: 2rem"
+                        title="Edit"
+                        (click)="openEdit(item)"
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-pencil"
+                    ></button>
+                    <button
+                        class="p-button-rounded p-button-text"
+                        style="font-size: 2rem"
+                        title="Delete"
+                        (click)="openDelete(item, $event)"
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-trash"
+                    ></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div
+        class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="listProcessProjectStep && listProcessProjectStep.length === 0"
+        style="float: right"
+    >
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog
+    [(visible)]="newPrcsDetailDialog"
+    [style]="{ width: '60rem', height: 'fit-content' }"
+    header="Create new Prcs Detail"
+    [modal]="true"
+    styleClass="p-fluid"
+    [closable]="true"
+>
+    <ng-template pTemplate="content">
+        <div
+            class="flex flex-row w-full h-fit align-items-center justify-content-between gap-3"
+        >
+            <div class="field w-4">
+                <label for="status"
+                    >Process<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <input
+                    type="text"
+                    pInputText
+                    id="project"
+                    [value]="inValue.process_name"
+                    [disabled]="true"
+                />
+            </div>
+            <div class="field w-4">
+                <label for="status"
+                    >Action<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="filterActions"
+                    (onChange)="selectedFilterAction($event)"
+                    optionLabel="action_name"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="action_name"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="Select Action"
+                    appendTo="body"
+                >
+                    <ng-template let-filterActions pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ filterActions.action_name }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field w-4">
+                <label for="status"
+                    >Layout<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="filterLayouts"
+                    (onChange)="selectedFilterLayout($event)"
+                    optionLabel="layout_name"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="layout_name"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="Select Layout"
+                    appendTo="body"
+                >
+                    <ng-template let-filterLayouts pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ filterLayouts.layout_name }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <div
+            class="flex flex-row w-full h-fit align-items-center justify-content-between gap-3"
+        >
+            <div class="field w-4">
+                <label for="status"
+                    >Employee Type Action<span
+                        class="font-bold"
+                        style="color: red"
+                    >
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="filterEmployees"
+                    (onChange)="selectedFilterEmployee($event)"
+                    optionLabel="Name"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="Name"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="Select Employee Type"
+                    appendTo="body"
+                >
+                    <ng-template let-filterEmployees pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ filterEmployees.Name }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field w-4">
+                <label for="status"
+                    >Notification Template<span
+                        class="font-bold"
+                        style="color: red"
+                    >
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="filterNotifications"
+                    (onChange)="selectedFilterNotification($event)"
+                    optionLabel="title"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="title"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="Select Notification Template"
+                    appendTo="body"
+                >
+                    <ng-template let-filterNotification pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>
+                                {{ filterNotification.title }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field w-14rem" *ngIf="items.length === 0">
+                <label for="order"
+                    >Order<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <input
+                    type="number"
+                    pInputText
+                    id="order"
+                    [(ngModel)]="order"
+                    [disabled]="true"
+                    placeholder="1"
+                />
+            </div>
+            <div class="field w-14rem" *ngIf="items.length > 0">
+                <label for="order"
+                    >Order<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <input
+                    type="number"
+                    pInputText
+                    id="order"
+                    [(ngModel)]="order"
+                    [disabled]="true"
+                    placeholder="{{items.length + 1}}"
+                />
+            </div>
+        </div>
+        <div class="flex flex-column w-full h-fit align-items-start gap-2">
+            <label for="desc">Description</label>
+            <input
+                type="text"
+                pInputText
+                id="desc"
+                [(ngModel)]="desc"
+                [disabled]="false"
+                placeholder="Please fill in Description"
+            />
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <!-- <button pButton pRipple label="Reset all data input" icon="pi pi-times" class="p-button-text"
+            (click)="resetNewInput()"></button> -->
+        <p-confirmDialog></p-confirmDialog>
+        <button
+            pButton
+            pRipple
+            label="Save"
+            icon="pi pi-check"
+            class="p-button-text"
+            (click)="saveNewStep($event)"
+        ></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog
+    [(visible)]="editPrcsDetailDialog"
+    [style]="{ width: '60rem', height: 'fit-content' }"
+    header="Edit Prcs Detail"
+    [modal]="true"
+    styleClass="p-fluid"
+    [closable]="true"
+>
+    <ng-template pTemplate="content">
+        <div
+            class="flex flex-row w-full h-fit align-items-center justify-content-between gap-3"
+        >
+            <div class="field w-4">
+                <label for="status"
+                    >Process<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <input
+                    type="text"
+                    pInputText
+                    id="project"
+                    [value]="inValue.process_name"
+                    [disabled]="true"
+                />
+            </div>
+            <div class="field w-4">
+                <label for="status"
+                    >Action<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="editActions"
+                    (onChange)="selectedEditAction($event)"
+                    optionLabel="action_name"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="action_name"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="{{ listProcessProjectDetail[0].action_name }}"
+                    appendTo="body"
+                >
+                    <ng-template let-editActions pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ editActions.action_name }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field w-4">
+                <label for="status"
+                    >Layout<span class="font-bold" style="color: red">
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="editLayouts"
+                    (onChange)="selectedEditLayout($event)"
+                    optionLabel="layout_name"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="layout_name"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="{{ listProcessProjectDetail[0].layout_name }}"
+                    appendTo="body"
+                >
+                    <ng-template let-editLayouts pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ editLayouts.layout_name }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div
+            class="flex flex-row w-full h-fit align-items-center justify-content-between gap-3"
+        >
+            <div class="field w-4">
+                <label for="status"
+                    >Employee Type Action<span
+                        class="font-bold"
+                        style="color: red"
+                    >
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="editEmployees"
+                    (onChange)="selectedEditEmployee($event)"
+                    optionLabel="Name"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="Name"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="{{
+                        listProcessProjectDetail[0].employee_type_name
+                    }}"
+                    appendTo="body"
+                >
+                    <ng-template let-editEmployees pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ editEmployees.Name }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field w-4">
+                <label for="status"
+                    >Notification Template<span
+                        class="font-bold"
+                        style="color: red"
+                    >
+                        *</span
+                    ></label
+                >
+                <p-dropdown
+                    [options]="editNotifications"
+                    (onChange)="selectedEditNotification($event)"
+                    optionLabel="title"
+                    [showClear]="true"
+                    [filter]="true"
+                    filterBy="title"
+                    [style]="{ minWidth: '100%' }"
+                    placeholder="{{ listProcessProjectDetail[0].title }}"
+                    appendTo="body"
+                >
+                    <ng-template let-editNotifications pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ editNotifications.title }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field w-4" *ngIf="editOrder === 1">
+                <label for="order">Order</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="order"
+                    [(ngModel)]="editOrder"
+                    [disabled]="true"
+                    placeholder="Please fill in Order"
+                />
+            </div>
+            <div class="field w-4" *ngIf="editOrder > 1">
+                <label for="order">Order</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="order"
+                    [(ngModel)]="editOrder"
+                    [disabled]="true"
+                    placeholder="Please fill in Order"
+                />
+            </div>
+        </div>
+        <div class="flex flex-column w-full h-fit align-items-start gap-2">
+            <label for="desc">Description</label>
+            <input
+                type="text"
+                pInputText
+                id="desc"
+                [(ngModel)]="editDesc"
+                [disabled]="false"
+                placeholder="Please fill in Description"
+            />
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <!-- <button pButton pRipple label="Reset all data input" icon="pi pi-times" class="p-button-text"
+            (click)="resetNewInput()"></button> -->
+        <p-confirmDialog></p-confirmDialog>
+        <button
+            pButton
+            pRipple
+            label="Save"
+            icon="pi pi-check"
+            class="p-button-text"
+            (click)="saveEditStep($event)"
+        ></button>
+    </ng-template>
+</p-dialog>

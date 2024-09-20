@@ -1,0 +1,11 @@
+<ng-container *ngIf="listDistrict && isLoadForm==0">
+    <p-dropdown [options]="listDistrict" [showClear]="true" (onChange)="returnValue(selectedDistrict)" [filter]="true"
+        filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedDistrict" [placeholder]="nameDistrict"
+        optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+<div *ngIf="isLoadForm==1">
+    <p-dropdown [options]="listDistrict" [showClear]="true" (onChange)="returnValue(selectedDistrict)" [filter]="true"
+        filterBy="name" [style]="{'minWidth':'100%'}" [(ngModel)]="selectedDistrict"
+        [placeholder]="'Please choose Province'" optionLabel="name" appendTo="body"></p-dropdown>
+</div>
+<!-- <p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton> -->

@@ -1,0 +1,13 @@
+{
+    "/attendant/":{
+        "target":"http://localhost:1222/",
+        "secure":false,
+        "logLevel":"info"
+    },
+    "/attendant-setup/":{
+        "target":"http://localhost:1223/",
+        "secure":false,
+        "logLevel":"info"
+    }
+   
+}

@@ -1,0 +1,9 @@
+a {color: #000}
+
+.horver-custor :hover {
+    cursor: pointer;
+}
+
+.custom_size_supervision {
+    min-width: calc(50% - 0.25rem); min-height: 8rem;
+}

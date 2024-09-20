@@ -1,0 +1,275 @@
+<section *ngIf="action == 'view'" class="gird">
+    <h5>Mã báo cáo: {{ inValue.report_id }} - ({{ inValue.UUID }})</h5>
+
+
+    <div class="card" *ngIf="is_loadForm == 1">
+        <div class="border-round border-1 surface-border p-4">
+            <div class="flex mb-3">
+                <p-skeleton shape="circle" size="4rem" styleClass="mr-2"></p-skeleton>
+                <div>
+                    <p-skeleton width="10rem" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton width="5rem" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton height=".5rem"></p-skeleton>
+                </div>
+            </div>
+            <p-skeleton width="100%" height="250px"></p-skeleton>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="true">
+        <p-tabView [scrollable]="true" #tabView [(activeIndex)]="activeIndex"
+            (onChange)="tabViewChange($event, tabView)">
+
+            <p-tabPanel *ngFor="let tab of ListSurveyResult" [header]="tab.survey_name" [pTooltip]="tab.created_date"
+                tooltipPosition="top">
+
+                <div class="grid" *ngIf="tab.model_edit == 0 || tab.model_edit == 2">
+                    <div class="col-7" *ngIf="tab.detail && tab.detail.length > 0">
+                        <p-table [scrollable]="true" scrollHeight="600px" [tableStyle]="{ 'min-height': '600px' }"
+                            [value]="tab.detail" [globalFilterFields]="[
+                                'question_name',
+                                'value_string'
+                            ]" #dt1 editMode="row" rowGroupMode="subheader" groupRowsBy="representative.name">
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-columnFilter field="question_group" matchMode="equals" [showMenu]="false"
+                                        [style]="{'minWidth':'70%'}">
+                                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                            <p-dropdown [filter]="true" filterBy="value" [ngModel]="value"
+                                                [options]="tab.group" (onChange)="
+                                                    filter($event.value)
+                                                " placeholder="Any Quenstion GROUP" [showClear]="true">
+
+                                            </p-dropdown>
+                                        </ng-template>
+                                    </p-columnFilter>
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" (input)="
+                                                dt1.filterGlobal(
+                                                    $any($event.target).value,
+                                                    'contains'
+                                                )
+                                            " placeholder="Search keyword" />
+                                    </span>
+
+                                </div>
+
+                            </ng-template>
+
+
+
+                            <ng-template pTemplate="header">
+
+                                <tr>
+                                    <th style="width: 2px">#</th>
+                                    <th class="text-center">Question</th>
+                                    <th class="text-center">Result</th>
+                                    <th class="text-center" *ngIf="CheckCol(tab.detail) == 1">Note</th>
+                                    <th class="text-center" *ngIf="tab.model_edit == 2">
+                                        #
+                                    </th>
+                                </tr>
+
+                            </ng-template>
+                            <ng-template pTemplate="groupheader" let-details>
+                                <tr pRowGroupHeader [ngStyle]="{
+                                        'background-color':
+                                            details.representative.color
+                                    }" style="width: 2px">
+                                    <td colspan="100%">
+                                        <span class="font-bold ml-2"><label>GROUP:
+                                                {{
+                                                details.representative.name
+                                                }}</label></span>
+                                    </td>
+                                </tr>
+
+                            </ng-template>
+                            <ng-template pTemplate="body" let-details let-editing="editing" let-ri="rowIndex">
+                                <tr>
+                                    <td [ngStyle]="{
+                                            'background-color': details.color
+                                        }"></td>
+                                    <td [pTooltip]="details.question_group" tooltipPosition="top">
+                                        {{ details.question_name }}
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <!-- <input pInputText type="text" [(ngModel)]="product.name" required> -->
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <b>
+                                                    {{
+                                                    details.value_string
+                                                    }}</b>
+                                                <p-table [value]="
+                                                        details.answer_item
+                                                    " *ngIf="
+                                                        details.answer_item
+                                                            .length > 0
+                                                    ">
+                                                    <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="text-center">nội dung</th>
+                                    <th class="text-center">kết quả</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.label }}
+                                    </td>
+                                    <td *ngIf="
+                                                                    item.action_id !=
+                                                                    8
+                                                                ">
+                                        {{ item.data }}
+                                    </td>
+                                    <td *ngIf="
+                                                                    item.action_id ==
+                                                                    8
+                                                                ">
+                                        <p-image [src]="
+                                                                        item.data
+                                                                    " alt="Image" width="30" [preview]="
+                                                                        true
+                                                                    "></p-image>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        </ng-template>
+                        </p-cellEditor>
+                        </td>
+                        <td *ngIf=" details.note != null">
+                            {{ details.note }}
+                        </td>
+                        <!-- <td class="text-center"><button (click)="showDialogEdit(tab,details)" *ngIf="tab.model_edit == 1" pButton pRipple
+                                                type="button" icon="pi pi-pencil"
+                                                class="p-button-sm p-button-rounded p-button-text p-button-raised"></button></td> -->
+
+                        <td class="text-center" *ngIf="tab.model_edit == 2">
+                            <button *ngIf="tab.is_edit_data == 1" (click)="
+                                                showDialogEdit(tab, details)
+                                            " pButton pRipple type="button" icon="pi pi-pencil"
+                                class="p-button-sm p-button-rounded p-button-text p-button-raised"></button>
+                        </td>
+                        </tr>
+                        </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="col-5">
+                        <app-control-tab-photo [KPI]="'SURVEY'" [fulldata]="inValue" [SurveyTab]="tab.configImage"
+                            [is_edit_data]="tab.is_edit_data" [inValue]="tab.photo"></app-control-tab-photo>
+                    </div>
+                </div>
+                <div class="grid" *ngIf="tab.survey_id == 72">
+                    <div class="col-12">
+                        <p-table [value]="tab.detailmodel" [scrollable]="true" scrollHeight="400px"
+                            [globalFilterFields]="[
+                                'question_name',
+                                'answer',
+                                'question_group',
+                                'question_type'
+                            ]" #dt2>
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" (input)="
+                                                dt2.filterGlobal(
+                                                    $any($event.target).value,
+                                                    'contains'
+                                                )
+                                            " placeholder="Search keyword" />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="bg-blue-500 text-white text-center">
+                                        GROUP
+                                    </th>
+                                    <th class="bg-blue-500 text-white text-center">
+                                        Question
+                                    </th>
+                                    <th class="bg-blue-500 text-white text-center">
+                                        Result
+                                    </th>
+                                    <th class="bg-blue-500 text-white text-center">
+                                        Type
+                                    </th>
+                                    <!-- <th>#</th> -->
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <p-columnFilter field="question_group" matchMode="equals" [showMenu]="false">
+                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                <p-dropdown [ngModel]="value" [options]="
+                                                        Listquestion_group
+                                                    " (onChange)="
+                                                        filter($event.value)
+                                                    " placeholder="Any" [showClear]="true"></p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter type="text" [matchMode]="'contains'"
+                                            field="question_name"></p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter type="text" [matchMode]="'contains'"
+                                            field="answer"></p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter field="question_type" matchMode="equals" [showMenu]="false">
+                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                <p-dropdown [ngModel]="value" [options]="
+                                                        Listquestion_type
+                                                    " (onChange)="
+                                                        filter($event.value)
+                                                    " placeholder="Any" [showClear]="true"></p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>{{ item.question_group }}</td>
+                                    <td>{{ item.question_name }}</td>
+                                    <td *ngIf="item.question_type == 'DATA'">
+                                        {{ item.answer }}
+                                    </td>
+                                    <td *ngIf="item.question_type == 'IMAGE'">
+                                        <p-image [src]="item.answer" alt="Image" width="30" [preview]="true"></p-image>
+                                    </td>
+                                    <td>{{ item.question_type }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+                <div class="grid">
+                    <app-qc-result-survey [KPI]="'SURVEY'" [item_id]="tab.survey_id" [Guid]="tab.Guid"
+                        [inValue]="inValue.report_id"></app-qc-result-survey>
+                </div>
+
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+
+</section>
+
+<section *ngIf="
+        edit_survey != undefined &&
+        edit_survey.item_data != undefined &&
+        visible == true
+    ">
+    <p-dialog [maximizable]="true" [style]="{ width: '50vw', height: '600px' }"
+        [header]="edit_survey.item_data.question_name" [(visible)]="visible" [modal]="true">
+        <!-- <app-edit-survey [survey_data]="edit_survey"></app-edit-survey> -->
+    </p-dialog>
+</section>

@@ -1,0 +1,75 @@
+<div *ngIf="action == 'create'">
+    <div class="container">
+        <div class="main-body">
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+                <div class="col-md-12 mb-3">
+                    <div class="card mt-3">
+                        <div class="field p-fluid">
+                            <label htmlFor="channel_code"
+                                >Channel code<span
+                                    style="color: red; font-weight: bold"
+                                >
+                                    *</span
+                                ></label
+                            >
+                            <p>
+                                <input
+                                    pInputText
+                                    id="channel_code"
+                                    [(ngModel)]="channel_code"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <label htmlFor="channel_name"
+                                >Channel name<span
+                                    style="color: red; font-weight: bold"
+                                >
+                                    *</span
+                                ></label
+                            >
+                            <p>
+                                <input
+                                    pInputText
+                                    id="channel_name "
+                                    [(ngModel)]="channel_name"
+                                    [disabled]="false"
+                                    type="text"
+                                />
+                            </p>
+                        </div>
+ 
+                        <div class="field p-fluid">
+                            <label htmlFor="_status">Status</label>
+                            <p>
+                                <p-checkbox
+                                    name="group1"
+                                    [binary]="true"
+                                    [(ngModel)]="_status"
+                                    (onclick)="clickStatus()"
+                                ></p-checkbox>
+                            </p>
+                        </div>
+
+                        <div class="field p-fluid">
+                            <p-button
+                                label="Save"
+                                (click)="createStoreChannel()"
+                                styleClass="p-button-success p-button-sm"
+                            ></p-button>
+                            <!-- {{clearMess}} -->
+                            <p-messages
+                                *ngIf="clearMess == true"
+                                [value]="msgsInfo"
+                            ></p-messages>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+<!-- UI Workday Detail Page -->
+<div class="flex flex-column align-items-center justify-content-center w-screen p-2">
+    <div class="flex flex-row align-items-center justify-content-between w-full h-fit m-2">
+        <a href="{{link}}" class="w-2">
+            <p-chip label="Trở lại" (click)="turnBack($event)" />
+        </a>
+        <div class="flex align-items-center justify-content-center w-8">
+            <span class="text-2xl font-semibold m-0">Chấm công {{monthYear}}</span>
+        </div>
+        <div class="w-2"></div>
+    </div>
+
+    <div class="flex flex-row w-full h-fit align-items-start gap-3 px-3" *ngIf="timeSheetDetail !== undefined">
+        <p-avatar [image]="timeSheetDetail[0]!.image" size="large" shape="circle" />
+        <div class="flex flex-column align-items-start justify-content-between h-fit gap-1">
+            <a href="{{link}}">
+                <span class="employee-name text-xl"><b>{{timeSheetDetail[0]!.employee_name}}</b></span>
+            </a>
+            <span><i class="pi pi-envelope"
+                style="font-size: 1rem; margin-right: 0.5rem"></i>{{timeSheetDetail[0]!.email}}</span>
+        </div>
+    </div>
+    
+    <div class="flex flex-row align-items-center justify-content-between w-full h-fit p-3">
+        <div class="flex flex-column align-items-start justify-content-between w-6 h-full ">
+            <span>Tổng số ngày làm: <b>{{countWorkDay?.length}}</b>/<b>{{timeSheetCalendar?.length}}</b></span>
+            <span>Tổng số giờ làm: <b>{{totalHourTime}}</b></span>
+        </div>
+        <div class="flex flex-column align-items-start justify-content-between w-6 h-full">
+            <span>Tổng ngày nghỉ phép: <b>1</b></span>
+            <span>Tổng giờ làm thêm: <b>0</b></span>
+        </div>
+    </div>
+    <br />
+    <p-table #dt [value]="timeSheetDetail" *ngIf="timeSheetDetail && timeSheetDetail.length > 0" styleClass="p-datatable-gridlines" [tableStyle]="{ 'width': '100vw' }"
+        rowGroupMode="subheader" sortField="representative.date" sortMode="single" dataKey="representative.date" groupRowsBy="representative.date" >
+        <ng-template pTemplate="header">
+            <tr class="text-sm">
+                <th class="text-center">
+                    Shop
+                </th>
+                <th class="text-center">
+                    CHECKIN <i class="pi pi-arrow-right" style="font-size: 1rem; margin-left: 1rem; margin-right: 1rem"></i> CHECKOUT
+                </th>
+                <!-- <th class="text-center">
+                    Tổng
+                </th> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="groupheader" let-item let-rowIndex="rowIndex" let-expanded="expanded">
+            <tr pRowGroupHeader>
+                <td colspan="5">
+                    <div class="flex flex-row align-items-center">
+                        <button 
+                            type="button" 
+                            pButton 
+                            pRipple 
+                            [pRowToggler]="item" 
+                            class="p-button-text p-button-rounded p-button-plain mr-2" 
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+                        </button>
+                        <span class="font-bold ml-2">Ngày: {{item.representative.dayMonthYear}}</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-item>
+            <tr class="text-sm">
+                <td class="text-center">
+                    <span class="pi pi-home" style="cursor: pointer; font-size: 1.5rem;" (click)="detailInfoShop(item)"></span>
+                </td>
+                <td class="text-start">
+                    <div class="flex flex-row align-items-center text-start gap-2">
+                        <span class="pi pi-clock"></span>
+                        {{item.time_ci}}
+                        <p-image 
+                            [src]="item?.atd_photo_ci"  
+                            alt="Image" 
+                            width="30" 
+                            loading="lazy"
+                            [preview]="true">
+                                <ng-template pTemplate="indicator">
+                                    <i class="pi pi-eye"></i>
+                                </ng-template>
+                        </p-image>
+                        <i class="pi pi-arrow-right" style="font-size: 1rem; margin-left: 0.5rem; margin-right: 0.5rem"></i>
+                        <span class="pi pi-stopwatch"></span>
+                        {{item.time_co}}
+                        <p-image 
+                            [src]="item?.atd_photo_co"  
+                            alt="Image" 
+                            width="30" 
+                            loading="lazy"
+                            [preview]="true">
+                                <ng-template pTemplate="indicator">
+                                    <i class="pi pi-eye"></i>
+                                </ng-template>
+                        </p-image>
+                    </div>
+                </td>
+                <!-- <td class="text-center">
+                    <span *ngIf="item.typeci === null && item.typeco === null">1</span>
+                    <span *ngIf="item.typeci !== null && item.typeco !== null">0.5</span>
+                </td> -->
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="openDetailInfoShop" [style]="{ width: '70vw', height: 'fit-content'}"
+    header='Thông tin cửa hàng' [modal]="true" styleClass="p-fluid" [closable]="true">
+
+    <!-- <p>ID cửa hàng: {{dataDetailShop?.shop_id}}</p> -->
+    <p>Code cửa hàng: {{dataDetailShop?.shop_code}}</p>
+    <p>Tên cửa hàng: {{dataDetailShop?.shop_name}}</p>
+    <!-- <p>ID Ca làm: {{dataDetailShop?.shift_id}}</p> -->
+    <p *ngIf="dataDetailShop?.note === 'Ca sáng'">Ca làm: Sáng</p>
+    <p *ngIf="dataDetailShop?.note === 'Ca chiều'">Ca làm: Chiều</p>
+</p-dialog>

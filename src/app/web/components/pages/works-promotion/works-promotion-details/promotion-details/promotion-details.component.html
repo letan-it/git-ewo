@@ -1,0 +1,1730 @@
+<!-- <p-toast></p-toast> -->
+<!-- <p-confirmPopup></p-confirmPopup> -->
+
+<p-accordion [multiple]="true" [activeIndex]="[0]" class="w-full"
+    *ngIf="inValue.data_promotion && inValue.data_promotion.result">
+
+    <p-accordionTab *ngFor="let tab of inValue.data_promotion.result">
+        <ng-template pTemplate="header">
+            <!-- {{tab.promotion_group}} -->
+            <div class="flex align-items-center"
+                pTooltip="Promotion : [{{tab.promotion_id}}] - {{tab.promotion_code}} - {{tab.promotion_name}}"
+                tooltipPosition="top">
+                <!-- tab.pr_id -->
+                <p-tag class="mr-2" [value]="tab.tagResult" [severity]="getPromotion(tab.tagResult)"></p-tag>
+                <span class="vertical-align-middle mr-2"> {{tab.Guild}} </span>
+
+                <p-overlayPanel #op [showCloseIcon]="true">
+                    <ng-template pTemplate="content">
+                        <h6 class="font-bold" style="color: green;">[{{tab.employee_id}}] - {{tab.employee_code}} -
+                            {{tab.employee_name}}</h6>
+                    </ng-template>
+                </p-overlayPanel>
+                <i (click)="op.toggle($event)" class="pi pi-user mr-2 cursor_pointer"></i>
+
+            </div>
+        </ng-template>
+
+
+        <ng-template pTemplate="content">
+            <div class="grid">
+                <div class="md:col-8">
+
+                    <div class="card">
+                        <p-tabView>
+                            <p-tabPanel header="SURVEY" *ngIf="(tab.audio && tab.audio.survey && tab.audio.survey.length > 0)
+                                || ( tab.detail && tab.detail.survey && tab.detail.survey.length > 0 )">
+                                <div *ngIf="tab.audio && tab.audio.survey">
+                                    <audio *ngFor="let audio of tab.audio.survey" controls
+                                        style="width: 278px; height: 35px;">
+                                        <source [src]="audio.url" type="audio/mpeg">
+                                    </audio>
+
+                                    <p-table [value]="tab.detail.survey" sortField="representative.name"
+                                        sortMode="single" [scrollable]="true" scrollHeight="510px" aria-sort="ascending"
+                                        sortField="order" dataKey="id" editMode="row" rowGroupMode="subheader"
+                                        groupRowsBy="representative.name">
+
+                                        <ng-template pTemplate="caption" *ngFor="let item of tab.detail.survey">
+                                            <div class="table-header">
+
+                                                <span class="p-input-icon-left" class="p-fluid">
+                                                    <p-columnFilter field="representative.name" matchMode="equals"
+                                                        [showMenu]="false" style="margin-top: -10px;">
+                                                        <ng-template pTemplate="filter" let-value
+                                                            let-filter="filterCallback">
+                                                            <p-dropdown [ngModel]="value"
+                                                                [options]="getDistinctObjects (item.sort,'value')"
+                                                                (onChange)="filter($event.value)"
+                                                                placeholder="Select a survey name" [showClear]="true"
+                                                                appendTo="body" [showClear]="true" [filter]="true"
+                                                                filterBy="value">
+                                                            </p-dropdown>
+                                                        </ng-template>
+                                                    </p-columnFilter>
+                                                </span>
+                                            </div>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th class="text-center">Question</th>
+                                                <th class="text-center">Result</th>
+                                                <th class="text-center">Note</th>
+                                                <th class="text-center" colspan="2">Action</th>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="groupheader" let-item>
+                                            <tr class="p-fluid" *ngIf="item && item.representative">
+
+                                                <td colspan="3" style="background: #f8f9fa;">
+                                                    <span style="color: black;"
+                                                        class="font-bold ml-2">{{item.representative.name}}</span>
+                                                </td>
+
+                                                <!-- && item.length > 4 -->
+                                                <td class="text-center" colspan="2" style="background: #f8f9fa;">
+
+                                                    <div class="flex align-items-center justify-content-center gap-2">
+                                                        <button *ngIf="item.question && item.question.length > 0"
+                                                            pButton pRipple icon="pi pi-plus" pTooltip="Add Image"
+                                                            tooltipPosition="left" class="p-button-success p-button-sm"
+                                                            (click)="editDetails(item, tab.image.survey.listphotoImage, 'SURVEY')"></button>
+
+                                                        <!-- <button pButton pRipple icon="pi pi-file-edit" pTooltip="New Data" tooltipPosition="left"
+                                                            class="p-button-success p-button-sm" (click)="editQuestion(item, tab, tab.detail.survey, 'SURVEY')"></button>  -->
+
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+                                            <tr [pEditableRow]="item" *ngIf="item.show_web == 1">
+                                                <td> {{item.question_name}}
+                                                </td>
+
+                                                <td class="text-center">
+                                                    <p-cellEditor>
+                                                        <ng-template pTemplate="input">
+
+                                                            <input
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 1"
+                                                                pInputText type="text" [(ngModel)]="item.value_string">
+
+                                                            <input
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 2"
+                                                                type="number" min="0" pInputText
+                                                                [(ngModel)]="item.value_string" [pKeyFilter]="'int'" />
+                                                            <input
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 3"
+                                                                type="number" pInputText [(ngModel)]="item.value_string"
+                                                                [pKeyFilter]="patternDecimal" />
+
+                                                            <input
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4"
+                                                                pInputText type="date" [(ngModel)]="item.value_string"
+                                                                dateFormat="yy-mm-dd" appendTo="body">
+
+                                                            <!-- type="datetime-local"  -->
+                                                            <input
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5"
+                                                                pInputText type="datetime-local"
+                                                                [(ngModel)]="item.value_string" appendTo="body">
+
+                                                            <p-selectButton
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 6"
+                                                                [options]="stateOptions"
+                                                                (onOptionClick)="chooseSelectButton($event, item)"
+                                                                [(ngModel)]="item.value_string" optionLabel="label"
+                                                                optionValue="value"></p-selectButton>
+
+                                                            <p-dropdown
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 7"
+                                                                [(ngModel)]="item._value_string"
+                                                                [options]="item.answer_option"
+                                                                placeholder="Select a answer" [showClear]="true"
+                                                                appendTo="body" [filter]="true" filterBy="value"
+                                                                optionLabel="value"
+                                                                (onChange)="chooseSelect($event, item)"> </p-dropdown>
+
+                                                            <p-multiSelect
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 8"
+                                                                [showClear]="true" appendTo="body"
+                                                                [options]="item.answer_option"
+                                                                [(ngModel)]="item.value_string" [filter]="true"
+                                                                optionLabel="value" placeholder="Select the answer"
+                                                                (onChange)="chooseMultiSelect($event, item)"></p-multiSelect>
+
+                                                            <!-- , tab.detail.survey -->
+                                                            <app-control-province
+                                                                *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 9"
+                                                                (outValue)="selectProvince($event , item)"
+                                                                [itemProvinceId]="item.item_Province?.code"></app-control-province>
+                                                            <app-control-district
+                                                                *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 10"
+                                                                [inValue]="item.item_Province"
+                                                                [inValueProvince]="item.item_Province"
+                                                                [itemDistrictId]="item.item_District?.code"
+                                                                (outValue)="selectDistrict($event , item)"></app-control-district>
+
+                                                            <app-control-ward
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 11"
+                                                                [inValue]="item.item_District"
+                                                                [inValueProvince]="item.item_Province"
+                                                                [inValueDistrict]="item.item_District"
+                                                                [itemWardId]="item.item_Ward?.code"
+                                                                (outValue)="selectWard($event , item)"></app-control-ward>
+
+
+                                                            <!-- <label *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 12 "> {{item.value_string}} </label> -->
+
+                                                        </ng-template>
+                                                        <ng-template pTemplate="output">
+
+                                                            <label
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) != 4 && checkValue(item.support_data, item.question_type, item.typeOf ) != 5 
+                                                && checkValue(item.support_data, item.question_type, item.typeOf ) != 8">
+                                                                {{item.value_string}} </label>
+                                                            <label
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4">
+                                                                {{item.value_string |date : "yyyy-MM-dd"}} </label>
+                                                            <label
+                                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5">
+                                                                {{item.value_string |date : "yyyy-MM-dd HH:mm:ss"}}
+                                                            </label>
+                                                            <label
+                                                                *ngIf="item.value_string && checkValue(item.support_data, item.question_type, item.typeOf ) == 8">
+                                                                <p *ngFor="let ans of item.value_string">
+                                                                    {{ans.value}}
+                                                                </p>
+                                                            </label>
+
+                                                            <span>
+                                                                <button
+                                                                    *ngIf="item.detail_item && item.detail_item.length > 0"
+                                                                    (click)="opt.toggle($event)" pButton pRipple
+                                                                    type="button" pCancelEditableRow
+                                                                    class="p-button-rounded p-button-text p-button-text ml-2"
+                                                                    icon="pi pi-info-circle"></button>
+                                                            </span>
+
+                                                            <!-- DETAILS ITEM -->
+                                                            <p-overlayPanel #opt [showCloseIcon]="true">
+                                                                <ng-template pTemplate="content">
+                                                                    <p-table [value]="item.detail_item">
+                                                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th class="text-center">Nội dung</th>
+                                                <th class="text-center">Kết quả</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-di>
+                                            <tr>
+                                                <td>{{ di.label }}</td>
+                                                <td>
+                                                    <!-- {{ di.data }} -->
+
+                                                    <input
+                                                        *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 2"
+                                                        type="number" min="0" pInputText [(ngModel)]="di.data"
+                                                        [pKeyFilter]="'int'" />
+
+                                                    <input
+                                                        *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 3"
+                                                        type="number" pInputText [(ngModel)]="di.data"
+                                                        [pKeyFilter]="patternDecimal" />
+
+                                                    <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 1 || 
+                                    checkValue(di.support_data, di.question_type, di.typeOf ) == 14" pInputText
+                                                        type="text" [(ngModel)]="di.data">
+
+                                                    <input
+                                                        *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 4"
+                                                        pInputText type="date" [(ngModel)]="di.data"
+                                                        dateFormat="yy-mm-dd" appendTo="body">
+
+                                                    <input
+                                                        *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 5"
+                                                        pInputText type="datetime-local" [(ngModel)]="di.data"
+                                                        appendTo="body">
+
+                                                    <!-- || 
+                                            checkValue(di.support_data, di.question_type, di.typeOf ) == 14 -->
+                                                    <p-image
+                                                        *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 13"
+                                                        [src]="di.data" alt="Image" width="50"
+                                                        [preview]="true"></p-image>
+
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+        </ng-template>
+        </p-overlayPanel>
+
+
+        </ng-template>
+        </p-cellEditor>
+        </td>
+
+
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) != 9 && 
+                                    checkValue(item.support_data, item.question_type, item.typeOf) != 10 &&
+                                    checkValue(item.support_data, item.question_type, item.typeOf) != 11">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.note">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item.note}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 9">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" (ngModelChange)="chanegesNoteProvince($event , item)"
+                        [(ngModel)]="item._noteProvince">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item._noteProvince}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 10">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" (ngModelChange)="chanegesNoteDistrict($event , item)"
+                        [(ngModel)]="item._noteDistrict">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item._noteDistrict}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 11">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" (ngModelChange)="chanegesNoteWard($event , item)"
+                        [(ngModel)]="item._noteWard">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item._noteWard}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+
+        <td class="text-center">
+            <div class="flex align-items-center justify-content-center gap-2">
+                <button
+                    *ngIf="!editing && checkValue(item.support_data, item.question_type, item.typeOf ) != 12 && inValue.data_promotion.is_edit_data == 1"
+                    pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                    (click)="onRowEditInit(item,tab.detail.survey)" class="p-button-rounded p-button-warning"></button>
+
+
+                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                    (click)="onRowEditSave(item, tab)"
+                    class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                    (click)="onRowEditCancel(item, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+            </div>
+
+
+        </td>
+        <td class="text-center" style="width: 15px;">
+            <!-- HISTORY -->
+            <button
+                *ngIf="!editing && item.history && item.history.length > 0 && checkValue(item.support_data, item.question_type, item.typeOf ) != 12"
+                pButton pRipple type="button" pCancelEditableRow icon="pi pi-history" (click)="op.toggle($event)"
+                class="p-button-rounded p-button-text p-button-text mr-2"></button>
+            <p-overlayPanel #op [style]="{'width': '500px'}" [showCloseIcon]="true">
+                <ng-template pTemplate="content">
+                    <!-- [(selection)]="selectedProduct" (onRowSelect)="onRowSelect($event, op)" -->
+                    <p-table [value]="item.history" selectionMode="single" [paginator]="true" [rows]="3"
+                        responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Employee</th>
+                                <th class="text-center">Value</th>
+                                <th class="text-center">Note</th>
+                                <th class="text-center">Update time</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-his>
+                            <tr [pSelectableRow]="rowData" *ngIf="his.show_history == 1">
+                                <td class="font-bold" style="color: green;">{{his.employee_code}} -
+                                    {{his.employee_name}}</td>
+                                <td class="text-center">{{his.value_string}}</td>
+                                <td>{{his.note}}</td>
+                                <td class="text-center">{{his.update_date}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </ng-template>
+            </p-overlayPanel>
+        </td>
+
+        </tr>
+        </ng-template>
+
+        </p-table>
+
+        </div>
+        </p-tabPanel>
+        <p-tabPanel header="PRODUCT" *ngIf="(tab.audio && tab.audio.product && tab.audio.product.length > 0) 
+            || (tab.detail && tab.detail.product && tab.detail.product.length > 0)">
+            <div *ngIf="tab.audio && tab.audio.product">
+                <audio *ngFor="let audio of tab.audio.product" controls style="width: 278px; height: 35px;">
+                    <source [src]="audio.url" type="audio/mpeg">
+                </audio>
+            </div>
+            <p-table [value]="tab.detail.product" sortField="representative.value" sortMode="single" [scrollable]="true"
+                scrollHeight="510px" aria-sort="ascending" sortField="order" dataKey="id" editMode="row"
+                rowGroupMode="subheader" groupRowsBy="representative.value" [columns]="selectedColumns">
+
+                <ng-template pTemplate="caption" *ngFor="let item of tab.detail.product">
+
+                    <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+                        (onChange)="onChangeColumns($event)" selectedItemsLabel="{0} columns selected"
+                        [style]="{'min-width': '300px'}" placeholder="Choose Columns"></p-multiSelect>
+
+                    <div class="table-header mt-2">
+                        <span class="p-input-icon-left" class="p-fluid">
+
+                            <p-columnFilter field="representative.value" matchMode="equals" [showMenu]="false"
+                                style="margin-top: -10px;">
+                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                    <p-dropdown [ngModel]="value" [options]="getDistinctObjects ( item.sort,'value')"
+                                        (onChange)="filter($event.value)" placeholder="Select a product"
+                                        [showClear]="true" appendTo="body" [showClear]="true" [filter]="true"
+                                        filterBy="value">
+                                    </p-dropdown>
+                                </ng-template>
+                            </p-columnFilter>
+                        </span>
+
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th class="text-center" style="width: 1px;">#</th>
+                        <!-- c.category_name, c.brand_code, c.division_code, c.market_code -->
+                        <th *ngFor="let col of columns" class="text-center" style="min-width: 180px;">
+                            {{col.header}}
+                        </th>
+                        <th class="text-center" style="min-width: 180px;">Question</th>
+                        <th class="text-center" style="min-width: 180px;">Result</th>
+                        <th class="text-center" style="min-width: 180px;">Note</th>
+                        <th class="text-center" colspan="2">Action</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th *ngFor="let col of columns">
+                            <p-columnFilter type="text" [field]="col.field" matchMode="equals"></p-columnFilter>
+                        </th>
+                        <th> <p-columnFilter type="text" field="question_name" matchMode="equals"></p-columnFilter>
+                        </th>
+                        <th> <p-columnFilter type="text" field="value_string" matchMode="equals"></p-columnFilter>
+                        </th>
+                        <th>
+                            <p-columnFilter type="text" field="note" matchMode="equals"></p-columnFilter>
+                        </th>
+                        <th colspan="2"></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="groupheader" let-item>
+                    <tr class="p-fluid" *ngIf="item && item.representative">
+
+                        <td [colSpan]="colSpanGroup" style="background: #f8f9fa;">
+                            <span style="color: black;" class="font-bold ml-2">{{item.representative.name}}</span>
+                        </td>
+                        <td colspan="2" class="text-center" style="background: #f8f9fa;">
+                            <div class="flex align-items-center justify-content-center gap-2">
+                                <button *ngIf="item.question && item.question.length > 0" pButton pRipple
+                                    icon="pi pi-plus" pTooltip="Add Image" tooltipPosition="left"
+                                    class="p-button-success p-button-sm"
+                                    (click)="editDetails(item, tab.image.product.listphotoImage, 'PRODUCT')"></button>
+
+                                <!-- <button pButton pRipple icon="pi pi-file-edit" pTooltip="New Data" tooltipPosition="left"
+                                                class="p-button-success p-button-sm" (click)="editQuestion(item, tab, tab.detail.product, 'PRODUCT')"></button>  -->
+
+                            </div>
+
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex" let-columns="columns">
+                    <tr [pEditableRow]="item" *ngIf="item.show_web == 1">
+
+                        <td style="background: #f8f9fa;">
+                            <!-- Total Customers: {{calculateCustomerTotal(item.representative.name, tab.detail.product)}} -->
+                        </td>
+                        <!-- c.category_name, c.brand_code, c.division_code, c.market_code -->
+                        <!-- <td> {{item.category_name}}</td>
+                            <td> {{item.brand_code}}</td>
+                            <td> {{item.division_code}}</td>
+                            <td> {{item.market_code}}</td> -->
+                        <td *ngFor="let col of columns">
+                            {{item[col.field]}}
+                        </td>
+
+                        <td> {{item.question_name}}</td>
+
+                        <td class="text-center">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+
+                                    <input *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 1"
+                                        pInputText type="text" [(ngModel)]="item.value_string">
+
+                                    <input *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 2"
+                                        type="number" min="0" pInputText [(ngModel)]="item.value_string"
+                                        [pKeyFilter]="'int'" />
+                                    <input *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 3"
+                                        type="number" pInputText [(ngModel)]="item.value_string"
+                                        [pKeyFilter]="patternDecimal" />
+
+                                    <input *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4"
+                                        pInputText type="date" [(ngModel)]="item.value_string" dateFormat="yy-mm-dd"
+                                        appendTo="body">
+                                    <input *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5"
+                                        pInputText type="datetime-local" [(ngModel)]="item.value_string"
+                                        appendTo="body">
+                                    <!-- <p-calendar *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 5" [(ngModel)]="item.value_string"  [showButtonBar]="true" dateFormat="yy-mm-dd"  [showTime]="true" [showSeconds]="true" [showIcon]="true"  appendTo="body"></p-calendar> -->
+
+                                    <p-selectButton
+                                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 6"
+                                        [options]="stateOptions" (onOptionClick)="chooseSelectButton($event, item)"
+                                        [(ngModel)]="item.value_string" optionLabel="label"
+                                        optionValue="value"></p-selectButton>
+
+                                    <p-dropdown
+                                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 7"
+                                        [(ngModel)]="item._value_string" [options]="item.answer_option"
+                                        placeholder="Select a answer" [showClear]="true" appendTo="body" [filter]="true"
+                                        filterBy="value" optionLabel="value" (onChange)="chooseSelect($event, item)">
+                                    </p-dropdown>
+
+                                    <p-multiSelect
+                                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 8"
+                                        [showClear]="true" appendTo="body" [options]="item.answer_option"
+                                        [(ngModel)]="item.value_string" [filter]="true" optionLabel="value"
+                                        placeholder="Select the answer"
+                                        (onChange)="chooseMultiSelect($event, item)"></p-multiSelect>
+
+                                    <app-control-province
+                                        *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 9"
+                                        (outValue)="selectProvince($event , item)"
+                                        [itemProvinceId]="item.item_Province?.code"></app-control-province>
+                                    <app-control-district
+                                        *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 10"
+                                        [inValue]="item.item_Province" [inValueProvince]="item.item_Province"
+                                        [itemDistrictId]="item.item_District?.code"
+                                        (outValue)="selectDistrict($event , item)"></app-control-district>
+
+                                    <app-control-ward
+                                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 11"
+                                        [inValue]="item.item_District" [inValueProvince]="item.item_Province"
+                                        [inValueDistrict]="item.item_District" [itemWardId]="item.item_Ward?.code"
+                                        (outValue)="selectWard($event , item)"></app-control-ward>
+
+
+                                    <!-- <label *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 9 "> {{item.value_string}} </label> -->
+
+                                </ng-template>
+                                <ng-template pTemplate="output">
+
+                                    <label *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) != 4 && checkValue(item.support_data, item.question_type, item.typeOf ) != 5 
+                                        && checkValue(item.support_data, item.question_type, item.typeOf ) != 8">
+                                        {{item.value_string}} </label>
+                                    <label *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4">
+                                        {{item.value_string |date : "yyyy-MM-dd"}} </label>
+                                    <label *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5">
+                                        {{item.value_string |date : "yyyy-MM-dd HH:mm:ss"}} </label>
+                                    <label
+                                        *ngIf="item.value_string && checkValue(item.support_data, item.question_type, item.typeOf ) == 8">
+                                        <p *ngFor="let ans of item.value_string">
+                                            {{ans.value}}
+                                        </p>
+                                    </label>
+
+
+                                    <span>
+                                        <button *ngIf="item.detail_item && item.detail_item.length > 0"
+                                            (click)="opt.toggle($event)" pButton pRipple type="button"
+                                            pCancelEditableRow class="p-button-rounded p-button-text p-button-text ml-2"
+                                            icon="pi pi-info-circle"></button>
+                                    </span>
+
+                                    <!-- DETAILS ITEM -->
+                                    <p-overlayPanel #opt [showCloseIcon]="true">
+                                        <ng-template pTemplate="content">
+                                            <p-table [value]="item.detail_item">
+                                                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center">Nội dung</th>
+                        <th class="text-center">Kết quả</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-di>
+                    <tr>
+                        <td>{{ di.label }}</td>
+                        <td>
+                            <!-- {{ di.data }} -->
+
+                            <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 2" type="number"
+                                min="0" pInputText [(ngModel)]="di.data" [pKeyFilter]="'int'" />
+
+                            <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 3" type="number"
+                                pInputText [(ngModel)]="di.data" [pKeyFilter]="patternDecimal" />
+
+                            <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 1 || 
+                        checkValue(di.support_data, di.question_type, di.typeOf ) == 14" pInputText type="text"
+                                [(ngModel)]="di.data">
+
+                            <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 4" pInputText
+                                type="date" [(ngModel)]="di.data" dateFormat="yy-mm-dd" appendTo="body">
+
+                            <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 5" pInputText
+                                type="datetime-local" [(ngModel)]="di.data" appendTo="body">
+
+                            <!-- || 
+                                checkValue(di.support_data, di.question_type, di.typeOf ) == 14 -->
+                            <p-image *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 13"
+                                [src]="di.data" alt="Image" width="50" [preview]="true"></p-image>
+
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            </ng-template>
+            </p-overlayPanel>
+
+            </ng-template>
+            </p-cellEditor>
+            </td>
+
+            <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) != 9 && 
+                            checkValue(item.support_data, item.question_type, item.typeOf) != 10 &&
+                            checkValue(item.support_data, item.question_type, item.typeOf) != 11">
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="item.note">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{item.note}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+
+            <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 9">
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <!-- , tab.detail.survey -->
+                        <input pInputText type="text" (ngModelChange)="chanegesNoteProvince($event , item)"
+                            [(ngModel)]="item._noteProvince">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{item._noteProvince}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 10">
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <input pInputText type="text" (ngModelChange)="chanegesNoteDistrict($event, item)"
+                            [(ngModel)]="item._noteDistrict">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{item._noteDistrict}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 11">
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <input pInputText type="text" (ngModelChange)="chanegesNoteWard($event, item)"
+                            [(ngModel)]="item._noteWard">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{item._noteWard}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td class="text-center">
+                <div class="flex align-items-center justify-content-center gap-2">
+                    <button
+                        *ngIf="!editing  && checkValue(item.support_data, item.question_type, item.typeOf ) != 12 && inValue.data_promotion.is_edit_data == 1"
+                        pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                        (click)="onRowEditInit(item,tab.detail.product)"
+                        class="p-button-rounded p-button-warning"></button>
+
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                        (click)="onRowEditSave(item, tab)"
+                        class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                        (click)="onRowEditCancel(item, ri)"
+                        class="p-button-rounded p-button-text p-button-danger"></button>
+                </div>
+
+            </td>
+            <td class="text-center" style="width: 15px;">
+
+                <button
+                    *ngIf="!editing && item.history && checkValue(item.support_data, item.question_type, item.typeOf ) != 12"
+                    pButton pRipple type="button" pCancelEditableRow icon="pi pi-history" (click)="op.toggle($event)"
+                    class="p-button-rounded p-button-text p-button-text mr-2"></button>
+
+                <!-- HISTORY -->
+                <p-overlayPanel #op [style]="{'width': '500px'}" [showCloseIcon]="true">
+                    <ng-template pTemplate="content">
+                        <!-- [(selection)]="selectedProduct" (onRowSelect)="onRowSelect($event, op)" -->
+                        <p-table [value]="item.history" selectionMode="single" [paginator]="true" [rows]="3"
+                            responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="text-center">Employee</th>
+                                    <th class="text-center">Value</th>
+                                    <th class="text-center">Note</th>
+                                    <th class="text-center">Update time</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-his>
+                                <tr [pSelectableRow]="rowData" *ngIf="his.show_history == 1">
+                                    <td class="font-bold" style="color: green;">{{his.employee_code}} -
+                                        {{his.employee_name}}
+                                    </td>
+                                    <td class="text-center">{{his.value_string}}</td>
+                                    <td>{{his.note}}</td>
+                                    <td class="text-center">{{his.update_date}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </ng-template>
+                </p-overlayPanel>
+            </td>
+
+            </tr>
+            </ng-template>
+
+            </p-table>
+        </p-tabPanel>
+        </p-tabView>
+        </div>
+
+        </div>
+        <div class="md:col-4">
+
+            <div class="card">
+                <p-tabView>
+                    <p-tabPanel header="SURVEY"
+                        *ngIf="tab.image && tab.image.survey && tab.image.survey.listphotoImage && tab.image.survey.listphotoImage.length > 0 ">
+
+                        <h6><span class="font-bold">Total : </span>{{tab.image.survey.listphotoImage.length| json}}</h6>
+                        <p-galleria [value]="tab.image.survey.listphotoImage" [responsiveOptions]="responsiveOptions"
+                            [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+
+                            <ng-template pTemplate="item" let-item>
+                                <!-- style="width: 100%;min-height: 230px;max-height: 400px;" -->
+                                <img *ngIf="item" [src]="item.src" style="width: 100%;height: 400px;" />
+                            </ng-template>
+
+                            <ng-template pTemplate="caption" let-item>
+                                <div *ngIf="item">
+                                    <h4 class="mb-2 font-bold" style="color: white;">{{item.question_name}}</h4>
+                                    <p-tag [value]="item.survey"></p-tag>
+                                    <p>{{item.image_time}}</p>
+                                    <p-button
+                                        *ngIf="clickImageSurvey && item.delete && item.delete == 1 && imageDelete.pr_id == tab.pr_id"
+                                        type="button" styleClass="p-button-danger mr-2 mt-2" icon="pi pi-trash"
+                                        (onClick)="deleteImageDetails($event)" label="Delete"></p-button>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="thumbnail" let-item>
+                                <div class="grid grid-nogutter justify-content-center"
+                                    (click)="clickImage(item, 'SURVEY',tab.image.survey.listphotoImage)">
+                                    <img (dblclick)="openImageDbClick(item, tab.image.survey.listphotoImage)"
+                                        width="45px" [src]="item.src" />
+                                </div>
+
+                            </ng-template>
+                        </p-galleria>
+                    </p-tabPanel>
+                    <p-tabPanel header="PRODUCT" *ngIf="tab.image && tab.image.product && tab.image.product.listphotoImage 
+                    && tab.image.product.listphotoImage.length > 0">
+                        <h6><span class="font-bold">Total : </span>{{tab.image.product.listphotoImage.length| json}}
+                        </h6>
+
+                        <p-galleria [value]="tab.image.product.listphotoImage" [responsiveOptions]="responsiveOptions"
+                            [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+
+                            <ng-template pTemplate="item" let-item>
+                                <!-- style="width: 100%;min-height: 230px;max-height: 400px;" -->
+                                <img *ngIf="item" [src]="item.src" style="width: 100%;height: 400px;" />
+                            </ng-template>
+
+                            <ng-template pTemplate="caption" let-item>
+                                <div *ngIf="item">
+                                    <h4 class="mb-2 font-bold" style="color: white;">{{item.question_name}}</h4>
+                                    <p-tag [value]="item.product"></p-tag>
+                                    <p>{{item.image_time}}</p>
+                                    <p-button
+                                        *ngIf="clickImageProduct && item.delete && item.delete== 1 && imageDelete.pr_id == tab.pr_id"
+                                        type="button" styleClass="p-button-danger mr-2 mt-2" icon="pi pi-trash"
+                                        (onClick)="deleteImageDetails($event)" label="Delete"></p-button>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="thumbnail" let-item>
+                                <div class="grid grid-nogutter justify-content-center"
+                                    (click)="clickImage(item, 'PRODUCT',tab.image.product.listphotoImage)">
+                                    <img (dblclick)="openImageDbClick(item, tab.image.product.listphotoImage)"
+                                        width="45px" [src]="item.src" />
+                                </div>
+
+                            </ng-template>
+                        </p-galleria>
+
+                    </p-tabPanel>
+                </p-tabView>
+            </div>
+
+        </div>
+        </div>
+
+        <div class="mt-5">
+            <app-qc-result-promotion [KPI]="'DISPLAY'" [item_id]="tab.pr_id" [Guid]="tab.Guild"
+                [inValue]="tab.report_id"></app-qc-result-promotion>
+        </div>
+
+        </ng-template>
+
+
+
+
+
+        <ng-template pTemplate="content" *ngIf="false">
+
+            <div *ngIf="tab.audio && tab.audio.survey">
+                <audio *ngFor="let audio of tab.audio.survey" controls style="width: 278px; height: 35px;">
+                    <source [src]="audio.url" type="audio/mpeg">
+                </audio>
+            </div>
+
+            <div class="grid">
+
+                <!-- [class]="checkNotExists(tab.image.survey.listphotoImage) == true ? 'md:col-12' : 'md:col-8'" -->
+
+                <div [class]="tab.image && tab.image.survey && tab.image.survey.listphotoImage && checkNotExists(tab.image.survey.listphotoImage) == true ? 'md:col-12' : 'md:col-8'"
+                    *ngIf="tab.detail && tab.detail.survey && tab.detail.survey.length > 0">
+
+                    <p-table [value]="tab.detail.survey" sortField="representative.name" sortMode="single"
+                        [scrollable]="true" scrollHeight="510px" aria-sort="ascending" sortField="order" dataKey="id"
+                        editMode="row" rowGroupMode="subheader" groupRowsBy="representative.name">
+
+                        <ng-template pTemplate="caption" *ngFor="let item of tab.detail.survey">
+                            <div class="table-header">
+                                <!-- {{item|json}} -->
+                                <span class="p-input-icon-left" class="p-fluid">
+                                    <p-columnFilter field="representative.name" matchMode="equals" [showMenu]="false"
+                                        style="margin-top: -10px;">
+                                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                            <p-dropdown [ngModel]="value"
+                                                [options]="getDistinctObjects (item.sort,'value')"
+                                                (onChange)="filter($event.value)" placeholder="Select a survey name"
+                                                [showClear]="true" appendTo="body" [showClear]="true" [filter]="true"
+                                                filterBy="value">
+                                            </p-dropdown>
+                                        </ng-template>
+                                    </p-columnFilter>
+                                </span>
+                            </div>
+                        </ng-template>
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Question</th>
+                                <th class="text-center">Result</th>
+                                <th class="text-center">Note</th>
+                                <th class="text-center" colspan="2">Action</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="groupheader" let-item>
+                            <tr class="p-fluid" *ngIf="item && item.representative">
+                                <td colspan="3" style="background: #f8f9fa;">
+                                    <span style="color: black;"
+                                        class="font-bold ml-2">{{item.representative.name}}</span>
+                                </td>
+                                <td class="text-center" colspan="2" style="background: #f8f9fa;">
+
+                                    <div class="flex align-items-center justify-content-center gap-2">
+                                        <button *ngIf="item.question && item.question.length > 0" pButton pRipple
+                                            icon="pi pi-plus" pTooltip="Add Image" tooltipPosition="left"
+                                            class="p-button-success p-button-sm"
+                                            (click)="editDetails(item, tab.image.survey.listphotoImage, 'SURVEY')"></button>
+
+                                        <!-- <button pButton pRipple icon="pi pi-file-edit" pTooltip="New Data" tooltipPosition="left"
+                                                            class="p-button-success p-button-sm" (click)="editQuestion(item, tab, tab.detail.survey, 'SURVEY')"></button>  -->
+
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+                            <tr [pEditableRow]="item" *ngIf="item.show_web == 1">
+                                <td> {{item.question_name}}
+                                </td>
+
+                                <td class="text-center">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+
+                                            <input
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 1"
+                                                pInputText type="text" [(ngModel)]="item.value_string">
+
+                                            <input
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 2"
+                                                type="number" min="0" pInputText [(ngModel)]="item.value_string"
+                                                [pKeyFilter]="'int'" />
+                                            <input
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 3"
+                                                type="number" pInputText [(ngModel)]="item.value_string"
+                                                [pKeyFilter]="patternDecimal" />
+
+                                            <input
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4"
+                                                pInputText type="date" [(ngModel)]="item.value_string"
+                                                dateFormat="yy-mm-dd" appendTo="body">
+
+                                            <!-- type="datetime-local"  -->
+                                            <input
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5"
+                                                pInputText type="datetime-local" [(ngModel)]="item.value_string"
+                                                appendTo="body">
+
+                                            <p-selectButton
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 6"
+                                                [options]="stateOptions"
+                                                (onOptionClick)="chooseSelectButton($event, item)"
+                                                [(ngModel)]="item.value_string" optionLabel="label"
+                                                optionValue="value"></p-selectButton>
+
+                                            <p-dropdown
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 7"
+                                                [(ngModel)]="item._value_string" [options]="item.answer_option"
+                                                placeholder="Select a answer" [showClear]="true" appendTo="body"
+                                                [filter]="true" filterBy="value" optionLabel="value"
+                                                (onChange)="chooseSelect($event, item)"> </p-dropdown>
+
+                                            <p-multiSelect
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 8"
+                                                [showClear]="true" appendTo="body" [options]="item.answer_option"
+                                                [(ngModel)]="item.value_string" [filter]="true" optionLabel="value"
+                                                placeholder="Select the answer"
+                                                (onChange)="chooseMultiSelect($event, item)"></p-multiSelect>
+
+                                            <!-- , tab.detail.survey -->
+                                            <app-control-province
+                                                *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 9"
+                                                (outValue)="selectProvince($event , item)"
+                                                [itemProvinceId]="item.item_Province?.code"></app-control-province>
+                                            <app-control-district
+                                                *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 10"
+                                                [inValue]="item.item_Province" [inValueProvince]="item.item_Province"
+                                                [itemDistrictId]="item.item_District?.code"
+                                                (outValue)="selectDistrict($event , item)"></app-control-district>
+
+                                            <app-control-ward
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 11"
+                                                [inValue]="item.item_District" [inValueProvince]="item.item_Province"
+                                                [inValueDistrict]="item.item_District"
+                                                [itemWardId]="item.item_Ward?.code"
+                                                (outValue)="selectWard($event , item)"></app-control-ward>
+
+
+                                            <!-- <label *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 12 "> {{item.value_string}} </label> -->
+
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+
+                                            <label
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) != 4 && checkValue(item.support_data, item.question_type, item.typeOf ) != 5 
+                                                && checkValue(item.support_data, item.question_type, item.typeOf ) != 8">
+                                                {{item.value_string}} </label>
+                                            <label
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4">
+                                                {{item.value_string |date : "yyyy-MM-dd"}} </label>
+                                            <label
+                                                *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5">
+                                                {{item.value_string |date : "yyyy-MM-dd HH:mm:ss"}} </label>
+                                            <label
+                                                *ngIf="item.value_string && checkValue(item.support_data, item.question_type, item.typeOf ) == 8">
+                                                <p *ngFor="let ans of item.value_string">
+                                                    {{ans.value}}
+                                                </p>
+                                            </label>
+
+                                            <span>
+                                                <button *ngIf="item.detail_item && item.detail_item.length > 0"
+                                                    (click)="opt.toggle($event)" pButton pRipple type="button"
+                                                    pCancelEditableRow
+                                                    class="p-button-rounded p-button-text p-button-text ml-2"
+                                                    icon="pi pi-info-circle"></button>
+                                            </span>
+
+                                            <!-- DETAILS ITEM -->
+                                            <p-overlayPanel #opt [showCloseIcon]="true">
+                                                <ng-template pTemplate="content">
+                                                    <p-table [value]="item.detail_item">
+                                                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Nội dung</th>
+                                <th class="text-center">Kết quả</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-di>
+                            <tr>
+                                <td>{{ di.label }}</td>
+                                <td>
+                                    <!-- {{ di.data }} -->
+
+                                    <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 2"
+                                        type="number" min="0" pInputText [(ngModel)]="di.data" [pKeyFilter]="'int'" />
+
+                                    <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 3"
+                                        type="number" pInputText [(ngModel)]="di.data" [pKeyFilter]="patternDecimal" />
+
+                                    <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 1 || 
+                                    checkValue(di.support_data, di.question_type, di.typeOf ) == 14" pInputText
+                                        type="text" [(ngModel)]="di.data">
+
+                                    <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 4"
+                                        pInputText type="date" [(ngModel)]="di.data" dateFormat="yy-mm-dd"
+                                        appendTo="body">
+
+                                    <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 5"
+                                        pInputText type="datetime-local" [(ngModel)]="di.data" appendTo="body">
+
+                                    <!-- || 
+                                            checkValue(di.support_data, di.question_type, di.typeOf ) == 14 -->
+                                    <p-image *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 13"
+                                        [src]="di.data" alt="Image" width="50" [preview]="true"></p-image>
+
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+        </ng-template>
+        </p-overlayPanel>
+
+
+        </ng-template>
+        </p-cellEditor>
+        </td>
+
+
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) != 9 && 
+                                    checkValue(item.support_data, item.question_type, item.typeOf) != 10 &&
+                                    checkValue(item.support_data, item.question_type, item.typeOf) != 11">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.note">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item.note}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 9">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" (ngModelChange)="chanegesNoteProvince($event , item)"
+                        [(ngModel)]="item._noteProvince">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item._noteProvince}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 10">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" (ngModelChange)="chanegesNoteDistrict($event , item)"
+                        [(ngModel)]="item._noteDistrict">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item._noteDistrict}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+        <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 11">
+            <p-cellEditor>
+                <ng-template pTemplate="input">
+                    <input pInputText type="text" (ngModelChange)="chanegesNoteWard($event , item)"
+                        [(ngModel)]="item._noteWard">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{item._noteWard}}
+                </ng-template>
+            </p-cellEditor>
+        </td>
+
+        <td class="text-center">
+            <div class="flex align-items-center justify-content-center gap-2">
+                <button
+                    *ngIf="!editing && checkValue(item.support_data, item.question_type, item.typeOf ) != 12 && inValue.data_promotion.is_edit_data == 1"
+                    pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                    (click)="onRowEditInit(item,tab.detail.survey)" class="p-button-rounded p-button-warning"></button>
+
+
+                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                    (click)="onRowEditSave(item, tab)"
+                    class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                    (click)="onRowEditCancel(item, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+            </div>
+
+
+        </td>
+        <td class="text-center" style="width: 15px;">
+            <!-- HISTORY -->
+            <button
+                *ngIf="!editing && item.history && item.history.length > 0 && checkValue(item.support_data, item.question_type, item.typeOf ) != 12"
+                pButton pRipple type="button" pCancelEditableRow icon="pi pi-history" (click)="op.toggle($event)"
+                class="p-button-rounded p-button-text p-button-text mr-2"></button>
+            <p-overlayPanel #op [style]="{'width': '500px'}" [showCloseIcon]="true">
+                <ng-template pTemplate="content">
+                    <!-- [(selection)]="selectedProduct" (onRowSelect)="onRowSelect($event, op)" -->
+                    <p-table [value]="item.history" selectionMode="single" [paginator]="true" [rows]="3"
+                        responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Employee</th>
+                                <th class="text-center">Value</th>
+                                <th class="text-center">Note</th>
+                                <th class="text-center">Update time</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-his>
+                            <tr [pSelectableRow]="rowData" *ngIf="his.show_history == 1">
+                                <td class="font-bold" style="color: green;">{{his.employee_code}} -
+                                    {{his.employee_name}}</td>
+                                <td class="text-center">{{his.value_string}}</td>
+                                <td>{{his.note}}</td>
+                                <td class="text-center">{{his.update_date}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </ng-template>
+            </p-overlayPanel>
+        </td>
+
+        </tr>
+        </ng-template>
+
+        </p-table>
+        </div>
+        <!-- [class]="checkNotExists(tab.detail.survey) == true ? 'md:col-12' : 'md:col-4'" -->
+        <div [class]="tab.detail && checkNotExists(tab.detail.survey) == true ? 'md:col-12' : 'md:col-4'"
+            style="max-width: 650px !important;"
+            *ngIf="tab.image && tab.image.survey && tab.image.survey.listphotoImage && tab.image.survey.listphotoImage.length > 0 ">
+
+            <div class="card">
+                <h6><span class="font-bold">Total : </span>{{tab.image.survey.listphotoImage.length| json}}</h6>
+
+                <p-galleria [value]="tab.image.survey.listphotoImage" [responsiveOptions]="responsiveOptions"
+                    [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+
+                    <ng-template pTemplate="item" let-item>
+                        <!-- style="width: 100%;min-height: 230px;max-height: 400px;" -->
+                        <img *ngIf="item" [src]="item.src" style="width: 100%;height: 400px;" />
+                    </ng-template>
+
+                    <ng-template pTemplate="caption" let-item>
+                        <div *ngIf="item">
+                            <h4 class="mb-2 font-bold" style="color: white;">{{item.question_name}}</h4>
+                            <p-tag [value]="item.survey"></p-tag>
+                            <p>{{item.image_time}}</p>
+                            <p-button
+                                *ngIf="clickImageSurvey && item.delete && item.delete == 1 && imageDelete.pr_id == tab.pr_id"
+                                type="button" styleClass="p-button-danger mr-2 mt-2" icon="pi pi-trash"
+                                (onClick)="deleteImageDetails($event)" label="Delete"></p-button>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="thumbnail" let-item>
+                        <div class="grid grid-nogutter justify-content-center"
+                            (click)="clickImage(item, 'SURVEY',tab.image.survey.listphotoImage)">
+                            <img (dblclick)="openImageDbClick(item, tab.image.survey.listphotoImage)" width="45px"
+                                [src]="item.src" />
+                        </div>
+
+                    </ng-template>
+                </p-galleria>
+
+
+
+            </div>
+
+        </div>
+
+
+        </div>
+
+        <hr class="mt-8">
+        <div *ngIf="tab.audio && tab.audio.product">
+            <audio *ngFor="let audio of tab.audio.product" controls style="width: 278px; height: 35px;">
+                <source [src]="audio.url" type="audio/mpeg">
+            </audio>
+        </div>
+
+
+        <div class="grid">
+            <!-- [class]="checkNotExists(tab.image.product.listphotoImage) == true ? 'md:col-12' : 'md:col-8'" -->
+            <div id="div_product"
+                [class]="tab.image && tab.image.product && tab.image.product.listphotoImage && checkNotExists(tab.image.product.listphotoImage) == true ? 'md:col-12' : 'md:col-8'"
+                *ngIf="tab.detail && tab.detail.product && tab.detail.product.length > 0">
+
+                <p-table [value]="tab.detail.product" sortField="representative.value" sortMode="single"
+                    [scrollable]="true" scrollHeight="510px" aria-sort="ascending" sortField="order" dataKey="id"
+                    editMode="row" rowGroupMode="subheader" groupRowsBy="representative.value"
+                    [columns]="selectedColumns">
+
+                    <ng-template pTemplate="caption" *ngFor="let item of tab.detail.product">
+
+                        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+                            (onChange)="onChangeColumns($event)" selectedItemsLabel="{0} columns selected"
+                            [style]="{'min-width': '300px'}" placeholder="Choose Columns"></p-multiSelect>
+
+                        <div class="table-header mt-2">
+                            <span class="p-input-icon-left" class="p-fluid">
+
+                                <p-columnFilter field="representative.value" matchMode="equals" [showMenu]="false"
+                                    style="margin-top: -10px;">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-dropdown [ngModel]="value"
+                                            [options]="getDistinctObjects ( item.sort,'value')"
+                                            (onChange)="filter($event.value)" placeholder="Select a product"
+                                            [showClear]="true" appendTo="body" [showClear]="true" [filter]="true"
+                                            filterBy="value">
+                                        </p-dropdown>
+                                    </ng-template>
+                                </p-columnFilter>
+                            </span>
+
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th class="text-center" style="width: 1px;">#</th>
+                            <!-- c.category_name, c.brand_code, c.division_code, c.market_code -->
+                            <th *ngFor="let col of columns" class="text-center" style="min-width: 180px;">
+                                {{col.header}}
+                            </th>
+                            <th class="text-center" style="min-width: 180px;">Question</th>
+                            <th class="text-center" style="min-width: 180px;">Result</th>
+                            <th class="text-center" style="min-width: 180px;">Note</th>
+                            <th class="text-center" colspan="2">Action</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th *ngFor="let col of columns">
+                                <p-columnFilter type="text" [field]="col.field" matchMode="equals"></p-columnFilter>
+                            </th>
+                            <th> <p-columnFilter type="text" field="question_name" matchMode="equals"></p-columnFilter>
+                            </th>
+                            <th> <p-columnFilter type="text" field="value_string" matchMode="equals"></p-columnFilter>
+                            </th>
+                            <th>
+                                <p-columnFilter type="text" field="note" matchMode="equals"></p-columnFilter>
+                            </th>
+                            <th colspan="2"></th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="groupheader" let-item>
+                        <tr class="p-fluid" *ngIf="item && item.representative">
+                            <!-- [colSpan]='colSpanGroup' //  colspan="4"  -->
+
+                            <td [colSpan]="colSpanGroup" style="background: #f8f9fa;">
+                                <span style="color: black;" class="font-bold ml-2">{{item.representative.name}} </span>
+                            </td>
+
+                            <td colspan="2" class="text-center" style="background: #f8f9fa;">
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <button *ngIf="item.question && item.question.length > 0" pButton pRipple
+                                        icon="pi pi-plus" pTooltip="Add Image" tooltipPosition="left"
+                                        class="p-button-success p-button-sm"
+                                        (click)="editDetails(item, tab.image.product.listphotoImage, 'PRODUCT')"></button>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+
+
+                    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex"
+                        let-columns="columns">
+                        <tr [pEditableRow]="item" *ngIf="item.show_web == 1">
+
+                            <td style="background: #f8f9fa;">
+                            </td>
+                            <td *ngFor="let col of columns">
+                                {{item[col.field]}}
+                            </td>
+
+                            <td> {{item.question_name}}</td>
+
+                            <td class="text-center">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+
+                                        <input
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 1"
+                                            pInputText type="text" [(ngModel)]="item.value_string">
+
+                                        <input
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 2"
+                                            type="number" min="0" pInputText [(ngModel)]="item.value_string"
+                                            [pKeyFilter]="'int'" />
+                                        <input
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 3"
+                                            type="number" pInputText [(ngModel)]="item.value_string"
+                                            [pKeyFilter]="patternDecimal" />
+
+                                        <input
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4"
+                                            pInputText type="date" [(ngModel)]="item.value_string" dateFormat="yy-mm-dd"
+                                            appendTo="body">
+                                        <input
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5"
+                                            pInputText type="datetime-local" [(ngModel)]="item.value_string"
+                                            appendTo="body">
+                                        <!-- <p-calendar *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 5" [(ngModel)]="item.value_string"  [showButtonBar]="true" dateFormat="yy-mm-dd"  [showTime]="true" [showSeconds]="true" [showIcon]="true"  appendTo="body"></p-calendar> -->
+
+                                        <p-selectButton
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 6"
+                                            [options]="stateOptions" (onOptionClick)="chooseSelectButton($event, item)"
+                                            [(ngModel)]="item.value_string" optionLabel="label"
+                                            optionValue="value"></p-selectButton>
+
+                                        <p-dropdown
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 7"
+                                            [(ngModel)]="item._value_string" [options]="item.answer_option"
+                                            placeholder="Select a answer" [showClear]="true" appendTo="body"
+                                            [filter]="true" filterBy="value" optionLabel="value"
+                                            (onChange)="chooseSelect($event, item)"> </p-dropdown>
+
+                                        <p-multiSelect
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 8"
+                                            [showClear]="true" appendTo="body" [options]="item.answer_option"
+                                            [(ngModel)]="item.value_string" [filter]="true" optionLabel="value"
+                                            placeholder="Select the answer"
+                                            (onChange)="chooseMultiSelect($event, item)"></p-multiSelect>
+
+                                        <app-control-province
+                                            *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 9"
+                                            (outValue)="selectProvince($event , item)"
+                                            [itemProvinceId]="item.item_Province?.code"></app-control-province>
+                                        <app-control-district
+                                            *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 10"
+                                            [inValue]="item.item_Province" [inValueProvince]="item.item_Province"
+                                            [itemDistrictId]="item.item_District?.code"
+                                            (outValue)="selectDistrict($event , item)"></app-control-district>
+
+                                        <app-control-ward
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 11"
+                                            [inValue]="item.item_District" [inValueProvince]="item.item_Province"
+                                            [inValueDistrict]="item.item_District" [itemWardId]="item.item_Ward?.code"
+                                            (outValue)="selectWard($event , item)"></app-control-ward>
+
+
+                                        <!-- <label *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 9 "> {{item.value_string}} </label> -->
+
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+
+                                        <label
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) != 4 && checkValue(item.support_data, item.question_type, item.typeOf ) != 5 
+                                                && checkValue(item.support_data, item.question_type, item.typeOf ) != 8">
+                                            {{item.value_string}} </label>
+                                        <label
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4">
+                                            {{item.value_string |date : "yyyy-MM-dd"}} </label>
+                                        <label
+                                            *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5">
+                                            {{item.value_string |date : "yyyy-MM-dd HH:mm:ss"}} </label>
+                                        <label
+                                            *ngIf="item.value_string && checkValue(item.support_data, item.question_type, item.typeOf ) == 8">
+                                            <p *ngFor="let ans of item.value_string">
+                                                {{ans.value}}
+                                            </p>
+                                        </label>
+
+
+                                        <span>
+                                            <button *ngIf="item.detail_item && item.detail_item.length > 0"
+                                                (click)="opt.toggle($event)" pButton pRipple type="button"
+                                                pCancelEditableRow
+                                                class="p-button-rounded p-button-text p-button-text ml-2"
+                                                icon="pi pi-info-circle"></button>
+                                        </span>
+
+                                        <!-- DETAILS ITEM -->
+                                        <p-overlayPanel #opt [showCloseIcon]="true">
+                                            <ng-template pTemplate="content">
+                                                <p-table [value]="item.detail_item">
+                                                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center">Nội dung</th>
+                            <th class="text-center">Kết quả</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-di>
+                        <tr>
+                            <td>{{ di.label }}</td>
+                            <td>
+                                <!-- {{ di.data }} -->
+
+                                <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 2"
+                                    type="number" min="0" pInputText [(ngModel)]="di.data" [pKeyFilter]="'int'" />
+
+                                <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 3"
+                                    type="number" pInputText [(ngModel)]="di.data" [pKeyFilter]="patternDecimal" />
+
+                                <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 1 || 
+                                checkValue(di.support_data, di.question_type, di.typeOf ) == 14" pInputText type="text"
+                                    [(ngModel)]="di.data">
+
+                                <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 4" pInputText
+                                    type="date" [(ngModel)]="di.data" dateFormat="yy-mm-dd" appendTo="body">
+
+                                <input *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 5" pInputText
+                                    type="datetime-local" [(ngModel)]="di.data" appendTo="body">
+
+                                <!-- || 
+                                        checkValue(di.support_data, di.question_type, di.typeOf ) == 14 -->
+                                <p-image *ngIf="checkValue(di.support_data, di.question_type, di.typeOf ) == 13"
+                                    [src]="di.data" alt="Image" width="50" [preview]="true"></p-image>
+
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </ng-template>
+                </p-overlayPanel>
+
+
+                <!-- {{item.support_data|json}}
+                                                {{item.question_type |json}}
+                                                {{item.typeOf|json}}  -->
+
+                </ng-template>
+                </p-cellEditor>
+                </td>
+
+                <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) != 9 && 
+                                    checkValue(item.support_data, item.question_type, item.typeOf) != 10 &&
+                                    checkValue(item.support_data, item.question_type, item.typeOf) != 11">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="item.note">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{item.note}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 9">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <!-- , tab.detail.survey -->
+                            <input pInputText type="text" (ngModelChange)="chanegesNoteProvince($event , item)"
+                                [(ngModel)]="item._noteProvince">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{item._noteProvince}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 10">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" (ngModelChange)="chanegesNoteDistrict($event, item)"
+                                [(ngModel)]="item._noteDistrict">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{item._noteDistrict}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td class="text-center" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 11">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" (ngModelChange)="chanegesNoteWard($event, item)"
+                                [(ngModel)]="item._noteWard">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{item._noteWard}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td class="text-center">
+                    <div class="flex align-items-center justify-content-center gap-2">
+
+                        <button
+                            *ngIf="!editing  && checkValue(item.support_data, item.question_type, item.typeOf ) != 12 && inValue.data_promotion.is_edit_data == 1"
+                            pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            (click)="onRowEditInit(item,tab.detail.product)"
+                            class="p-button-rounded p-button-warning"></button>
+
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(item, tab)"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            (click)="onRowEditCancel(item, ri)"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+                    </div>
+
+                </td>
+                <td class="text-center" style="width: 15px;">
+
+                    <button
+                        *ngIf="!editing && item.history && checkValue(item.support_data, item.question_type, item.typeOf ) != 12"
+                        pButton pRipple type="button" pCancelEditableRow icon="pi pi-history"
+                        (click)="op.toggle($event)" class="p-button-rounded p-button-text p-button-text mr-2"></button>
+
+                    <!-- HISTORY -->
+                    <p-overlayPanel #op [style]="{'width': '500px'}" [showCloseIcon]="true">
+                        <ng-template pTemplate="content">
+                            <!-- [(selection)]="selectedProduct" (onRowSelect)="onRowSelect($event, op)" -->
+                            <p-table [value]="item.history" selectionMode="single" [paginator]="true" [rows]="3"
+                                responsiveLayout="scroll">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-center">Employee</th>
+                                        <th class="text-center">Value</th>
+                                        <th class="text-center">Note</th>
+                                        <th class="text-center">Update time</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-his>
+                                    <tr [pSelectableRow]="rowData" *ngIf="his.show_history == 1">
+                                        <td class="font-bold" style="color: green;">{{his.employee_code}} -
+                                            {{his.employee_name}}
+                                        </td>
+                                        <td class="text-center">{{his.value_string}}</td>
+                                        <td>{{his.note}}</td>
+                                        <td class="text-center">{{his.update_date}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </ng-template>
+                    </p-overlayPanel>
+                </td>
+
+                </tr>
+                </ng-template>
+
+                </p-table>
+            </div>
+            <br>
+            <!-- [class]="checkNotExists(tab.image.product.listphotoImage) == true ? 'md:col-12' : 'md:col-4'"  -->
+            <div id="div_product_image"
+                [class]="tab.image && tab.image.product && tab.image.product.listphotoImage && checkNotExists(tab.image.product.listphotoImage) == true ? 'md:col-12' : 'md:col-4'"
+                style="max-width: 650px !important;" *ngIf="tab.image && tab.image.product && tab.image.product.listphotoImage 
+                    && tab.image.product.listphotoImage.length > 0">
+
+                <div class="card">
+                    <h6><span class="font-bold">Total : </span>{{tab.image.product.listphotoImage.length| json}}</h6>
+
+
+                    <p-galleria [value]="tab.image.product.listphotoImage" [responsiveOptions]="responsiveOptions"
+                        [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+
+                        <ng-template pTemplate="item" let-item>
+                            <!-- style="width: 100%;min-height: 230px;max-height: 400px;" -->
+                            <img *ngIf="item" [src]="item.src" style="width: 100%;height: 400px;" />
+                        </ng-template>
+
+                        <ng-template pTemplate="caption" let-item>
+                            <div *ngIf="item">
+                                <h4 class="mb-2 font-bold" style="color: white;">{{item.question_name}}</h4>
+                                <p-tag [value]="item.product"></p-tag>
+                                <p>{{item.image_time}}</p>
+                                <p-button
+                                    *ngIf="clickImageProduct && item.delete && item.delete== 1 && imageDelete.pr_id == tab.pr_id"
+                                    type="button" styleClass="p-button-danger mr-2 mt-2" icon="pi pi-trash"
+                                    (onClick)="deleteImageDetails($event)" label="Delete"></p-button>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="thumbnail" let-item>
+                            <div class="grid grid-nogutter justify-content-center"
+                                (click)="clickImage(item, 'PRODUCT',tab.image.product.listphotoImage)">
+                                <img (dblclick)="openImageDbClick(item, tab.image.product.listphotoImage)" width="45px"
+                                    [src]="item.src" />
+                            </div>
+
+                        </ng-template>
+                    </p-galleria>
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-5">
+            <app-qc-result-promotion [KPI]="'DISPLAY'" [item_id]="tab.pr_id" [Guid]="tab.Guild"
+                [inValue]="tab.report_id"></app-qc-result-promotion>
+        </div>
+
+        </ng-template>
+
+    </p-accordionTab>
+
+</p-accordion>
+<!-- </div> -->
+
+
+<!-- ADD QUESTION -->
+<p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="ADD IMAGE" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field text-center">
+            <label for="product" *ngIf="item_data == 'PRODUCT'"><span class="font-bold">PRODUCT</span>
+                : {{item.product_code}} - {{item.product_name}}</label>
+            <label for="survey" *ngIf="item_data == 'SURVEY'"><span class="font-bold">SURVEY</span>
+                : {{item.survey_name}}</label>
+        </div>
+        <div class="field">
+            <label for="question">Question Name<span class="font-bold" style="color: red;"> *</span></label>
+            <p-dropdown class="p-fluid" [options]="item.question" placeholder="Select a question"
+                optionLabel="question_name" (onChange)="selectQuestion()" [showClear]="true" appendTo="body"
+                [(ngModel)]="question_name"> </p-dropdown>
+
+        </div>
+        <div class="field">
+            <label for="image">Image<span class="font-bold" style="color: red;"> *</span></label>
+            <input id="surveyFile" #myInputImage type="file" (change)="onUploadImge($event)"
+                accept=".png, .jpg, .jpeg" />
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="addImageDetails()"></button>
+    </ng-template>
+</p-dialog>
+
+
+
+<!-- ADD QUESTION -->
+<p-dialog *ngIf="itemData && questionDialog" [(visible)]="questionDialog" [header]="itemData.headerName" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field" *ngFor="let item of listQuestionEdit">
+
+            <div class="grid">
+                <div class="col">
+                    <label>{{item.question_name}}</label>
+                </div>
+                <div class="col">
+
+                    <input class="p-fluid" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 1"
+                        pInputText type="text" [(ngModel)]="item.value_string">
+
+                    <input class="p-fluid" (ngModelChange)="onChangeQuestion($event, item, 2)"
+                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 2" type="number"
+                        min="0" pInputText [(ngModel)]="item.value_int" [pKeyFilter]="'int'" />
+                    <input class="p-fluid" (ngModelChange)="onChangeQuestion($event, item, 3)"
+                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 3" type="number"
+                        pInputText [(ngModel)]="item.value_decimal" [pKeyFilter]="patternDecimal" />
+                    <input class="p-fluid" (ngModelChange)="onChangeQuestion($event, item, 4)"
+                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 4" pInputText
+                        type="date" [(ngModel)]="item.value_string" dateFormat="yyyy-mm-dd" appendTo="body">
+                    <input class="p-fluid" (ngModelChange)="onChangeQuestion($event, item, 5)"
+                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 5" pInputText
+                        type="datetime-local" [(ngModel)]="item.value_datetime" appendTo="body">
+
+                    <p-selectButton class="p-fluid"
+                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 6"
+                        [options]="stateOptions" (onOptionClick)="chooseSelectButton($event, item)"
+                        [(ngModel)]="item.value_string" optionLabel="label" optionValue="value"></p-selectButton>
+                    <p-dropdown class="p-fluid"
+                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 7"
+                        [(ngModel)]="item._value_string" [options]="item.answer_option" placeholder="Select a answer"
+                        [showClear]="true" appendTo="body" [filter]="true" filterBy="value" optionLabel="value"
+                        (onChange)="chooseSelect($event, item)"> </p-dropdown>
+
+
+                    <p-multiSelect class="p-fluid"
+                        *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 8" [showClear]="true"
+                        appendTo="body" [options]="item.answer_option" [(ngModel)]="item.value_string" [filter]="true"
+                        optionLabel="value" placeholder="Select the answer"
+                        (onChange)="chooseMultiSelect($event, item)"></p-multiSelect>
+
+                    <!-- (outValue)="selectProvince($event, item)" -->
+                    <app-control-province *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 9"
+                        [itemProvinceId]="item.item_Province?.code"></app-control-province>
+                    <!-- (outValue)="selectDistrict($event, item)" -->
+                    <app-control-district *ngIf=" checkValue(item.support_data, item.question_type, item.typeOf ) == 10"
+                        [inValue]="item.item_Province" [inValueProvince]="item.item_Province"
+                        [itemDistrictId]="item.item_District?.code"></app-control-district>
+
+                    <!-- (outValue)="selectWard($event, item)" -->
+                    <app-control-ward *ngIf="checkValue(item.support_data, item.question_type, item.typeOf ) == 11"
+                        [inValue]="item.item_District" [inValueProvince]="item.item_Province"
+                        [inValueDistrict]="item.item_District" [itemWardId]="item.item_Ward?.code"></app-control-ward>
+
+                </div>
+                <div class="col">
+                    <input class="p-fluid" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) != 12 &&
+                        checkValue(item.support_data, item.question_type, item.typeOf) != 9 && 
+                        checkValue(item.support_data, item.question_type, item.typeOf) != 10 && 
+                        checkValue(item.support_data, item.question_type, item.typeOf) != 11" placeholder="Ghi chú"
+                        pInputText type="text" [(ngModel)]="item.note">
+
+                    <input class="p-fluid" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 9"
+                        placeholder="Ghi chú" pInputText type="text" [(ngModel)]="item._noteProvince">
+                    <input class="p-fluid" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 10"
+                        placeholder="Ghi chú" pInputText type="text" [(ngModel)]="item._noteDistrict">
+                    <input class="p-fluid" *ngIf="checkValue(item.support_data, item.question_type, item.typeOf) == 11"
+                        placeholder="Ghi chú" pInputText type="text" [(ngModel)]="item._noteWard">
+                </div>
+            </div>
+
+        </div>
+        <div class="field">
+            <!-- <label for="image">Image<span class="font-bold" style="color: red;"> *</span></label>
+            <input id="surveyFile" #myInputImage type="file" (change)="onUploadImge($event)" accept=".png, .jpg, .jpeg" /> -->
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialogQuestion()"></button>
+        <!-- (click)="editDataQuestion(listQuestionEdit)" -->
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="editDataQuestion1(listQuestionEdit)"></button>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

@@ -1,0 +1,83 @@
+
+<div *ngIf="action == 'create'">
+    <div class="container">
+        <div class="main-body"> 
+            <div class="row gutters-sm">
+                <div class="col-md-12 mb-3">
+                    <div class="card mt-3">
+                        <div class="field p-fluid">
+
+                            <h6 htmlFor="shop_code" >Shop Code
+                                <span style="color: red; font-weight: bold" >  *</span></h6
+                        >
+                        <p>
+                            <input
+                                pInputText
+                                id="shop_code"
+                                [(ngModel)]="shop_code"
+                                type="text"
+                            />
+                        </p>
+                       </div>
+
+                    <div class="field p-fluid">
+
+                        <h6 htmlFor="customer_code" >Customer Code</h6
+                    >
+                    <p>
+                        <input
+                            pInputText
+                            id="customer_code"
+                            [(ngModel)]="customer_code"
+                            type="text"
+                        />
+                    </p>
+                   </div>
+
+
+                   <div class="field p-fluid">
+
+                            <h6 htmlFor="project" >Project<span style="color: red; font-weight: bold" > *</span></h6 >
+                             <p>
+                                     <app-control-employee-project [itemEmployeeProject] ="item_Project"
+                                      (outValue)="selectProject($event)" [placeholder]="'Select a Project'"  ></app-control-employee-project>
+
+                            </p>
+                  </div>
+
+                  <div class="field p-fluid">
+
+                    <h6 htmlFor="manager" >Manager</h6 >
+                     <p>
+                        <app-control-employee-list [itemManagerCode] ="itemManager"
+                        [project_id] = "project_id"
+                         (outValue)="selectManager($event)" [placeholder]="'Select a Manager '" ></app-control-employee-list>
+                    </p>
+                  </div>
+
+                  <div class="field p-fluid">
+
+                    <h6 htmlFor="status" >Status</h6 >
+                     <p>
+                        <p-checkbox [(ngModel)]="_status" [binary]="true" inputId="binary"></p-checkbox> 
+                    </p>
+                  </div>
+
+                  <div class="field p-fluid">
+                    <p-button
+                        label="Save"
+                        (click)="createShopInfoProject()"
+                        styleClass="p-button-success p-button-sm"
+                    ></p-button>
+                     
+                    <p-messages 
+                        [value]="msgsShopInfo"
+                    ></p-messages>
+                </div>
+
+                 </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>

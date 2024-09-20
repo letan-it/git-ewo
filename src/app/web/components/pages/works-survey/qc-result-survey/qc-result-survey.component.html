@@ -1,0 +1,41 @@
+<hr>
+<section>
+
+    <p-toolbar *ngIf="result!= undefined &&result.is_action_change == 1 && action.length > 0">
+        <div class="p-toolbar-group-left flex flex-wrap">
+            <span class="p-float-label">
+                <!-- {{result.notenew|json}} -->
+                <textarea id="float-input" rows="1" cols="100%" [(ngModel)]="result.notenew" pInputTextarea></textarea>
+                <label for="float-input">Note</label>
+            </span>
+
+            <i class="pi pi-bars p-toolbar-separator"></i>
+
+            <p-toast></p-toast>
+            <!-- <p-confirmPopup></p-confirmPopup> -->
+            <p-button *ngFor="let item of action"
+                (click)="confirm($event,result.qc_result_id,item.result,result.notenew)" [icon]="item.icon"
+                [label]="item.label" [styleClass]="item.style"></p-button>
+
+
+
+        </div>
+
+        <div class="p-toolbar-group-right">
+
+        </div>
+    </p-toolbar>
+    <hr>
+    <p-timeline [value]="history">
+
+        <ng-template pTemplate="content" let-event>
+            <p> {{ event.employee_name }}: {{ event.created_date }}</p>
+            <p>{{event.note}}</p>
+            <hr>
+        </ng-template>
+        <ng-template pTemplate="opposite" let-event>
+            <b [ngStyle]="{'color': event.color}">{{ event.result }} </b>
+        </ng-template>
+
+    </p-timeline>
+</section>

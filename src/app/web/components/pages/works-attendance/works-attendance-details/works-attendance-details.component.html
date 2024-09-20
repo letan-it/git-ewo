@@ -1,0 +1,1631 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<section *ngIf="action == 'view'" class="gird w-full">
+    <h5>Mã báo cáo: {{ inValue.report_id }} - ({{ inValue.UUID }})</h5>
+    <div
+        style="height: 70px; position: relative"
+        class="speeddial-linear-demo"
+        *ngIf="permission_full == 1"
+    >
+        <p-toast></p-toast>
+        <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+        <p-speedDial
+            *ngIf="is_ChangeNote == 0 && is_ChangeReportStatus == 0"
+            showIcon="pi pi-bars"
+            hideIcon="pi pi-times"
+            buttonClassName="p-button-sm p-button-outlined"
+            [model]="leftTooltipItems"
+            direction="right"
+        ></p-speedDial>
+        <div
+            class="p-toolbar-group-left flex flex-wrap"
+            *ngIf="is_ChangeNote == 1"
+        >
+            <span class="p-float-label mr-2">
+                <textarea
+                    id="float-input"
+                    rows="1"
+                    cols="100%"
+                    [(ngModel)]="inValue.employee_note"
+                    pInputTextarea
+                ></textarea>
+            </span>
+            <p-button
+                icon="pi pi-check"
+                label="Submit"
+                (click)="
+                    ReportAction_EmployeeNote(
+                        'change.employee_note',
+                        inValue.report_id,
+                        inValue.employee_note
+                    )
+                "
+                styleClass="mr-2 p-button-success"
+            ></p-button>
+            <p-button
+                icon="pi pi-pan"
+                label="Cancel"
+                (click)="is_ChangeNote = 0"
+                styleClass="mr-2 p-button-outlined"
+            >
+            </p-button>
+        </div>
+        <div *ngIf="is_ChangeReportStatus == 1">
+            <app-control-report-status
+                (outValue)="selectReportStatus($event)"
+            ></app-control-report-status>
+        </div>
+    </div>
+
+    <div
+        *ngIf="
+            currentUser.employee_type_id != 11 &&
+            currentUser.employee_type_id != 12
+        "
+    >
+        <audio
+            *ngFor="let audio of inValue.audio"
+            controls
+            style="width: 278px; height: 35px"
+        >
+            <source [src]="audio.url" type="audio/mpeg" />
+        </audio>
+    </div>
+
+    <div class="card" *ngIf="is_loadForm == 1">
+        <div class="border-round border-1 surface-border p-4">
+            <div class="flex mb-3">
+                <p-skeleton
+                    shape="circle"
+                    size="4rem"
+                    styleClass="mr-2"
+                ></p-skeleton>
+                <div>
+                    <p-skeleton width="10rem" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton width="5rem" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton height=".5rem"></p-skeleton>
+                </div>
+            </div>
+            <p-skeleton width="100%" height="250px"></p-skeleton>
+        </div>
+    </div>
+    <div class="card">
+        <p-tabView
+            [scrollable]="true"
+            #tabView
+            [(activeIndex)]="activeIndex"
+            (onChange)="tabViewChange($event, tabView)"
+        >
+            <!-- <p-tabPanel
+                header="SHOP INFO"
+                *ngIf="
+                    inValue.data_checkShop && inValue.data_checkShop.length > 0
+                "
+            >
+                <app-shop-info [inValue]="inValue"> </app-shop-info>
+            </p-tabPanel> -->
+            <!-- project_id == 20 -->
+            <p-tabPanel
+                header="ATTENDANCE"
+                *ngIf="
+                    (project_id == 20 ||
+                        project_id == 21 ||
+                        project_id == 1 ||
+                        project_id == 12 ||
+                        project_id == 32) &&
+                    ListATT_getItem &&
+                    ListATT_getItem.length > 0
+                "
+            >
+                <!-- *ngIf="is_request && type_code != ''" -->
+                <div class="col-2">
+                    <p-speedDial
+                        showIcon="pi pi-info-circle"
+                        hideIcon="pi pi-times"
+                        buttonClassName="p-button-sm p-button-outlined"
+                        [model]="items"
+                        direction="down"
+                    ></p-speedDial>
+                    <p-dialog
+                        [(visible)]="requestExplanation"
+                        [style]="{ width: '60rem', height: 'fit-content' }"
+                        header="Yêu cầu giải trình cho báo cáo: {{
+                            inValue.report_id
+                        }}"
+                        [modal]="true"
+                        styleClass="p-fluid"
+                        [closable]="true"
+                        (onHide)="closeRequest()"
+                    >
+                        <ng-template pTemplate="content">
+                            <div class="flex flex-column w-full gap-1">
+                                <div class="flex flex-row w-full gap-1">
+                                    <div class="col-8">
+                                        <!-- <h6>Title</h6> -->
+                                        <h6>Tiêu đề</h6>
+                                        <textarea
+                                            rows="5"
+                                            cols="30"
+                                            pInputTextarea
+                                            placeholder="Mẫu: Yêu cầu giải trình ....."
+                                            [(ngModel)]="dataNoti.title"
+                                        ></textarea>
+                                        <!-- (ngModelChange)="onChangeInputSosCode($event)" -->
+                                    </div>
+
+                                    <div class="col-4">
+                                        <h6>Chọn ca</h6>
+                                        <p-dropdown
+                                            [options]="filterWorkShifts"
+                                            (onChange)="
+                                                selectedFilterWorkShift($event)
+                                            "
+                                            optionLabel="atd_time"
+                                            [showClear]="true"
+                                            [filter]="true"
+                                            filterBy="atd_time"
+                                            [group]="true"
+                                            [style]="{ minWidth: '100%' }"
+                                            placeholder="Select Work shift"
+                                            appendTo="body"
+                                        >
+                                            <ng-template
+                                                let-filterProcess
+                                                pTemplate="group"
+                                            >
+                                                <div
+                                                    class="flex align-items-center gap-2"
+                                                >
+                                                    <div>
+                                                        {{
+                                                            filterProcess.label
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template
+                                                let-myItem
+                                                pTemplate="item"
+                                            >
+                                                <div>
+                                                    <div
+                                                        *ngIf="
+                                                            myItem.atd_type !==
+                                                            'OVERVIEW'
+                                                        "
+                                                    >
+                                                        {{ myItem.atd_type }} -
+                                                        {{ myItem.atd_time }}
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <!-- <h6>Content</h6> -->
+                                    <h6>Nội dung</h6>
+                                    <textarea
+                                        placeholder="Mẫu: Vui lòng giải trình hình ảnh chấm công ....."
+                                        rows="5"
+                                        cols="30"
+                                        pInputTextarea
+                                        [(ngModel)]="dataNoti.content"
+                                    ></textarea>
+                                    <!-- (ngModelChange)="onChangeInputSosCode($event)" -->
+                                </div>
+                            </div>
+                        </ng-template>
+
+                        <ng-template pTemplate="footer">
+                            <!-- <button
+                                pButton
+                                pRipple
+                                label="Reset all data input"
+                                icon="pi pi-times"
+                                class="p-button-text"
+                            ></button> -->
+                            <!-- (click)="resetAllInput()" -->
+                            <!-- <p-toast></p-toast> -->
+                            <button
+                                pButton
+                                pRipple
+                                label="Save"
+                                icon="pi pi-check"
+                                class="p-button-text"
+                                (click)="sendRequest()"
+                                [loading]="loading_save"
+                            ></button>
+                        </ng-template>
+                    </p-dialog>
+                    <p-dialog
+                        [(visible)]="historyRequest"
+                        [style]="{ width: '100rem', height: 'fit-content' }"
+                        header="Lịch sử yêu cầu giải trình của báo cáo: {{
+                            inValue.report_id
+                        }}"
+                        [modal]="true"
+                        styleClass="p-fluid"
+                        [closable]="true"
+                        (onHide)="closeRequest()"
+                    >
+                        <p-table
+                            #dt1
+                            [value]="dataHistory"
+                            dataKey="id"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [loading]="loading"
+                            [paginator]="true"
+                            [globalFilterFields]="[
+                                'emp',
+                                'request_note',
+                                'request_time'
+                            ]"
+                            styleClass="p-datatable-gridlines"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex gap-3">
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clearHistory(dt1)"
+                                    />
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            #searchInput
+                                            pInputText
+                                            type="text"
+                                            [(ngModel)]="searchValue"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    searchInput.value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Employee request
+                                            <p-columnFilter
+                                                type="text"
+                                                field="emp"
+                                                display="menu"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 10rem">
+                                        <div class="flex align-items-center">
+                                            Note
+                                            <p-columnFilter
+                                                type="text"
+                                                field="request_note"
+                                                display="menu"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Time request
+                                            <p-columnFilter
+                                                type="text"
+                                                field="request_time"
+                                                display="menu"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Transaction uuid
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 10rem">
+                                        <div class="flex align-items-center">
+                                            Status
+                                            <p-columnFilter
+                                                type="text"
+                                                field="explanation_plan_status"
+                                                display="menu"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 10rem">
+                                        <div class="flex align-items-center">
+                                            ATD result Id
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.emp }}
+                                    </td>
+                                    <td>
+                                        {{ item.request_note }}
+                                    </td>
+                                    <td>
+                                        {{ item.request_time }}
+                                    </td>
+                                    <td>
+                                        {{ item.transaction_uuid }}
+                                    </td>
+                                    <td>
+                                        <div
+                                            *ngIf="
+                                                item.explanation_plan_status ===
+                                                    1;
+                                                else zero
+                                            "
+                                        >
+                                            <p>Đã giải trình</p>
+                                        </div>
+                                        <ng-template #zero>
+                                            <p>Chưa giải trình</p>
+                                        </ng-template>
+                                    </td>
+                                    <td>
+                                        {{ item.atd_result_id }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-dialog>
+                    <p-dialog
+                        [(visible)]="viewIamges"
+                        [style]="{ width: '100rem', height: 'fit-content' }"
+                        header="Hình ảnh nhân viên"
+                        [modal]="true"
+                        styleClass="p-fluid"
+                        [closable]="true"
+                        (onHide)="closeRequest()"
+                    >
+                        <p-image
+                            src="{{ inValue.image_face_left }}"
+                            alt="Image"
+                            width="250"
+                            height="300"
+                            [preview]="true"
+                        />
+                        <p-image
+                            src="{{ inValue.employee_image }}"
+                            alt="Image"
+                            width="250"
+                            height="300"
+                            [preview]="true"
+                        />
+                        <p-image
+                            src="{{ inValue.image_face_right }}"
+                            alt="Image"
+                            width="250"
+                            height="300"
+                            [preview]="true"
+                        />
+                    </p-dialog>
+                </div>
+                <div class="mt-4">
+                    <app-control-attendance
+                        (outValue)="readLoadDataATD($event)"
+                        [inValue]="ListATT_getItem"
+                    >
+                    </app-control-attendance>
+                </div>
+            </p-tabPanel>
+
+            <p-tabPanel
+                header="ATTENDANCE"
+                *ngIf="
+                    project_id != 20 &&
+                    project_id != 21 &&
+                    project_id != 1 &&
+                    project_id != 12 &&
+                    project_id != 32 &&
+                    ListATT_getItem &&
+                    ListATT_getItem.length > 0
+                "
+            >
+                <div class="mt-2">
+                    <p-speedDial
+                        showIcon="pi pi-info-circle"
+                        hideIcon="pi pi-times"
+                        buttonClassName="p-button-sm p-button-outlined"
+                        [model]="items"
+                        direction="down"
+                    ></p-speedDial>
+                    <p-dialog
+                        [(visible)]="requestExplanation"
+                        [style]="{ width: '60rem', height: 'fit-content' }"
+                        header="Yêu cầu giải trình cho báo cáo: {{
+                            inValue.report_id
+                        }}"
+                        [modal]="true"
+                        styleClass="p-fluid"
+                        [closable]="true"
+                        (onHide)="closeRequest()"
+                    >
+                        <ng-template pTemplate="content">
+                            <div class="flex flex-column w-full gap-1">
+                                <div class="flex flex-row w-full gap-1">
+                                    <div class="col-8">
+                                        <!-- <h6>Title</h6> -->
+                                        <h6>Tiêu đề</h6>
+                                        <textarea
+                                            rows="5"
+                                            cols="30"
+                                            pInputTextarea
+                                            placeholder="Mẫu: Yêu cầu giải trình ....."
+                                            [(ngModel)]="dataNoti.title"
+                                        ></textarea>
+                                        <!-- (ngModelChange)="onChangeInputSosCode($event)" -->
+                                    </div>
+
+                                    <div class="col-4">
+                                        <h6>Chọn ca</h6>
+                                        <p-dropdown
+                                            [options]="filterWorkShifts"
+                                            (onChange)="
+                                                selectedFilterWorkShift($event)
+                                            "
+                                            optionLabel="atd_time"
+                                            [showClear]="true"
+                                            [filter]="true"
+                                            filterBy="atd_time"
+                                            [group]="true"
+                                            [style]="{ minWidth: '100%' }"
+                                            placeholder="Select Work shift"
+                                            appendTo="body"
+                                        >
+                                            <ng-template
+                                                let-filterProcess
+                                                pTemplate="group"
+                                            >
+                                                <div
+                                                    class="flex align-items-center gap-2"
+                                                >
+                                                    <div>
+                                                        {{
+                                                            filterProcess.label
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template
+                                                let-myItem
+                                                pTemplate="item"
+                                            >
+                                                <div>
+                                                    <div
+                                                        *ngIf="
+                                                            myItem.atd_type !==
+                                                            'OVERVIEW'
+                                                        "
+                                                    >
+                                                        {{ myItem.atd_type }} -
+                                                        {{ myItem.atd_time }}
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <!-- <h6>Content</h6> -->
+                                    <h6>Nội dung</h6>
+                                    <textarea
+                                        placeholder="Mẫu: Vui lòng giải trình hình ảnh chấm công ....."
+                                        rows="5"
+                                        cols="30"
+                                        pInputTextarea
+                                        [(ngModel)]="dataNoti.content"
+                                    ></textarea>
+                                    <!-- (ngModelChange)="onChangeInputSosCode($event)" -->
+                                </div>
+                            </div>
+                        </ng-template>
+
+                        <ng-template pTemplate="footer">
+                            <!-- <button
+                                pButton
+                                pRipple
+                                label="Reset all data input"
+                                icon="pi pi-times"
+                                class="p-button-text"
+                            ></button> -->
+                            <!-- (click)="resetAllInput()" -->
+                            <!-- <p-toast></p-toast> -->
+                            <button
+                                pButton
+                                pRipple
+                                label="Save"
+                                icon="pi pi-check"
+                                class="p-button-text"
+                                (click)="sendRequest()"
+                                [loading]="loading_save"
+                            ></button>
+                        </ng-template>
+                    </p-dialog>
+                    <p-dialog
+                        [(visible)]="historyRequest"
+                        [style]="{ width: '100rem', height: 'fit-content' }"
+                        header="Lịch sử yêu cầu giải trình của báo cáo: {{
+                            inValue.report_id
+                        }}"
+                        [modal]="true"
+                        styleClass="p-fluid"
+                        [closable]="true"
+                        (onHide)="closeRequest()"
+                    >
+                        <p-table
+                            #dt1
+                            [value]="dataHistory"
+                            dataKey="id"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [loading]="loading"
+                            [paginator]="true"
+                            [globalFilterFields]="[
+                                'emp',
+                                'request_note',
+                                'request_time'
+                            ]"
+                            styleClass="p-datatable-gridlines"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clearHistory(dt1)"
+                                    />
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            #searchInput
+                                            pInputText
+                                            type="text"
+                                            [(ngModel)]="searchValue"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    searchInput.value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Employee request
+                                            <p-columnFilter
+                                                type="text"
+                                                field="emp"
+                                                display="menu"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 10rem">
+                                        <div class="flex align-items-center">
+                                            Note
+                                            <p-columnFilter
+                                                type="text"
+                                                field="request_note"
+                                                display="menu"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Time request
+                                            <p-columnFilter
+                                                type="text"
+                                                field="request_time"
+                                                display="menu"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Transaction uuid
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div class="flex align-items-center">
+                                            Status
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 10rem">
+                                        <div class="flex align-items-center">
+                                            ATD result Id
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.emp }}
+                                    </td>
+                                    <td>
+                                        {{ item.request_note }}
+                                    </td>
+                                    <td>
+                                        {{ item.request_time }}
+                                    </td>
+                                    <td>
+                                        {{ item.transaction_uuid }}
+                                        <i
+                                            class="text-end pi pi-copy cursor-pointer"
+                                            style="font-size: 1.75rem"
+                                            title="Click to copy!"
+                                            (click)="
+                                                handleCopy(
+                                                    item.transaction_uuid
+                                                )
+                                            "
+                                        ></i>
+                                    </td>
+                                    <td
+                                        *ngIf="
+                                            item.explanation_plan_status == 1
+                                        "
+                                    >
+                                        <b style="color: green">
+                                            Đã giải trình
+                                        </b>
+                                    </td>
+                                    <td
+                                        *ngIf="
+                                            item.explanation_plan_status == 0
+                                        "
+                                    >
+                                        <b style="color: red">
+                                            Chưa giải trình
+                                        </b>
+                                    </td>
+                                    <td>
+                                        {{ item.atd_result_id }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-dialog>
+                    <p-dialog
+                        [(visible)]="viewIamges"
+                        [style]="{ width: '100rem', height: 'fit-content' }"
+                        header="Hình ảnh nhân viên"
+                        [modal]="true"
+                        styleClass="p-fluid"
+                        [closable]="true"
+                        (onHide)="closeRequest()"
+                    >
+                        <p-image
+                            src="{{ inValue.image_face_left }}"
+                            alt="Image"
+                            width="250"
+                            height="300"
+                            [preview]="true"
+                        />
+                        <p-image
+                            src="{{ inValue.employee_image }}"
+                            alt="Image"
+                            width="250"
+                            height="300"
+                            [preview]="true"
+                        />
+                        <p-image
+                            src="{{ inValue.image_face_right }}"
+                            alt="Image"
+                            width="250"
+                            height="300"
+                            [preview]="true"
+                        />
+                    </p-dialog>
+                </div>
+
+                <div
+                    class="grid row"
+                    *ngIf="
+                        ListATT_getItemThree ||
+                        ListATT_getItemTwo ||
+                        ListATT_getItemOne
+                    "
+                >
+                    <div
+                        class="col-3 text-center"
+                        *ngIf="ListATT_getItemOne != undefined"
+                    >
+                        <h6 class="text-center">
+                            {{ ListATT_getItemOne.atd_type }}
+                            <span *ngIf="ListATT_getItemOne.shift_code">
+                                (Shift: {{ ListATT_getItemOne.shift_code }})
+                            </span>
+                        </h6>
+                        <h5 class="text-center font-bold">
+                            {{ ListATT_getItemOne.atd_time }}
+                        </h5>
+
+                        <p
+                            class="text-center cursor_pointer"
+                            [ngStyle]="{
+                                display:
+                                    currentUser.employee_type_id == 11 ||
+                                    currentUser.employee_type_id == 12
+                                        ? 'none'
+                                        : ''
+                            }"
+                        >
+                            <!-- value="Distance" -->
+                            <p-tag
+                                pTooltip="Distance"
+                                tooltipPosition="top"
+                                (click)="op.toggle($event)"
+                                icon="pi pi-external-link"
+                            ></p-tag>
+                        </p>
+
+                        <p-overlayPanel #op>
+                            <ng-template pTemplate="content">
+                                Khoảng cách giữa vị trí CHECKIN so với vị trí
+                                cửa hàng là: ~{{ ListATT_getItemOne.distance }}
+                                mét
+                            </ng-template>
+                        </p-overlayPanel>
+
+                        <p
+                            class="text-center cursor_pointer"
+                            [ngStyle]="{
+                                display:
+                                    currentUser.employee_type_id == 11 ||
+                                    currentUser.employee_type_id == 12
+                                        ? 'none'
+                                        : ''
+                            }"
+                        >
+                            MAP
+                            <p-image
+                                (click)="
+                                    mapPopup(
+                                        ListATT_getItemOne.latitude,
+                                        ListATT_getItemOne.longitude
+                                    )
+                                "
+                                src="/assets/demo/images/works/marker_red.png"
+                                alt="Image"
+                                width="20px"
+                            ></p-image>
+                        </p>
+                        <p-image
+                            (onImageError)="
+                                onImageError($event, 'ListATT_getItemOne')
+                            "
+                            (dblclick)="openImage(1)"
+                            [src]="ListATT_getItemOne.atd_photo"
+                            alt="Image"
+                            height="150"
+                        >
+                        </p-image>
+                        <hr />
+                        <p-button
+                            *ngIf="
+                                permission_full == 1 &&
+                                ListATT_getItemOne.is_edit_data == 1
+                            "
+                            class="p-button-rounded p-button-text p-button-sm mb-2"
+                            onclick="document.getElementById('myInputImageCheckIN').click()"
+                            >Change Image Check In
+                        </p-button>
+                        <p>
+                            <p-button
+                                (click)="
+                                    onUpdateAvatar(
+                                        'employee',
+                                        ListATT_getItemOne
+                                    )
+                                "
+                                *ngIf="
+                                    permission_full == 1 &&
+                                    ListATT_getItemOne.is_edit_data == 1
+                                "
+                                styleClass="p-button-raised p-button-text p-button-success p-button-sm mt-2"
+                                >Making an employee's avatar</p-button
+                            >
+                        </p>
+                        <input
+                            type="file"
+                            id="myInputImageCheckIN"
+                            style="display: none"
+                            (change)="
+                                onUploadImge(
+                                    $event,
+                                    'CHECKIN',
+                                    ListATT_getItemOne
+                                )
+                            "
+                            id="myInputImageCheckIN"
+                            style="visibility: hidden"
+                        />
+                    </div>
+                    <div
+                        class="col-3 text-center"
+                        *ngIf="ListATT_getItemTwo != undefined"
+                    >
+                        <h6 class="text-center">
+                            {{ ListATT_getItemTwo.atd_type }}
+                            <span *ngIf="ListATT_getItemTwo.shift_code">
+                                (Shift: {{ ListATT_getItemTwo.shift_code }})
+                            </span>
+                        </h6>
+                        <h5 class="text-center font-bold">
+                            {{ ListATT_getItemTwo.atd_time }}
+                        </h5>
+
+                        <p
+                            class="text-center cursor_pointer"
+                            [ngStyle]="{
+                                display:
+                                    currentUser.employee_type_id == 11 ||
+                                    currentUser.employee_type_id == 12
+                                        ? 'none'
+                                        : ''
+                            }"
+                        >
+                            <!--  value="Distance" -->
+                            <p-tag
+                                pTooltip="Distance"
+                                tooltipPosition="top"
+                                (click)="op.toggle($event)"
+                                icon="pi pi-external-link"
+                            ></p-tag>
+                        </p>
+
+                        <p-overlayPanel #op>
+                            <ng-template pTemplate="content">
+                                Khoảng cách giữa vị trí CHECKOUT so với vị trí
+                                cửa hàng là: ~{{ ListATT_getItemTwo.distance }}
+                                mét
+                            </ng-template>
+                        </p-overlayPanel>
+
+                        <p
+                            class="text-center cursor_pointer"
+                            [ngStyle]="{
+                                display:
+                                    currentUser.employee_type_id == 11 ||
+                                    currentUser.employee_type_id == 12
+                                        ? 'none'
+                                        : ''
+                            }"
+                        >
+                            MAP
+                            <p-image
+                                (click)="
+                                    mapPopup(
+                                        ListATT_getItemTwo.latitude,
+                                        ListATT_getItemTwo.longitude
+                                    )
+                                "
+                                src="/assets/demo/images/works/marker_blue.png"
+                                alt="Image"
+                                width="20px"
+                            ></p-image>
+                        </p>
+                        <p-image
+                            [ngStyle]="{
+                                display:
+                                    currentUser.employee_type_id == 11 ||
+                                    currentUser.employee_type_id == 12
+                                        ? 'none'
+                                        : ''
+                            }"
+                            (dblclick)="openImage(2)"
+                            (onImageError)="
+                                onImageError($event, 'ListATT_getItemTwo')
+                            "
+                            [src]="ListATT_getItemTwo.atd_photo"
+                            alt="Image"
+                            height="150"
+                        ></p-image>
+                        <hr />
+                        <p-button
+                            *ngIf="
+                                permission_full == 1 &&
+                                ListATT_getItemTwo.is_edit_data == 1
+                            "
+                            class="p-button-rounded p-button-text p-button-sm mb-2"
+                            onclick="document.getElementById('myInputImageCheckOUT').click()"
+                            >Change Image Check Out
+                        </p-button>
+                        <p>
+                            <p-button
+                                (click)="
+                                    onUpdateAvatar(
+                                        'employee',
+                                        ListATT_getItemTwo
+                                    )
+                                "
+                                *ngIf="
+                                    permission_full == 1 &&
+                                    ListATT_getItemTwo.is_edit_data == 1
+                                "
+                                styleClass="p-button-raised p-button-text p-button-success p-button-sm mt-2"
+                                >Making an employee's avatar</p-button
+                            >
+                        </p>
+                        <input
+                            type="file"
+                            id="myInputImageCheckOUT"
+                            style="display: none"
+                            (change)="
+                                onUploadImge(
+                                    $event,
+                                    'CHECKOUT',
+                                    ListATT_getItemTwo
+                                )
+                            "
+                            id="myInputImageCheckOUT"
+                            style="visibility: hidden"
+                        />
+                    </div>
+                    <div
+                        [ngStyle]="{
+                            display:
+                                currentUser.employee_type_id == 11 ||
+                                currentUser.employee_type_id == 12
+                                    ? 'none'
+                                    : ''
+                        }"
+                        class="col-3"
+                        *ngIf="
+                            ListATT_getItemOne != undefined &&
+                            ListATT_getItemTwo != undefined
+                        "
+                    >
+                        <h6 class="text-center">Thời gian tại cửa hàng</h6>
+                        <h5 class="text-center font-bold">
+                            {{ inValue.time_in_store }}
+                        </h5>
+                        <p-image
+                            src="https://maps.googleapis.com/maps/api/staticmap?center={{
+                                ListATT_getItemOne.latitude
+                            }},{{
+                                ListATT_getItemOne.longitude
+                            }}&zoom=18&size=600x300&maptype=roadmap&markers=color:red%7Clabel:Shop%7C{{
+                                ListATT_getItemOne.latitude
+                            }},{{
+                                ListATT_getItemOne.longitude
+                            }}&markers=color:blue%7Clabel:Marker1%7C{{
+                                ListATT_getItemTwo.latitude
+                            }},{{
+                                ListATT_getItemTwo.longitude
+                            }}&key=AIzaSyAa8HeLH2lQMbPeOiMlM9D1VxZ7pbGQq8o"
+                            alt="Image"
+                            width="100%"
+                        ></p-image>
+                    </div>
+                    <div
+                        class="col-3 text-center"
+                        *ngIf="ListATT_getItemThree != undefined"
+                    >
+                        <h6 class="text-center">
+                            {{ ListATT_getItemThree.atd_type }}
+                        </h6>
+                        <h5 class="text-center font-bold">
+                            {{ ListATT_getItemThree.atd_time }}
+                        </h5>
+                        <p
+                            class="text-center cursor_pointer"
+                            [ngStyle]="{
+                                display:
+                                    currentUser.employee_type_id == 11 ||
+                                    currentUser.employee_type_id == 12
+                                        ? 'none'
+                                        : ''
+                            }"
+                        >
+                            MAP
+                            <p-image
+                                (click)="
+                                    mapPopup(
+                                        ListATT_getItemThree.latitude,
+                                        ListATT_getItemThree.longitude
+                                    )
+                                "
+                                src="/assets/demo/images/works/home.png"
+                                alt="Image"
+                                width="20px"
+                            ></p-image>
+                        </p>
+                        <p-image
+                            (dblclick)="openImage(3)"
+                            (onImageError)="
+                                onImageError($event, 'ListATT_getItemThree')
+                            "
+                            [src]="ListATT_getItemThree.atd_photo"
+                            alt="Image"
+                            height="150"
+                        ></p-image>
+                        <hr />
+                        <p>
+                            <p-button
+                                *ngIf="
+                                    permission_full == 1 &&
+                                    ListATT_getItemThree.is_edit_data == 1
+                                "
+                                class="p-button-rounded p-button-sm p-button-text mb-2"
+                                onclick="document.getElementById('myInputImageOVERVIEW').click()"
+                                >Change Image OVERVIEW
+                            </p-button>
+                        </p>
+                        <p-button
+                            (click)="
+                                onUpdateAvatar('shop', ListATT_getItemThree)
+                            "
+                            *ngIf="
+                                permission_full == 1 &&
+                                ListATT_getItemThree.is_edit_data == 1
+                            "
+                            styleClass="p-button-raised p-button-text p-button-success p-button-sm mt-2"
+                            >Use as an overview of the store</p-button
+                        >
+                        <input
+                            type="file"
+                            id="myInputImageOVERVIEW"
+                            style="display: none"
+                            (change)="
+                                onUploadImge(
+                                    $event,
+                                    'OVERVIEW',
+                                    ListATT_getItemThree
+                                )
+                            "
+                            id="myInputImageOVERVIEW"
+                            style="visibility: hidden"
+                        />
+                    </div>
+                </div>
+                <div
+                    class="card flex justify-content-center justify-content-between text-center"
+                    *ngIf="ListATT_getItem && ListATT_getItem.length == 0"
+                >
+                    <h5>No data</h5>
+                </div>
+                <div
+                    class="row"
+                    [ngStyle]="{
+                        display:
+                            currentUser.employee_type_id == 11 ||
+                            currentUser.employee_type_id == 12
+                                ? 'none'
+                                : ''
+                    }"
+                >
+                    <app-qc-result-attendance
+                        [KPI]="'ATTENDANCE'"
+                        [inValue]="inValue.report_id"
+                    ></app-qc-result-attendance>
+                </div>
+            </p-tabPanel>
+
+            <!-- 
+            <p-tabPanel
+                *ngFor="let tab of ListSurveyResult"
+                [header]="tab.survey_name"
+                [pTooltip]="tab.created_date"
+                tooltipPosition="top"
+            >
+                <div
+                    class="grid"
+                    *ngIf="tab.model_edit == 0 || tab.model_edit == 2"
+                >
+                    <div
+                        class="col-7"
+                        *ngIf="tab.detail && tab.detail.length > 0"
+                    >
+                        <p-table
+                            [scrollable]="true"
+                            scrollHeight="600px"
+                            [tableStyle]="{
+                                'min-height':
+                                    tab.detail.length > 5 ? '600px' : ''
+                            }"
+                            [value]="tab.detail"
+                            [globalFilterFields]="[
+                                'question_name',
+                                'value_string'
+                            ]"
+                            #dt1
+                            editMode="row"
+                            rowGroupMode="subheader"
+                            groupRowsBy="representative.name"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-columnFilter
+                                        field="question_group"
+                                        matchMode="equals"
+                                        [showMenu]="false"
+                                        [style]="{ minWidth: '70%' }"
+                                    >
+                                        <ng-template
+                                            pTemplate="filter"
+                                            let-value
+                                            let-filter="filterCallback"
+                                        >
+                                            <p-dropdown
+                                                [filter]="true"
+                                                filterBy="value"
+                                                [ngModel]="value"
+                                                [options]="tab.group"
+                                                (onChange)="
+                                                    filter($event.value)
+                                                "
+                                                placeholder="Any Quenstion GROUP"
+                                                [showClear]="true"
+                                            >
+                                            </p-dropdown>
+                                        </ng-template>
+                                    </p-columnFilter>
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            pInputText
+                                            type="text"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    $any($event.target).value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 2px">#</th>
+                                    <th class="text-center">Question</th>
+                                    <th class="text-center">Result</th>
+                                    <th
+                                        class="text-center"
+                                        *ngIf="CheckCol(tab.detail) == 1"
+                                    >
+                                        Note
+                                    </th>
+
+                                    <th
+                                        class="text-center"
+                                        *ngIf="tab.model_edit == 2"
+                                    >
+                                        #
+                                    </th>
+                                    <th class="text-center" *ngIf="isHistory">
+                                        History
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="groupheader" let-details>
+                                <tr
+                                    pRowGroupHeader
+                                    [ngStyle]="{
+                                        'background-color':
+                                            details.representative.color
+                                    }"
+                                    style="width: 2px"
+                                >
+                                    <td colspan="100%">
+                                        <span class="font-bold ml-2"
+                                            ><label
+                                                >GROUP:
+                                                {{
+                                                    details.representative.name
+                                                }}</label
+                                            ></span
+                                        >
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="body"
+                                let-details
+                                let-editing="editing"
+                                let-ri="rowIndex"
+                            >
+                                <tr
+                                    [pTooltip]="details.tooltip"
+                                    tooltipPosition="top"
+                                >
+                                    <td
+                                        [ngStyle]="{
+                                            'background-color': details.color
+                                        }"
+                                    ></td>
+                                    <td
+                                        [pTooltip]="details.question_group"
+                                        tooltipPosition="top"
+                                    >
+                                        {{ details.question_name }}
+                                    </td>
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <b>
+                                                    {{
+                                                        details.value_string
+                                                    }}</b
+                                                >
+                                                <p-table
+                                                    [value]="
+                                                        details.answer_item
+                                                    "
+                                                    *ngIf="
+                                                        details.answer_item
+                                                            .length > 0
+                                                    "
+                                                >
+                                                    <ng-template
+                                                        pTemplate="header"
+                                                    >
+                                                        <tr>
+                                                            <th
+                                                                class="text-center"
+                                                            >
+                                                                nội dung
+                                                            </th>
+                                                            <th
+                                                                class="text-center"
+                                                            >
+                                                                kết quả
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template
+                                                        pTemplate="body"
+                                                        let-item
+                                                    >
+                                                        <tr>
+                                                            <td>
+                                                                {{ item.label }}
+                                                            </td>
+                                                            <td
+                                                                *ngIf="
+                                                                    item.action_id !=
+                                                                    8
+                                                                "
+                                                            >
+                                                                {{ item.data }}
+                                                            </td>
+                                                            S
+                                                            <td
+                                                                *ngIf="
+                                                                    item.action_id ==
+                                                                    8
+                                                                "
+                                                            >
+                                                                <p-image
+                                                                    [src]="
+                                                                        item.data
+                                                                    "
+                                                                    alt="Image"
+                                                                    width="30"
+                                                                    [preview]="
+                                                                        true
+                                                                    "
+                                                                ></p-image>
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td *ngIf="details.note != null">
+                                        {{ details.note }}
+                                    </td>
+                                    <td
+                                        class="text-center"
+                                        *ngIf="tab.model_edit == 2"
+                                    >
+                                        <button
+                                            *ngIf="tab.is_edit_data == 1"
+                                            (click)="
+                                                showDialogEdit(tab, details)
+                                            "
+                                            pButton
+                                            pRipple
+                                            type="button"
+                                            icon="pi pi-pencil"
+                                            class="p-button-sm p-button-rounded p-button-text p-button-raised"
+                                        ></button>
+                                    </td>
+                                    <td *ngIf="isHistory">
+                                        <button
+                                            (click)="op.toggle($event)"
+                                            *ngIf="
+                                                details.history &&
+                                                details.history.length > 0
+                                            "
+                                            pButton
+                                            pRipple
+                                            type="button"
+                                            icon="pi pi-history"
+                                            class="p-button-rounded p-button-text"
+                                            style="font-size: 1rem"
+                                        ></button>
+                                        <p-overlayPanel
+                                            #op
+                                            [style]="{ width: '650px' }"
+                                            [showCloseIcon]="true"
+                                        >
+                                            <ng-template pTemplate="content">
+                                                <p-table
+                                                    [value]="details.history"
+                                                    [tableStyle]="{
+                                                        'min-width': '50rem'
+                                                    }"
+                                                    [paginator]="true"
+                                                    [first]="0"
+                                                    [rows]="5"
+                                                    [rowsPerPageOptions]="[
+                                                        5, 10, 20
+                                                    ]"
+                                                >
+                                                    <ng-template
+                                                        pTemplate="header"
+                                                    >
+                                                        <tr>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Result
+                                                            </th>
+
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Update by
+                                                            </th>
+                                                            <th
+                                                                class="text-center text-sm font-bold"
+                                                            >
+                                                                Update time
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template
+                                                        pTemplate="body"
+                                                        let-his
+                                                    >
+                                                        <tr>
+                                                            <td
+                                                                class="text-center text-xs font-bold"
+                                                            >
+                                                                {{
+                                                                    his.value_string
+                                                                }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center text-xs"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{
+                                                                    his.employee_code
+                                                                }}-{{
+                                                                    his.employee_name
+                                                                }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center text-xs"
+                                                            >
+                                                                {{
+                                                                    his.update_date
+                                                                }}
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </ng-template>
+                                        </p-overlayPanel>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="col-5">
+                        <app-control-tab-photo
+                            [KPI]="'SURVEY'"
+                            [fulldata]="inValue"
+                            [SurveyTab]="tab.configImage"
+                            [is_edit_data]="tab.is_edit_data"
+                            [inValue]="tab.photo"
+                        ></app-control-tab-photo>
+                    </div>
+                </div>
+                <div class="grid" *ngIf="tab.survey_id == 72">
+                    <div class="col-12">
+                        <p-table
+                            [value]="tab.detailmodel"
+                            [scrollable]="true"
+                            scrollHeight="400px"
+                            [globalFilterFields]="[
+                                'question_name',
+                                'answer',
+                                'question_group',
+                                'question_type'
+                            ]"
+                            #dt2
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            pInputText
+                                            type="text"
+                                            (input)="
+                                                dt2.filterGlobal(
+                                                    $any($event.target).value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th
+                                        class="bg-blue-500 text-white text-center"
+                                    >
+                                        GROUP
+                                    </th>
+                                    <th
+                                        class="bg-blue-500 text-white text-center"
+                                    >
+                                        Question
+                                    </th>
+                                    <th
+                                        class="bg-blue-500 text-white text-center"
+                                    >
+                                        Result
+                                    </th>
+                                    <th
+                                        class="bg-blue-500 text-white text-center"
+                                    >
+                                        Type
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <p-columnFilter
+                                            field="question_group"
+                                            matchMode="equals"
+                                            [showMenu]="false"
+                                        >
+                                            <ng-template
+                                                pTemplate="filter"
+                                                let-value
+                                                let-filter="filterCallback"
+                                            >
+                                                <p-dropdown
+                                                    [ngModel]="value"
+                                                    [options]="
+                                                        Listquestion_group
+                                                    "
+                                                    (onChange)="
+                                                        filter($event.value)
+                                                    "
+                                                    placeholder="Any"
+                                                    [showClear]="true"
+                                                ></p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+                                            type="text"
+                                            [matchMode]="'contains'"
+                                            field="question_name"
+                                        >
+                                        </p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+                                            type="text"
+                                            [matchMode]="'contains'"
+                                            field="answer"
+                                        >
+                                        </p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+                                            field="question_type"
+                                            matchMode="equals"
+                                            [showMenu]="false"
+                                        >
+                                            <ng-template
+                                                pTemplate="filter"
+                                                let-value
+                                                let-filter="filterCallback"
+                                            >
+                                                <p-dropdown
+                                                    [ngModel]="value"
+                                                    [options]="
+                                                        Listquestion_type
+                                                    "
+                                                    (onChange)="
+                                                        filter($event.value)
+                                                    "
+                                                    placeholder="Any"
+                                                    [showClear]="true"
+                                                ></p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>{{ item.question_group }}</td>
+                                    <td>{{ item.question_name }}</td>
+                                    <td *ngIf="item.question_type == 'DATA'">
+                                        {{ item.answer }}
+                                    </td>
+                                    <td *ngIf="item.question_type == 'IMAGE'">
+                                        <p-image
+                                            [src]="item.answer"
+                                            alt="Image"
+                                            width="30"
+                                            [preview]="true"
+                                        ></p-image>
+                                    </td>
+                                    <td>{{ item.question_type }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+                <div
+                    class="grid"
+                    [ngStyle]="{
+                        display:
+                            currentUser.employee_type_id == 11 ? 'none' : ''
+                    }"
+                >
+                    <app-qc-result-attendance
+                        [KPI]="'SURVEY'"
+                        [item_id]="tab.survey_id"
+                        [Guid]="tab.Guid"
+                        [inValue]="inValue.report_id"
+                    ></app-qc-result-attendance>
+                </div>
+            </p-tabPanel> -->
+        </p-tabView>
+    </div>
+</section>

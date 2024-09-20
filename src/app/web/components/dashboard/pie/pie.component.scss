@@ -1,0 +1,46 @@
+:host ::ng-deep.highcharts-data-table table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    background: white;
+    min-width: 100%;
+    margin-top: 10px;
+    font-family: sans-serif;
+    font-size: 0.9em;
+}
+
+:host ::ng-deep.highcharts-data-table td,
+:host ::ng-deep.highcharts-data-table th,
+.highcharts-data-table caption {
+    border: 1px solid silver;
+    padding: 0.5em;
+}
+
+// :host ::ng-deep.highcharts-data-table tr:nth-child(even),
+// :host ::ng-deep.highcharts-data-table thead tr {
+//     background: #f8f8f8;
+// }
+
+:host ::ng-deep.highcharts-data-table td {
+    cursor: pointer;
+    // display: none;
+}
+
+:host ::ng-deep.highcharts-data-table td:hover {
+    background: #eff;
+}
+
+:host ::ng-deep.highcharts-data-table caption {
+    border-bottom: none;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+:host ::ng-deep.highcharts-sort-ascending::after {
+    content: " ↓";
+}
+:host ::ng-deep.highcharts-number::after {
+    content: '%';
+}
+:host ::ng-deep.highcharts-sort-descending::after {
+    content: "↑"
+}

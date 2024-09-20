@@ -1,0 +1,277 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">                
+                <div class="md:col-2 p-fluid">
+                    <h6>{{GetLanguage("f_start_date")}}</h6>
+                    <input pInputText id="dateStart" class="text-center font-bold mr-2" type="date"
+                        [(ngModel)]="dateStart" />
+                </div>
+                <div class="md:col-2 p-fluid">
+                    <h6>{{GetLanguage("f_end_date")}}</h6>
+                    <input pInputText id="dateEnd" class="text-center font-bold mr-2 h-5" type="date" 
+                        [(ngModel)]="dateEnd" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button pButton type="button" label="Filter" [loading]="isLoading_Filter" icon="pi pi-search"
+                        (click)="loadData(1)" class="p-button-sm mr-2 mt-2"></button>
+
+                    <button pButton pRipple label="New" icon="pi pi-plus" (click)="openAddForm()" class="p-button-sm mr-2 mt-2"></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button pButton type="button" pTooltip="Show Filter" pStyleClass=".box" enterClass="hidden"
+                        enterActiveClass="fadeinup" (click)="ShowHideFilter()" tooltipPosition="top" icon="pi pi-eye"
+                        class=" p-button-success mr-2 mt-2"
+                        [ngStyle]="{'display' : showFilter === 1 ? 'none' : 'flex'}"></button>
+
+                    <button pButton type="button" pTooltip="Hide Filter" (click)="ShowHideFilter()"
+                        tooltipPosition="top" icon="pi pi-eye-slash" class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box" leaveActiveClass="fadeoutup" leaveToClass="hidden"
+                        [ngStyle]="{'display' : showFilter === 0 ? 'none' : 'flex'}"></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <p-table #dt [value]="listSOS" paginatorPosition="top" *ngIf="listSOS && listSOS.length > 0" styleClass="p-datatable-gridlines"
+        [paginator]="true" [first]="first" [rows]="20" [rowsPerPageOptions]="[20, 50, 100]" dataKey="id" [globalFilterFields]="['active_date', 'image_result', 'image_by_product-date']">
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}  
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr class="text-lg">
+                <th class="text-center" pSortableColumn="active_date">Active date <p-sortIcon field="active_date"></p-sortIcon></th>
+                <th class="text-center">Input Width</th>
+                <th class="text-center">Input Width Total</th>
+                <th class="text-center">Unit</th>
+                <th class="text-center">Input Foot</th>
+                <th class="text-center">Input Facing</th>
+                <th class="text-center" pSortableColumn="image_result">Image result <p-sortIcon field="image_result"></p-sortIcon></th>
+                <th class="text-center" pSortableColumn="image_by_product">Image by item <p-sortIcon field="image_by_item"></p-sortIcon></th>
+                <th class="text-center">Created by</th>
+                <th class="text-center">Updated by</th>
+                <th class="text-center md:col-1">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr [pSelectableRow]="item">
+                <td class="text-center">
+                    <span class="font-medium">{{ item.active_date }}</span>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.input_width"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.input_width_total"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <p>{{ item.unit }}</p>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.input_foot"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <app-control-status-check [status]="item.input_facing"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <!-- <span class="font-medium">{{ item.image_result }}</span> -->
+                    <app-control-status-check [status]="item.image_result"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <!-- <span class="font-medium">{{ item.image_by_product }}</span> -->
+                    <app-control-status-check [status]="item.image_by_item"></app-control-status-check>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium" pTooltip="Created at {{item.created_date}}" [fitContent]="true" tooltipPosition="top">{{ item.created_name }}</span>
+                </td>
+                <td class="text-center">
+                    <span class="font-medium" pTooltip="Updated at {{item.update_date}}" [fitContent]="true" tooltipPosition="top">{{ item.update_name }}</span>
+                </td>
+                <td class="text-center flex flex-row align-items-center justify-content-around gap-3 px-7 w-full h-full md:col-1">
+                    <div class="text-center flex flex-row align-items-center justify-content-around gap-3" *ngIf="currentDate - item.active_date_int <= 0; else configPass">
+                        <button class="p-button-rounded p-button-text" pButton pRipple type="button" icon="pi pi-pencil"
+                            (click)="openEditForm(item.id, item.active_date, item.input_width, item.input_width_total, item.unit, item.input_foot, item.input_facing, item.image_result, item.image_by_item)">
+                        </button>
+                        <button class="p-button-rounded p-button-danger p-button-text" pButton pRipple type="button" icon="pi pi-trash"
+                            (click)="openDelete(item.project_id, item.id, item.active_date, item.input_width, item.input_width_total, item.unit, item.input_foot, item.input_facing, item.image_result, item.image_by_item, $event)">
+                        </button>
+                        <p-toast></p-toast>
+                        <p-confirmPopup></p-confirmPopup>
+                    </div>
+                    <ng-template #configPass>
+                        <button class="border-circle border-none w-3rem h-3rem" style="background-color: #2ac76400;" [disabled]="true">
+                            <i class="pi pi-pencil" style="font-size: 1rem; color: rgba(255, 255, 255, 0);"></i>
+                        </button>
+                        <button class="border-circle border-none w-3rem h-3rem" style="background-color: rgba(255, 0, 0, 0);" [disabled]="true">
+                            <i class="pi pi-trash" style="font-size: 1rem; color: rgba(255, 255, 255, 0);"></i>
+                        </button>
+                    </ng-template>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card flex justify-content-center justify-content-between text-center"
+        *ngIf="listSOS && listSOS.length === 0" style="float: right;">
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog [(visible)]="newConfigSOSDialog" [style]="{ width: '60rem', height: 'fit-content' }" header="Create new Config SOS"
+    [modal]="true" styleClass="p-fluid" [closable]="true" (onHide)="resetNewConfigSOSDialog()"> 
+
+    <ng-template pTemplate="content">
+        <div class="flex flex-column w-full gap-1">
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-between gap-3">
+                <div class="field w-4">
+                    <label for="active_date">Active Date<span class="font-bold" style="color: red;"> *</span></label>
+                    <input pInputText id="active_date" class="text-center font-bold mr-2" type="date"
+                        [(ngModel)]="activeDateInt" />
+                </div>
+                <div class="field w-3">
+                    <p-checkbox label="Image result" id="image_result" [binary]="true" [value]="imageResult" [(ngModel)]="imageResult"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Image By Item" id="image_by_item" [binary]="true" [value]="imageByItem" [(ngModel)]="imageByItem"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Input Foot" id="input_foot" [binary]="true" [value]="inputFoot" [(ngModel)]="inputFoot"></p-checkbox>
+                </div>
+            </div>
+
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-between gap-3">
+                <div class="field w-4" *ngIf="checkedWidthFlag === true || checkedWidthTotalFlag === true; else hideUnitInput">
+                    <label for="unit">Unit<span class="font-bold" style="color: red;"> *</span></label>
+                    <input pInputText id="unit" class="text-center" type="text" [disabled]="true" 
+                        [(ngModel)]="showInputUnit" placeholder="Select Unit (Width & Width Total)" />
+                    <div class="tag-wrapper flex flex-row align-items-center gap-3 mt-3">
+                        <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                        (click)="chooseMM()">
+                            mm
+                        </div>
+                        <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                        (click)="chooseCM()">
+                            cm
+                        </div>
+                        <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                        (click)="chooseM()">
+                            m
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template #hideUnitInput>
+                    <div class="field w-4"></div>
+                </ng-template>
+                
+                <div class="field w-3">
+                    <p-checkbox label="Input Width" id="input_width" [binary]="true" [value]="inputWidth" [(ngModel)]="inputWidth" (onChange)="checkedWidth($event)"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Input Width Total" id="input_width_total" [binary]="true" [value]="inputWidthTotal" [(ngModel)]="inputWidthTotal" (onChange)="checkedWidthTotal($event)"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Input Facing" id="input_facing" [binary]="true" [value]="inputFacing" [(ngModel)]="inputFacing"></p-checkbox>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Reset all data input" icon="pi pi-times" class="p-button-text"
+            (click)="resetAllInput()"></button>
+            <p-toast></p-toast>
+            <p-confirmDialog></p-confirmDialog>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveNewConfigSOS($event)"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="editConfigSOSDialog" [style]="{ width: '60rem', height: 'fit-content' }" header="Edit Config SOS"
+    [modal]="true" styleClass="p-fluid" [closable]="true" (onHide)="resetEditConfigSOSDialog()"> 
+
+    <ng-template pTemplate="content">
+        <div class="flex flex-column w-full gap-1">
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-between gap-3">
+                <div class="field w-4">
+                    <label for="active_date">Active Date<span class="font-bold" style="color: red;"> *</span></label>
+                    <input pInputText id="active_date" class="text-center font-bold mr-2" type="date" [disabled]="true"
+                        [(ngModel)]="editActiveDate" />
+                </div>
+                <div class="field w-3">
+                    <p-checkbox label="Image result" id="image_result" [binary]="true" [value]="editImageResult" [(ngModel)]="editImageResult"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Image By Item" id="image_by_item" [binary]="true" [value]="editImageByItem" [(ngModel)]="editImageByItem"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Input Foot" id="input_foot" [binary]="true" [value]="editInputFood" [(ngModel)]="editInputFood"></p-checkbox>
+                </div>
+            </div>
+
+            <div class="flex flex-row w-full h-fit align-items-end justify-content-between gap-3">
+                <div class="field w-4" *ngIf="checkedWidthFlag === true || checkedWidthTotalFlag === true; else hideUnitInput">
+                    <label for="unit">Unit<span class="font-bold" style="color: red;"> *</span></label>
+                    <input pInputText id="unit" class="text-center" type="text"
+                        [(ngModel)]="showInputUnit" placeholder="{{ showEditInputUnit }}" />
+                        <div class="tag-wrapper flex flex-row align-items-center gap-3 mt-3">
+                            <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                            (click)="chooseMM()">
+                                mm
+                            </div>
+                            <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                            (click)="chooseCM()">
+                                cm
+                            </div>
+                            <div class="flex align-items-center justify-content-center w-4 h-4 border-round surface-200 hover:surface-300 cursor-pointer"
+                            (click)="chooseM()">
+                                m
+                            </div>
+                        </div>
+                </div>
+
+                <ng-template #hideUnitInput>
+                    <div class="field w-4"></div>
+                </ng-template>
+
+                <div class="field w-3">
+                    <p-checkbox label="Input Width" id="input_width" [binary]="true" [value]="editInputWidth" [(ngModel)]="editInputWidth" (onChange)="checkedWidth($event)"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Input Width Total" id="input_width_total" [binary]="true" [value]="editInputWidthTotal" [(ngModel)]="editInputWidthTotal" (onChange)="checkedWidthTotal($event)"></p-checkbox>
+                </div>
+
+                <div class="field w-3">
+                    <p-checkbox label="Input Facing" id="input_facing" [binary]="true" [value]="editInputFacing" [(ngModel)]="editInputFacing"></p-checkbox>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveEditConfigSOS()"></button>
+            <p-toast></p-toast>
+            <p-confirmDialog></p-confirmDialog>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,646 @@
+<p-toast></p-toast>
+<div class="mb-2">
+    <p-breadcrumb
+        class="max-w-full"
+        [model]="items_menu"
+        [home]="home"
+    ></p-breadcrumb>
+</div>
+
+<div class="styleSearch">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="flex justify-content-end align-items-center gap-2">
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">
+                        Start Date - End Date
+                    </h6>
+                    <p-calendar
+                        inputId="date"
+                        [(ngModel)]="rangeDates"
+                        selectionMode="range"
+                        placeholder="yy/mm/dd - yy/mm/dd"
+                        appendTo="body"
+                        dateFormat="yy/mm/dd"
+                        [readonlyInput]="true"
+                        class="mr-2"
+                        [showButtonBar]="true"
+                    ></p-calendar>
+                </div>
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Area</h6>
+                    <!-- {{itemArea |json}} -->
+                    <p-multiSelect
+                        [options]="listArea"
+                        [(ngModel)]="selectedArea"
+                        placeholder="Select area"
+                        optionLabel="name"
+                        display="chip"
+                        [showClear]="true"
+                        appendTo="body"
+                        class="mr-2"
+                        [filter]="true"
+                        filterBy="name"
+                        (onChange)="selectArea($event)"
+                        [style]="{ maxWidth: '200px' }"
+                        (onClear)="clearSelectArea()"
+                    ></p-multiSelect>
+                </div>
+
+                <div
+                    class="p-input-icon-right flex flex-column gap-2"
+                    *ngIf="checkManager == true"
+                >
+                    <h6 class="text-sm font-medium m-0">Manager</h6>
+                    <!-- {{manager_id |json}} -->
+                    <app-control-employee-list
+                        (outValue)="selectManager($event)"
+                        class="mr-2"
+                        [inputStyle]="{ minWidth: '200px', maxWidth: '300px' }"
+                        [employee_type_id]="'8'"
+                        [project_id]="project_id"
+                        [multiSelect]="true"
+                        [placeholder]="'Select manager'"
+                        (outClear)="clearSelectManager($event)"
+                    ></app-control-employee-list>
+                </div>
+
+                <div
+                    class="p-input-icon-right flex flex-column gap-2"
+                    *ngIf="checkManager == true"
+                >
+                    <h6 class="text-sm font-medium m-0">Employee</h6>
+                    <app-control-employee-list
+                        (outValue)="selectEmployee($event)"
+                        class="mr-2"
+                        [inputStyle]="{ minWidth: '200px', maxWidth: '300px' }"
+                        [employee_type_id]="'7'"
+                        [project_id]="project_id"
+                        [multiSelect]="true"
+                        [placeholder]="'Select employee'"
+                        (outClear)="clearSelectEmployee($event)"
+                    ></app-control-employee-list>
+                </div>
+
+                <div class="p-input-icon-right flex flex-column gap-2">
+                    <h6 class="text-sm font-medium m-0">Shop Code</h6>
+                    <input
+                        (ngModelChange)="selectShopCodeOutlet($event)"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="shop_code"
+                        placeholder="List Shop Code"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="p-toolbar-group-end">
+            <p-button (onClick)="getData()" class="mt-4"
+                ><span class="pi pi-search"></span
+            ></p-button>
+        </div>
+    </p-toolbar>
+</div>
+
+<!-- <figure class="highcharts-figure">
+    <div id="dataEmployeeByDay"></div>
+</figure>
+
+<figure class="highcharts-figure">
+    <div id="dataEmployeeBySup"></div>
+</figure>
+
+<figure class="highcharts-figure">
+    <div id="dataEmployeeByShop"></div>
+</figure>
+
+<figure class="highcharts-figure">
+    <div id="dataEmployeeByArea"></div>
+</figure> -->
+
+<div class="card">
+    <p-tabView>
+        <p-tabPanel header="Data">
+            <div class="card">
+                <div
+                    class="flex justify-content-end px-4 align-item-center gap-3"
+                >
+                    <div
+                        class="flex justify-content-end align-items-center gap-2"
+                    >
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Date</h6>
+                            <p-calendar
+                                inputId="date"
+                                [(ngModel)]="itemDate"
+                                placeholder="dd/mm/yy"
+                                appendTo="body"
+                                (ngModelChange)="changeReportDate($event)"
+                                dateFormat="dd/mm/yy"
+                                [readonlyInput]="true"
+                                class="mr-2"
+                                [showButtonBar]="true"
+                                [minDate]="rangeDates[0]"
+                                [maxDate]="rangeDates[1]"
+                                (onClearClick)="clearSelectReportDate()"
+                            ></p-calendar>
+                        </div>
+                    </div>
+                </div>
+
+                <figure
+                    class="highcharts-figure"
+                    [ngClass]="{
+                        'hide-loadding': loading.EmployeeByDay == true
+                    }"
+                >
+                    <div id="dataEmployeeByDay"></div>
+                </figure>
+                <div>
+                    <p-table
+                        *ngIf="isTableData"
+                        [value]="EmployeeByDay.dataTable"
+                        dataKey="plan_date"
+                        [tableStyle]="{ 'min-width': '40rem' }"
+                        [expandedRowKeys]="expandedRows"
+                        [paginator]="true"
+                        [first]="first"
+                        [rows]="10"
+                        [rowsPerPageOptions]="[10, 20, 50, 100]"
+                        paginatorPosition="top"
+                        (onPage)="onPageChange($event)"
+                        selectionMode="single"
+                    >
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width: 5rem"></th>
+                                <th pSortableColumn="plan_date" class="text-center">
+                                    Date <p-sortIcon field="plan_date" />
+                                </th>
+                                <th pSortableColumn="sum_working_plan" class="text-center">
+                                    Số User có lịch làm việc
+                                    <p-sortIcon field="sum_working_plan" />
+                                </th>
+                                <th pSortableColumn="sum_atd_result" class="text-center">
+                                    Số User có chấm công
+                                    <p-sortIcon field="sum_atd_result" />
+                                </th>
+                                <th pSortableColumn="percent" class="text-center">
+                                    Tỉ Lệ Chấm Công
+                                    <p-sortIcon field="percent" />
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template
+                            pTemplate="body"
+                            let-plan
+                            let-expanded="expanded"
+                        >
+                            <tr> 
+                                <td>
+                                    <button
+                                        type="button"
+                                        pButton
+                                        pRipple
+                                        [pRowToggler]="plan"
+                                        class="p-button-text p-button-rounded p-button-plain"
+                                        [icon]="
+                                            expanded
+                                                ? 'pi pi-chevron-down'
+                                                : 'pi pi-chevron-right'
+                                        "
+                                    ></button>
+                                </td>
+                                <td class="text-center font-bold">{{ plan._plan_date }}</td>
+                                <td class="text-center" >{{ plan.sum_working_plan }}</td>
+                                <td class="text-center {{fontBoldEmpDetails(plan.checkPercent)}}" [ngStyle]="{'color': colorEmpDetails(plan.checkPercent)}">{{ plan.sum_atd_result }}</td>
+                                <td class="text-center {{fontBoldEmpDetails(plan.checkPercent)}}" [ngStyle]="{'color': colorEmpDetails(plan.checkPercent)}">{{ plan.percent }}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="rowexpansion" let-plan>
+                            <tr style="text-align: center">
+                                <td
+                                    colspan="100%"
+                                    style="background-color: #e9ecef"
+                                >
+                                    <div
+                                        class="p-2"
+                                        style="width: 100% !important"
+                                    >
+                                        <app-dashboard-empByDate
+                                            [inValue]="plan"
+                                        >
+                                        </app-dashboard-empByDate>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <p-skeleton
+                    width="100%"
+                    height="400px"
+                    *ngIf="loading.EmployeeByDay == true"
+                >
+                </p-skeleton>
+            </div>
+
+            <div class="card" *ngIf="true">
+                <figure
+                    class="highcharts-figure"
+                    [ngClass]="{
+                        'hide-loadding': loading.TimekeepingRate == true
+                    }"
+                >
+                    <div id="dataTimekeepingRate"></div>
+                </figure>
+                <p-skeleton
+                    width="100%"
+                    height="400px"
+                    *ngIf="loading.TimekeepingRate == true"
+                >
+                </p-skeleton>
+            </div>
+
+            <div class="card">
+                <div
+                    class="flex justify-content-end px-4 align-item-center gap-3"
+                >
+                    <div
+                        class="flex justify-content-end align-items-center gap-2"
+                    >
+                        <div class="p-input-icon-left flex flex-column gap-2">
+                            <h6 class="text-sm font-medium m-0">Shop Name</h6>
+                            <input
+                                (ngModelChange)="selectShopNameByShop($event)"
+                                type="text"
+                                pInputText
+                                [(ngModel)]="shop_name"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <figure
+                    class="highcharts-figure"
+                    [ngClass]="{
+                        'hide-loadding': loading.EmployeeByShop == true
+                    }"
+                >
+                    <div id="dataEmployeeByShop"></div>
+                </figure>
+                <p-skeleton
+                    width="100%"
+                    height="400px"
+                    *ngIf="loading.EmployeeByShop == true"
+                >
+                </p-skeleton>
+            </div>
+
+            <div class="card">
+                <figure
+                    class="highcharts-figure"
+                    [ngClass]="{
+                        'hide-loadding': loading.EmployeeByArea == true
+                    }"
+                >
+                    <div id="dataEmployeeByArea"></div>
+                </figure>
+                <p-skeleton
+                    width="100%"
+                    height="400px"
+                    *ngIf="loading.EmployeeByArea == true"
+                >
+                </p-skeleton>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel
+            header="Total Working Time"
+            (onclick)="getDataWorkingTime()"
+        >
+            <div class="flex justify-content-end px-4 align-item-center gap-3">
+                <div class="flex justify-content-end align-items-center gap-2">
+                    <div class="p-input-icon-left flex flex-column gap-2">
+                        <h6 class="text-sm font-medium m-0">Date</h6>
+                        <p-calendar
+                            inputId="date"
+                            [(ngModel)]="itemDateTime"
+                            placeholder="dd/mm/yy"
+                            appendTo="body"
+                            (ngModelChange)="changeDateWokingTime($event)"
+                            dateFormat="dd/mm/yy"
+                            [readonlyInput]="true"
+                            class="mr-2"
+                            [showButtonBar]="true"
+                            [minDate]="rangeDates[0]"
+                            [maxDate]="rangeDates[1]"
+                            (onClearClick)="reloadDataWokingTime()"
+                        ></p-calendar>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <p-table
+                    #dt2
+                    [value]="listWorkingTime.total_working_time"
+                    dataKey="employee_id"
+                    [rows]="10"
+                    [rowsPerPageOptions]="[10, 25, 50]"
+                    [loading]="loading_WorkingTime"
+                    [paginator]="true"
+                    [globalFilterFields]="[
+                        '_emp',
+                        '_manager',
+                        '_date',
+                        'cio',
+                        'total_time'
+                    ]"
+                    [tableStyle]="{ 'min-width': '75rem' }"
+                    class="text-align-center"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center" >Employee</th>
+                            <th class="text-center" >Manager</th>
+                            <th class="text-center" >Date</th>
+                            <th style="width: 10%;"  class="text-center" >Working time</th>
+                            <th class="text-center" >Total time</th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="_emp"
+                                    placeholder="Search by employee"
+                                    ariaLabel="Filter employee"
+                                />
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="_manager"
+                                    placeholder="Search by manager"
+                                    ariaLabel="Filter manager"
+                                />
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="_date"
+                                    placeholder="Search by date"
+                                    ariaLabel="Filter date"
+                                />
+                            </th>
+                            <th>
+                                <!-- <p-columnFilter
+                                    type="text"
+                                    field="cio"
+                                    placeholder="Search by CI-CO"
+                                    ariaLabel="Filter CI-CO"
+                                /> -->
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="total_time"
+                                    placeholder="Search by total time"
+                                    ariaLabel="Filter total time"
+                                />
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                      <tr> 
+                        <td>
+                            <img (click)="showImage(item.employee_image)" (error)="
+                            onImageError(
+                                $event,
+                                item
+                            )"  shape="circle"  [src]="item.employee_image" 
+                            [class]="'flag flag-dz styleImage'"    />
+                            <span class="ml-1 vertical-align-middle">
+                                    <span style="color: green" class="font-bold"
+                                    >[{{ item.employee_id }}]</span
+                                    >
+                                    - {{ item.employee_code }} -
+                                    {{ item.employee_name }}
+                                    </span>
+                        </td> 
+
+                        
+                            <td>
+                                <span style="color: green" class="font-bold"
+                                    >[{{ item.manager_id }}]</span
+                                >
+                                - {{ item.manager_code }} -
+                                {{ item.manager_name }}
+                            </td>
+                            <td class="font-bold text-center">
+                                {{ item._date }}
+                            </td>
+                            <td class="font-bold">
+                                <p-timeline
+                                    [value]="item.cio_arr"
+                                    layout="horizontal"
+                                    [align]="alignTimeline"
+                                >
+                                    <ng-template pTemplate="content" let-event>
+                                        <img (click)="showImage(event.photo)" (error)="
+                                        onImageErrorTimeLine(
+                                            $event,
+                                            event
+                                        )"  shape="circle"  [src]="event.photo" 
+                                        [class]="'flag flag-dz styleImage'"   /> 
+                                    </ng-template>
+                                    <ng-template pTemplate="opposite" let-event>   
+                                        <p-tag
+                                        class="font-bold m-0"
+                                        [severity]="
+                                            event.type == 'C OUT'
+                                                ? 'success'
+                                                : 'danger'
+                                        " *ngIf="event.time"
+                                        >{{ event.time }}</p-tag
+                                    >
+                                    </ng-template>
+                                </p-timeline>
+                            </td>
+                            <td class="font-bold text-center">
+                                {{ item.total_time }}
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="5">No total working time found.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <div class="card">
+                <p-table
+                    #dt2
+                    [value]="listWorkingTime.detailsbyshop"
+                    dataKey="employee_id"
+                    [rows]="10"
+                    [rowsPerPageOptions]="[10, 25, 50]"
+                    [loading]="loading_WorkingTime"
+                    [paginator]="true"
+                    [globalFilterFields]="[
+                        '_emp',
+                        '_shop',
+                        'shop_address',
+                        '_date',
+                        'cio',
+                        'second_time',
+                        'total_time'
+                    ]"
+                    [tableStyle]="{ 'min-width': '75rem' }"
+                    class="text-align-center"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center" >Employee</th>
+                            <th class="text-center" >Shop</th>
+                            <th class="text-center" >Shop Address</th>
+                            <th class="text-center" >Date</th>
+                            <th style="width: 10%;" class="text-center" >Working time</th>
+                            <th class="text-center" >Second time</th>
+                            <th class="text-center" >Total time</th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="_emp"
+                                    placeholder="Search by employee"
+                                    ariaLabel="Filter employee"
+                                />
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="_shop"
+                                    placeholder="Search by shop"
+                                    ariaLabel="Filter shop"
+                                />
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="shop_address"
+                                    placeholder="Search by shop address"
+                                    ariaLabel="Filter shop address"
+                                />
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="_date"
+                                    placeholder="Search by date"
+                                    ariaLabel="Filter date"
+                                />
+                            </th>
+                            <th>
+                                <!-- <p-columnFilter
+                                    type="text"
+                                    field="cio"
+                                    placeholder="Search by CI-CO"
+                                    ariaLabel="Filter CI-CO"
+                                /> -->
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="second_time"
+                                    placeholder="Search by second time"
+                                    ariaLabel="Filter second time"
+                                />
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                    type="text"
+                                    field="total_time"
+                                    placeholder="Search by total time"
+                                    ariaLabel="Filter total time"
+                                />
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>  
+                            <td>
+                                <img (click)="showImage(item.employee_image)" (error)="
+                                onImageError(
+                                    $event,
+                                    item
+                                )" shape="circle"  [src]="item.employee_image" 
+                                [class]="'flag flag-dz styleImage'"   />
+                                <span class="ml-1 vertical-align-middle" (click)="showItem(item)">
+                                        <span style="color: green" class="font-bold"
+                                        >[{{ item.employee_id }}]</span
+                                        >
+                                        - {{ item.employee_code }} -
+                                        {{ item.employee_name }}
+                                        </span>
+                            </td>
+                            <td>
+                                <span style="color: green" class="font-bold"
+                                    >[{{ item.shop_id }}]</span
+                                >
+                                - {{ item.shop_code }} - {{ item.shop_name }}
+                            </td>
+                            <td>{{ item.shop_address }}</td>
+                            <td class="font-bold text-center">
+                                {{ item._date }}
+                            </td>
+                            <td class="font-bold">
+                                <p-timeline
+                                    [value]="item.cio_arr"
+                                    layout="horizontal"
+                                    [align]="alignTimeline"
+                                >
+                                    <ng-template pTemplate="content" let-event>
+
+                                        <img (click)="showImage(event.photo)" (error)="
+                                        onImageErrorTimeLine(
+                                            $event,
+                                            event
+                                        )"  shape="circle"  *ngIf="event.time && event.time != null"  [src]="event.photo" 
+                                        [class]="'flag flag-dz styleImage'" />  
+                                    </ng-template>
+                                    <ng-template pTemplate="opposite" let-event> 
+                                        <p-tag
+                                        class="font-bold m-0"
+                                        [severity]="
+                                            event.type == 'C OUT'
+                                                ? 'success'
+                                                : 'danger'
+                                        " *ngIf="event.time && event.time != null"
+                                        >{{ event.time }}</p-tag
+                                    >
+                                    </ng-template>
+                                </p-timeline>
+                            </td>
+                            <td class="text-center">
+                                {{ item.second_time }}
+                            </td>
+                            <td class="font-bold text-center">
+                                {{ item.total_time }}
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="5">No details by shop found.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

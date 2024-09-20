@@ -1,0 +1,206 @@
+<section class="layout-content">
+    <div class="ng-star-inserted">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-5">
+                <span class="text-900 text-xl font-semibold">Task List</span>
+                <button pbutton="" pripple="" icon="pi pi-plus" label="Create Task"
+                    class="p-element p-ripple p-button-outlined font-semibold p-button p-component">
+                    <span class="p-button-icon p-button-icon-left pi pi-plus" aria-hidden="true"></span><span
+                        class="p-button-label">Create Task</span><span class="p-ink"></span>
+                </button>
+            </div>
+            <div class="todo">
+                <div class="text-900 font-semibold text-lg mt-5 mb-3 border-bottom-1 surface-border py-3">
+                    ToDo
+                </div>
+               
+                <ul class="list-none p-0 m-0">
+                    <li
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted">
+                        <div class="flex align-items-center flex-1">
+                            <p-checkbox class="p-element ng-untouched ng-pristine ng-valid">
+                                <div class="p-checkbox p-component">
+                                    <div class="p-hidden-accessible">
+                                        <input type="checkbox" value="undefined" id="1" aria-checked="false" />
+                                    </div>
+                                    <div class="p-checkbox-box"><!----></div>
+                                </div>
+                                <!---->
+                            </p-checkbox><label for="task.id" class="font-medium ml-2"
+                                style="word-break: break-word">Create a New Landing UI</label>
+                        </div>
+                        <div class="flex flex-1 gap-3 flex-column sm:flex-row sm:justify-content-between">
+                            <div class="flex align-items-center">
+                                <span class="flex align-items-center font-semibold mr-3 ng-star-inserted"><i
+                                        class="pi pi-comment mr-2"></i>3</span><!----><span
+                                    class="flex align-items-center font-semibold mr-3 ng-star-inserted"><i
+                                        class="pi pi-paperclip mr-2"></i>2</span><!----><span
+                                    class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted"><i
+                                        class="pi pi-clock mr-2"></i>13
+                                    May</span><!---->
+                            </div>
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img src="assets/demo/images/avatar/asiyajavayant.png"
+                                            class="ng-star-inserted" /><!----><!----><!----><!----><!---->
+                                    </div>
+                                </p-avatar>
+                                <button   
+                                pButton pRipple type="button" icon="pi pi-eye"
+                                class="p-button-rounded p-button-text ml-4"></button>
+                               
+                                
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="Completed">
+                <div class="text-900 font-semibold text-lg mt-5 mb-3 border-bottom-1 surface-border py-3">
+                    Completed
+                </div>
+                <ul class="list-none p-0 m-0">
+                    <li
+                        class="flex flex-column gap-3 md:flex-row md:align-items-center p-2 border-bottom-1 surface-border ng-star-inserted">
+                        <div class="flex align-items-center flex-1">
+                            <p-checkbox class="p-element ng-untouched ng-pristine ng-valid">
+                                <div class="p-checkbox p-component">
+                                    <div class="p-hidden-accessible">
+                                        <input type="checkbox" value="undefined" id="1" aria-checked="false" />
+                                    </div>
+                                    <div class="p-checkbox-box"><!----></div>
+                                </div>
+                                <!---->
+                            </p-checkbox><label for="task.id" class="font-medium ml-2"
+                                style="word-break: break-word">Create a New Landing UI</label>
+                        </div>
+                        <div class="flex flex-1 gap-3 flex-column sm:flex-row sm:justify-content-between">
+                            <div class="flex align-items-center">
+                                <span class="flex align-items-center font-semibold mr-3 ng-star-inserted"><i
+                                        class="pi pi-comment mr-2"></i>3</span><!----><span
+                                    class="flex align-items-center font-semibold mr-3 ng-star-inserted"><i
+                                        class="pi pi-paperclip mr-2"></i>2</span><!----><span
+                                    class="flex align-items-center font-semibold white-space-nowrap ng-star-inserted"><i
+                                        class="pi pi-clock mr-2"></i>13
+                                    May</span><!---->
+                            </div>
+                            <div class="flex align-items-center sm:justify-content-end">
+                                <p-avatar size="large" shape="circle" class="p-element ng-star-inserted">
+                                    <div class="p-avatar p-component p-avatar-image p-avatar-circle p-avatar-lg">
+                                        <img src="assets/demo/images/avatar/asiyajavayant.png"
+                                            class="ng-star-inserted" /><!----><!----><!----><!----><!---->
+                                    </div>
+                                </p-avatar>
+                                <button   
+                                pButton pRipple type="button" icon="pi pi-eye"
+                                class="p-button-rounded p-button-text ml-4"></button>
+                               
+                                
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section mt-4">
+    <div class="grid">
+        <div class="col-12 md:col-6">
+            <div class="card">
+                <h5>Left Align</h5>
+                <p-timeline [value]="events1">
+                    <ng-template pTemplate="content" let-event>
+                        {{ event.status }}
+                    </ng-template>
+                </p-timeline>
+            </div>
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="card">
+                <h5>Right Align</h5>
+                <p-timeline [value]="events1" align="right">
+                    <ng-template pTemplate="content" let-event>
+                        {{ event.status }}
+                    </ng-template>
+                </p-timeline>
+            </div>
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="card">
+                <h5>Alternate Align</h5>
+                <p-timeline [value]="events1" align="alternate">
+                    <ng-template pTemplate="content" let-event>
+                        {{ event.status }}
+                    </ng-template>
+                </p-timeline>
+            </div>
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="card">
+                <h5>Opposite Content</h5>
+                <p-timeline [value]="events1">
+                    <ng-template pTemplate="content" let-event>
+                        <small class="p-text-secondary">{{ event.date }}</small>
+                    </ng-template>
+                    <ng-template pTemplate="opposite" let-event>
+                        {{ event.status }}
+                    </ng-template>
+                </p-timeline>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h5>Customized</h5>
+        <p-timeline [value]="events1" align="alternate" styleClass="customized-timeline">
+            <ng-template pTemplate="marker" let-event>
+                <span
+                    class="flex z-1 w-2rem h-2rem align-items-center justify-content-center text-white border-circle shadow-2"
+                    [style.backgroundColor]="event.color">
+                    <i [ngClass]="event.icon"></i>
+                </span>
+            </ng-template>
+            <ng-template pTemplate="content" let-event>
+                <p-card [header]="event.status" [subheader]="event.date">
+                    <img *ngIf="event.image" [src]="'assets/demo/images/product/' + event.image" [alt]="event.name"
+                        width="200" class="shadow-2" />
+                    <p class="line-height-3 my-3">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing
+                        elit. Inventore sed consequuntur error repudiandae
+                        numquam deserunt quisquam repellat libero asperiores
+                        earum nam nobis, culpa ratione quam perferendis esse,
+                        cupiditate neque quas!
+                    </p>
+                    <button pButton label="Read more" class="p-button-outlined mb-5"></button>
+                </p-card>
+            </ng-template>
+        </p-timeline>
+    </div>
+
+    <div class="card">
+        <h5>Horizontal</h5>
+        <h6>Top Align</h6>
+        <p-timeline [value]="events2" layout="horizontal" align="top">
+            <ng-template pTemplate="content" let-event>
+                {{ event }}
+            </ng-template>
+        </p-timeline>
+
+        <h6>Bottom Align</h6>
+        <p-timeline [value]="events2" layout="horizontal" align="bottom">
+            <ng-template pTemplate="content" let-event>
+                {{ event }}
+            </ng-template>
+        </p-timeline>
+
+        <h6>Alternate Align</h6>
+        <p-timeline [value]="events2" layout="horizontal" align="alternate">
+            <ng-template pTemplate="content" let-event>
+                {{ event }}
+            </ng-template>
+            <ng-template pTemplate="opposite" let-event> &nbsp; </ng-template>
+        </p-timeline>
+    </div>
+</section>

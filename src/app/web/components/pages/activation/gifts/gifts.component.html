@@ -1,0 +1,632 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+
+<div class="card animation-duration-500 box">
+    <div class="row">
+        <div class="md:col-4">
+            <h6>Code</h6>
+            <input
+                [style]="{ minWidth: '100%' }"
+                type="text"
+                pInputText
+                [(ngModel)]="gift_code"
+                placeholder="List Code"
+            />
+        </div>
+        <div class="md:col-4">
+            <h6>Name</h6>
+            <input
+                [style]="{ minWidth: '100%' }"
+                type="text"
+                pInputText
+                [(ngModel)]="gift_name"
+                placeholder=""
+            />
+        </div>
+        <div class="md:col-3">
+            <h6>Type</h6>
+            <!-- <input
+                [style]="{ minWidth: '100%' }"
+                type="text"
+                pInputText
+                [(ngModel)]="gift_type"
+                placeholder=""
+            /> -->
+            <!-- <label for="gift_type"
+                >Type<span class="font-bold" style="color: red"> *</span></label
+            > -->
+            <p-dropdown
+                [options]="giftTypeList"
+                [(ngModel)]="gift_type"
+                optionLabel="code"
+                [showClear]="true"
+                [filter]="true"
+                filterBy="code"
+                [style]="{ minWidth: '100%' }"
+                placeholder="Select Type"
+            >
+                <ng-template let-item pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div>
+                            {{ item.name }}
+                        </div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+
+            <!-- <p-dropdown [options]="giftTypeList" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true"
+                placeholder="Select a type" [style]="{'minWidth':'100%'}" appendTo="body"
+                (onChange)="selectGiftType($event)">
+            </p-dropdown> -->
+        </div>
+        <div class="md:col-1">
+            <h6>Status</h6>
+            <!-- <p-checkbox [(ngModel)]="status" [binary]="true" inputId="binary"></p-checkbox> -->
+
+            <p-dropdown
+                [style]="{ minWidth: '100%' }"
+                [options]="statuses"
+                (onChange)="selectStatus($event)"
+                placeholder="Any"
+                optionLabel="title"
+                optionValue="value"
+                [showClear]="true"
+            >
+            </p-dropdown>
+        </div>
+    </div>
+</div>
+
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+        <button
+            [loading]="loading"
+            pButton
+            pRipple
+            label="Filter"
+            icon="pi pi-search"
+            class="p-button-sm mr-2"
+            (click)="loadData(1)"
+        ></button>
+
+        <button
+            type="button"
+            label="Raw data"
+            pButton
+            (click)="export()"
+            pRipple
+            icon="pi pi-file-excel"
+            style="float: right"
+            class="p-button-sm mr-2"
+        ></button>
+        <button
+            type="button"
+            (click)="ShowHideTemplate(1)"
+            label="Import Excel"
+            pButton
+            pRipple
+            class="p-button-sm mr-2"
+            icon="pi pi-upload"
+        ></button>
+        <i class="pi pi-bars p-toolbar-separator align-middle"></i>
+
+        <button
+            pButton
+            pRipple
+            label="New"
+            icon="pi pi-plus"
+            class="p-button-success p-button-sm mr-2"
+            (click)="openNew('create')"
+        ></button>
+
+        <button
+            pButton
+            type="button"
+            pTooltip="Show Filter"
+            pStyleClass=".box"
+            enterClass="hidden"
+            enterActiveClass="fadeinup"
+            (click)="showFilter()"
+            tooltipPosition="top"
+            icon="pi pi-eye"
+            class="p-button-success p-button-sm mr-2"
+            [ngStyle]="{ display: showFilter ? 'none' : 'flex' }"
+        ></button>
+
+        <button
+            pButton
+            type="button"
+            pTooltip="Hide Filter"
+            (click)="showFilter()"
+            tooltipPosition="top"
+            icon="pi pi-eye-slash"
+            class="p-button-warning p-button-sm mr-2"
+            pStyleClass=".box"
+            leaveActiveClass="fadeoutup"
+            leaveToClass="hidden"
+            [ngStyle]="{ display: !showFilter ? 'none' : 'flex' }"
+        ></button>
+    </ng-template>
+
+    <ng-template pTemplate="right"> </ng-template>
+</p-toolbar>
+
+<div class="card" *ngIf="showTemplate === 1">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <div class="text-center" class="mr-2">
+                <input
+                    class="form-control"
+                    type="file"
+                    (change)="onChange($event)"
+                    #myInputFile
+                    accept=".xlsx"
+                />
+            </div>
+
+            <button
+                pButton
+                pRipple
+                label="Get Template"
+                icon="pi pi-file-export"
+                (click)="getTemplate()"
+                class="p-button-sm p-button-info mr-2"
+            ></button>
+            <button
+                pButton
+                pRipple
+                (click)="importTemplate()"
+                class="ml-2"
+                label="Upload File"
+                icon="pi pi-upload"
+                class="p-button-sm p-button-success"
+            ></button>
+        </div>
+    </p-toolbar>
+    <hr />
+
+    <div class="card" *ngIf="dataError">
+        <p-table
+            #dt
+            [columns]="cols"
+            [value]="dataError"
+            selectionMode="multiple"
+            [exportHeader]="'customExportHeader'"
+            [tableStyle]="{ 'min-width': '50rem' }"
+        >
+            <ng-template pTemplate="caption">
+                <div class="flex">
+                    <button
+                        type="button"
+                        pButton
+                        pRipple
+                        icon="pi pi-file-excel"
+                        (click)="exportExcel()"
+                        class="p-button-success ml-auto"
+                        pTooltip="XLS"
+                        tooltipPosition="bottom"
+                    ></button>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th class="text-center" *ngFor="let col of columns">
+                        {{ col.header }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns">
+                        <p
+                            [class]="
+                                col.field !== 'error_name' ? 'text-center' : ''
+                            "
+                        >
+                            {{ rowData[col.field] }}
+                        </p>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <hr />
+    <div class="card" *ngIf="dataMessError">
+        <div class="col-12">
+            <div class="grid">
+                <div class="col-1 font-bold">Error Name :</div>
+                <div class="col-11">
+                    {{ dataMessError }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <p-toast></p-toast>
+
+    <!--   [paginator]="true" -->
+    <p-table
+        #dt
+        [value]="listGitfs"
+        [rows]="10"
+        [loading]="loading"
+        [globalFilterFields]="['gift_code', 'gift_name', 'gift_type', 'status']"
+        [tableStyle]="{ 'min-width': '75rem' }"
+        [(selection)]="selectedGifts"
+        styleClass="p-datatable-gridlines"
+        [rowHover]="true"
+        dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [showCurrentPageReport]="true"
+    >
+        <ng-template pTemplate="caption">
+            Total Item: {{ totalRecords }}
+            <p-paginator
+                (onPageChange)="onPageChange($event)"
+                [first]="first"
+                [rows]="rows"
+                [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[20, 50, 100]"
+            ></p-paginator>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center">RowNumber</th>
+                <th
+                    class="text-center"
+                    pSortableColumn="gift_code"
+                    style="min-width: 15rem"
+                >
+                    Code <p-sortIcon field="gift_code"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="gift_name">
+                    Name <p-sortIcon field="gift_name"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="gift_type">
+                    Type <p-sortIcon field="gift_type"></p-sortIcon>
+                </th>
+                <th class="text-center">Image</th>
+                <th class="text-center" pSortableColumn="amount">
+                    Amount <p-sortIcon field="amount"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="status">
+                    Status <p-sortIcon field="status"></p-sortIcon>
+                </th>
+                <th class="text-center" pSortableColumn="_created_by">
+                    Create By <p-sortIcon field="_created_by"></p-sortIcon>
+                </th>
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-gift>
+            <tr
+                [pTooltip]="gift._toolTip"
+                tooltipPosition="top"
+                class="cursor_pointer"
+            >
+                <td class="text-center">{{ gift.RowNum }}</td>
+                <td class="font-bold" style="color: green">
+                    {{ gift.gift_code }}
+                </td>
+                <td>{{ gift.gift_name }}</td>
+                <td>{{ gift.gift_type }}</td>
+                <td class="text-center">
+                    <!-- <img [src]="gift.gift_image" [alt]="gift.gift_name" width="50" class="shadow-4 m-auto" /> -->
+
+                    <p-image
+                        [src]="gift.gift_image"
+                        [alt]="gift.gift_name"
+                        width="50"
+                        height="50"
+                        class="shadow-4 m-auto"
+                        [preview]="true"
+                    ></p-image>
+                </td>
+                <td class="text-center font-bold" style="color: red">
+                    {{ gift.amount | number : "1.0-0" }}
+                </td>
+                <td class="text-center">
+                    <i
+                        class="pi"
+                        [ngClass]="{
+                            'text-green-500 pi-check-circle': gift.status,
+                            'text-red-500 pi-times-circle': !gift.status
+                        }"
+                    ></i>
+                </td>
+                <td>
+                    <span class="font-bold" style="color: green"
+                        >[{{ gift.created_by }}]</span
+                    >
+                    - {{ gift.created_code }} - {{ gift.created_name }}
+                </td>
+                <td class="text-center">
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-text"
+                        (click)="editGifts(gift, 'update')"
+                    ></button>
+
+                    <button class="p-button-rounded p-button-text" style="font-size: 2.5rem" title="Edit"
+                        (click)="openConfig(gift, 'update')" pButton pRipple type="button" icon="pi pi-sitemap">
+                    </button>
+
+                    <button
+                        *ngIf="checkUser() == true"
+                        pButton
+                        pRipple
+                        icon="pi pi-trash"
+                        class="p-button-danger p-button-text"
+                        (click)="deleteGifts($event, gift, 'delete')"
+                    ></button>
+                </td>
+                <!-- <td>
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                        (click)="editGifts(gift, 'update')" class="p-button-rounded p-button-text"></button>
+
+                        <button *ngIf="checkUser() == true" (click)="deleteGifts($event, gift, 'delete')" pButton
+                            pRipple type="button" icon="pi pi-trash" class="p-button-danger p-button-text"></button>
+                    </div>
+                </td> -->
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog
+    [(visible)]="giftDialog"
+    [style]="{ width: '450px' }"
+    header="Gift Details"
+    [modal]="true"
+    styleClass="p-fluid"
+>
+    <ng-template pTemplate="content">
+        <img
+            [src]="gift.gift_image"
+            [alt]="gift.gift_name"
+            width="50"
+            class="shadow-4 block m-auto pb-3"
+            *ngIf="gift.gift_image"
+        />
+
+        <!-- <p-image [src]="gift.gift_image" [alt]="gift.gift_name" width="50" class="text-center shadow-4 m-auto"
+            [preview]="true" *ngIf="gift.gift_image"></p-image> -->
+
+        <div class="field">
+            <label for="gift_code"
+                >Code<span class="font-bold" style="color: red"> *</span></label
+            >
+            <input
+                [disabled]="actionGift == 'create' ? false : true"
+                class="font-bold"
+                style="color: green"
+                type="text"
+                pInputText
+                id="gift_code"
+                [(ngModel)]="gift.gift_code"
+            />
+        </div>
+        <div class="field">
+            <label for="gift_name"
+                >Name<span class="font-bold" style="color: red"> *</span></label
+            >
+            <input
+                type="text"
+                pInputText
+                id="gift_name"
+                [(ngModel)]="gift.gift_name"
+            />
+        </div>
+
+        <div class="field">
+            <label for="gift_type"
+                >Type<span class="font-bold" style="color: red"> *</span></label
+            >
+            <p-dropdown
+                [options]="giftTypeList"
+                [(ngModel)]="selectedType"
+                optionLabel="code"
+                [showClear]="true"
+                [filter]="true"
+                filterBy="code"
+                [style]="{ minWidth: '100%' }"
+                placeholder="Select Type"
+                (onChange)="selectedGiftType($event)"
+            >
+                <ng-template let-item pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div>
+                            {{ item.name }}
+                        </div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+            <!-- <input
+                type="text"
+                pInputText
+                id="gift_type"
+                [(ngModel)]="gift.gift_type"
+            /> -->
+        </div>
+
+        <div class="flex flex-row align-items-center justify-content-between mt-3 gap-3">
+            <div class="field" *ngIf="isTypeGOTIT === true || selectedType === 'GOTIT'">
+                <label for="gift_type">GOTIT_productId</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="GOTIT_productId"
+                    [(ngModel)]="gift.GOTIT_productId"
+                />
+            </div>
+    
+            <div class="field" *ngIf="isTypeGOTIT === true || selectedType === 'GOTIT'">
+                <label for="gift_type">GOTIT_productPriceId</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="GOTIT_productPriceId"
+                    [(ngModel)]="gift.GOTIT_productPriceId"
+                />
+            </div>
+        </div>
+        
+
+        <div class="field">
+            <label for="gift_type">Image</label>
+            <input
+                class="form-control"
+                type="file"
+                (change)="onChangeImage($event)"
+                #myInputFileImage
+                accept=".png, .jpg, .jpeg"
+            />
+        </div>
+
+        <div class="formgrid grid">
+            <div class="field col">
+                <label for="amount">Amount</label>
+                <p-inputNumber
+                    id="amount"
+                    [(ngModel)]="gift.amount"
+                    class="font-bold"
+                    [style]="{ color: 'red' }"
+                ></p-inputNumber>
+            </div>
+            <div class="field col">
+                <label for="status">Status</label>
+                <p>
+                    <p-checkbox
+                        [(ngModel)]="gift._status"
+                        [binary]="true"
+                        inputId="binary"
+                    ></p-checkbox>
+                </p>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            label="Cancel"
+            icon="pi pi-times"
+            class="p-button-text"
+            (click)="hideDialog()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Save"
+            icon="pi pi-check"
+            class="p-button-text"
+            (click)="saveGift()"
+        ></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Open Dialog Prcs Configuration -->
+<p-dialog [(visible)]="openPrcsConfigDialog" [style]="{ width: '70vw', height: 'fit-content' }" header="Configuration Prcs"
+    [modal]="true" [closable]="true" [maximizable]="true">
+    <div *ngIf="configuration.configuration !== null; else other" class="row">
+        <div class="col-6">
+            <ace-editor [(text)]="configuration.configuration" mode="json" style="height:400px;"></ace-editor>
+            <label style="color:red" *ngIf="checkSomeObject(configuration.configuration) === 1">JSON format error configuration</label>
+        </div>
+        <div class="col-6">
+            <ngx-json-viewer [json]="someObject(configuration.configuration)" [depth]="3"></ngx-json-viewer>
+        </div>
+    </div>
+    <ng-template #other>
+        <div class="col-6">
+            <ace-editor [(text)]="configuration.configuration" mode="json" style="height:400px;"></ace-editor>
+            <!-- <label style="color:red" *ngIf="checkSomeObject(configuration.configuration) === 1">JSON format error configuration</label> -->
+        </div>
+        <div class="col-6"></div>
+    </ng-template>
+
+    <div class="card flex justify-content-center">
+        <div *ngIf="configuration.configuration !== ''; else otherBtn" class="flex flex-wrap gap-3">
+            <button type="button" (click)="updateConfig()" *ngIf="checkSomeObject(configuration.configuration) === 0"
+                class="p-button-sm p-button-success mr-2" label="Update" pButton pRipple icon="pi pi-check"></button>
+        </div>
+        <ng-template #otherBtn>
+            <div class="flex flex-wrap gap-3">
+                <button type="button" (click)="updateConfig()" *ngIf="checkSomeObject(configuration.configuration) !== 0"
+                    class="p-button-sm p-button-success mr-2" label="Create" pButton pRipple icon="pi pi-check"></button>
+            </div>
+        </ng-template>
+    </div>
+    <hr>
+    <!-- <div class="row">
+        <div class="col-6">
+
+            <textarea style="width: 100%;" rows="10" pInputTextarea [autoResize]="true"
+                [(ngModel)]="config_item.nextquestion_configuration"></textarea>
+
+            <label style="color:red" *ngIf="checksomeObject(config_item.nextquestion_configuration) == 1">JSON format
+                error
+                config</label>
+
+        </div>
+        <div class="col-6">
+            <ngx-json-viewer [json]="someObject(config_item.nextquestion_configuration)" [depth]="3"></ngx-json-viewer>
+        </div>
+    </div> -->
+    <!-- <div class="row">
+        <div class="col-12">
+            <p-table [value]="config_item.nextquestion_configuration" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>order</th>
+                        <th>question_id</th>
+                        <th>Sub Rule</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product>
+                    <tr>
+                        <td>{{ product.order }}</td>
+                        <td>{{ product.question_id }}</td>
+                        <td>
+                            <table class="p-datatable-table ng-star-inserted">
+                                <tr class="ng-star-inserted" style="background-color: gray;color: white;">
+                                    <th>Order</th>
+                                    <th *ngFor="let item of product.sub_rule">
+                                        {{item.order}}
+                                    </th>
+                                </tr>
+                                <tr class="ng-star-inserted">
+                                    <td>Question</td>
+                                    <td *ngFor="let item of product.sub_rule">
+                                        {{item.question_id}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="card flex justify-content-center">
+        <div class="flex flex-wrap gap-3">
+            <button type="button" class="p-button-sm p-button-success mr-2" (click)="updateRule()"
+                label="Calculate the formula" pButton pRipple icon="pi pi-check"></button>
+
+        </div>
+    </div> -->
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

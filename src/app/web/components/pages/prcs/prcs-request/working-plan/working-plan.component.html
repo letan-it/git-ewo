@@ -1,0 +1,651 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="card">
+    <p-tabView styleClass="tabview-custom">
+        <p-tabPanel header="{{ type }}">
+            <div>
+                <div class="row">
+                    <div class="md:col-3">
+                        <div class="wrapper">
+                            <div
+                                class="wrapper-child p-3"
+                                *ngFor="let event of data.step"
+                            >
+                                <div
+                                    class="w-fit h-full flex flex-column align-items-center justify-content-center mr-3"
+                                >
+                                    <div
+                                        class="shadow-6 border-circle flex align-items-center justify-content-center"
+                                        style="width: 2rem; aspect-ratio: 1/1"
+                                    ></div>
+                                    <div class="line"></div>
+                                </div>
+                                <p-card
+                                    class="w-full"
+                                    [header]="event.desc"
+                                    [subheader]="event.created_date"
+                                >
+                                    <div
+                                        class="flex flex-row w-full h-fit gap-3"
+                                        *ngFor="let item of event.images"
+                                    >
+                                        <p-image
+                                            *ngIf="item.file_url"
+                                            [src]="item.file_url"
+                                            [alt]="item.file_name"
+                                            class="shadow-2"
+                                            [preview]="true"
+                                            width="80"
+                                        />
+                                    </div>
+                                    <p></p>
+                                    <p *ngIf="event.employee_name">
+                                        Thực hiện:
+                                        <span style="color: rgb(99, 164, 0)">{{
+                                            event.employee_name
+                                        }}</span>
+                                    </p>
+                                    <p *ngIf="event.action_status_id !== null">
+                                        Trạng thái:
+                                        <span
+                                            [ngStyle]="{
+                                                color:
+                                                    event.action_status_id === 0
+                                                        ? 'red'
+                                                        : 'green'
+                                            }"
+                                            >{{ event.action_status }}</span
+                                        >
+                                    </p>
+                                </p-card>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-9" style="border-left: 2px solid black">
+                        <!-- table plan off -->
+                        <p-table
+                            #dt1
+                            *ngIf="type === 'PLAN_OFF'"
+                            [value]="data.detail"
+                            dataKey="request_id"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [loading]="loading"
+                            [paginator]="true"
+                            [globalFilterFields]="[
+                                'shop_name',
+                                'date',
+                                'employee_name'
+                            ]"
+                            styleClass="p-datatable-gridlines"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clear(dt1)"
+                                    />
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            #searchInput
+                                            pInputText
+                                            type="text"
+                                            [(ngModel)]="searchValue"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    searchInput.value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Nhân viên
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Từ ngày
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Đến ngày
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Loại phép
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Số ngày nghỉ
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ghi chú
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.employee_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.leave_date }}
+                                    </td>
+                                    <td>
+                                        {{ item.leave_date_to }}
+                                    </td>
+                                    <td>
+                                        {{ item.leave_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.leave_value }}
+                                    </td>
+                                    <td>
+                                        {{ item.note }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <!-- table ot -->
+                        <p-table
+                            #dt1
+                            *ngIf="type == 'OT_PLAN'"
+                            [value]="data.detail"
+                            dataKey="request_id"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [loading]="loading"
+                            [paginator]="true"
+                            [globalFilterFields]="[
+                                'shop_name',
+                                'date',
+                                'employee_name'
+                            ]"
+                            styleClass="p-datatable-gridlines"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clear(dt1)"
+                                    />
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            #searchInput
+                                            pInputText
+                                            type="text"
+                                            [(ngModel)]="searchValue"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    searchInput.value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Nhân viên
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Thời gian OT
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Từ giờ
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Đến giờ
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ghi chú
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.employee_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.OT_hour }}
+                                    </td>
+                                    <td>
+                                        {{ item.from_time }}
+                                    </td>
+                                    <td>
+                                        {{ item.to_time }}
+                                    </td>
+                                    <td>
+                                        {{ item.note }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                        <!-- table working -->
+                        <p-table
+                            #dt1
+                            *ngIf="
+                                type === 'WORKING_PLAN' ||
+                                type === 'REMOVE_PLAN'
+                            "
+                            [value]="data.detail"
+                            dataKey="request_id"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [loading]="loading"
+                            [paginator]="true"
+                            [globalFilterFields]="[
+                                'shop_name',
+                                'date',
+                                'employee_name'
+                            ]"
+                            styleClass="p-datatable-gridlines"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clear(dt1)"
+                                    />
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            #searchInput
+                                            pInputText
+                                            type="text"
+                                            [(ngModel)]="searchValue"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    searchInput.value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Cửa hàng
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ngày
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Nhân viên
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ca
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ghi chú
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.shop_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.date }}
+                                    </td>
+                                    <td>
+                                        {{ item.employee_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.shift_code }}
+                                    </td>
+                                    <td>
+                                        {{ item.working_plan_note }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                        <!-- atd result -->
+                        <p-table
+                            #dt1
+                            *ngIf="type === 'ADD_RESULT_PLAN'"
+                            [value]="data.detail"
+                            dataKey="request_id"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [loading]="loading"
+                            [paginator]="true"
+                            [globalFilterFields]="[
+                                'shop_name',
+                                'date',
+                                'employee_name'
+                            ]"
+                            styleClass="p-datatable-gridlines"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clear(dt1)"
+                                    />
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            #searchInput
+                                            pInputText
+                                            type="text"
+                                            [(ngModel)]="searchValue"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    searchInput.value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Nhân viên
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Cửa hàng
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Loại
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Thời gian
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ca
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ghi chú
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 10rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Hình ảnh
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.employee_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.shop_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.atd_type }}
+                                    </td>
+                                    <td>
+                                        {{ item.atd_time }}
+                                    </td>
+                                    <td>
+                                        {{ item.shift_code }}
+                                    </td>
+                                    <td>
+                                        {{ item.note }}
+                                    </td>
+                                    <td>
+                                        <p-image
+                                            src="{{ item.atd_photo }}"
+                                            alt="Image"
+                                            width="100"
+                                            height="100"
+                                            [preview]="true"
+                                        />
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                        <!-- change plan -->
+                        <p-table
+                            #dt1
+                            *ngIf="type === 'CHANGE_PLAN'"
+                            [value]="data.detail"
+                            dataKey="request_id"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [loading]="loading"
+                            [paginator]="true"
+                            [globalFilterFields]="[
+                                'employee_name',
+                                'employee_code',
+                                'plan_id'
+                            ]"
+                            styleClass="p-datatable-gridlines"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <p-button
+                                        label="Clear"
+                                        icon="pi pi-filter-slash"
+                                        (click)="clear(dt1)"
+                                    />
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input
+                                            #searchInput
+                                            pInputText
+                                            type="text"
+                                            [(ngModel)]="searchValue"
+                                            (input)="
+                                                dt1.filterGlobal(
+                                                    searchInput.value,
+                                                    'contains'
+                                                )
+                                            "
+                                            placeholder="Search keyword"
+                                        />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Nhân viên
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Cửa hàng
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ca
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ngày
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 5rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Giờ
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 15rem">
+                                        <div
+                                            class="flex flex-column align-items-start"
+                                        >
+                                            Ghi chú
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>
+                                        {{ item.employee_name }}
+                                    </td>
+                                    <td>
+                                        {{ item.shop }}
+                                    </td>
+                                    <td>
+                                        {{ item.shift }}
+                                    </td>
+                                    <td>
+                                        {{ item.date }}
+                                    </td>
+                                    <td>
+                                        {{ item.time }}
+                                    </td>
+                                    <td>
+                                        {{ item.working_plan_note }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">No data.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

@@ -1,0 +1,229 @@
+<div class="card w-full">
+    <p-toast></p-toast>
+    <p-tabView [(activeIndex)]="activeIndex">
+
+        <p-tabPanel header="Images">
+            <!-- {{inValue|json}}
+            {{images |json}} -->
+            <!-- <div class="flex flex-row w-full align-items-center justify-content-end gap-3">
+                <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mt-2 mb-2"
+                    (click)="openNew()"></button>
+            </div> -->
+
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" *ngIf="images && images.length > 0 "
+                [containerStyle]="{ 'max-width': '600px' }" [numVisible]="5">
+
+                <ng-template pTemplate="item" let-item>
+                    <img *ngIf="item" [src]="item.url" style="width: 100%;min-height: 230px;max-height: 400px;" />
+                </ng-template>
+
+                <ng-template pTemplate="caption" let-item>
+                    <div *ngIf="item">
+                        <h4 class="mb-2 font-bold" style="color: white;">{{item.alt}}</h4>
+                        <p>{{item.title}}</p>
+                        <p-button *ngIf="currentPhoto !== undefined && isCheckNotGdm == true" styleClass="mr-2 p-button-sm p-button-danger"
+                            (click)="confirm($event)" icon="pi pi-check" label="Delete photo"></p-button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="thumbnail" let-item>
+                    <div class="grid grid-nogutter justify-content-center" (click)="GetImagePhoto(item)">
+                        <img (dblclick)="openImage(item)" width="45px" [src]="item.url" />
+                    </div>
+                </ng-template>
+            </p-galleria>
+
+            <!-- card -->
+            <div class="text-center" *ngIf="permission_full === 1 && is_edit_data === 1">
+                <p-toast></p-toast>
+                <p-confirmPopup></p-confirmPopup>
+                <hr>
+                <div class="card flex justify-content-center"
+                    *ngIf="KPI === 'SURVEY' && SurveyTab && SurveyTab.length > 0">
+                    <h6>Bổ sung hình </h6>
+                    <p-dropdown [filter]="true" filterBy="question_name" [options]="SurveyTab"
+                        [(ngModel)]="selectedcofigImage" optionLabel="question_name">
+                    </p-dropdown>
+
+                    <hr> <input id="surveyFile" #myInputImagesurvey type="file" (change)="
+                        onUploadImge($event)" accept=".png, .jpg, .jpeg" />
+                </div>
+
+                <div class="card flex justify-content-center"
+                    *ngIf="KPI === 'POSM' && POSMconfig && POSMconfig.length > 0">
+                    <div class="gird">
+                        <div class="row">
+                            <div class="md:col-6">
+                                <h6>Bổ sung hình </h6>
+                                <p-dropdown [filter]="true" filterBy="posm_name" [options]="POSMconfig"
+                                    [(ngModel)]="selectedcofigImagePOSM" optionLabel="posm_name" class="p-fluid">
+                                </p-dropdown>
+                            </div>
+
+                            <!-- [itemSurveyType]= "item_SurveyType" -->
+                            <div class="md:col-6">
+                                <h6>Loại hình ảnh</h6>
+                                <app-control-survey-type class="p-fluid" code="POSM_image_type"
+                                    nameSurveyType="Select a image type" name="VN" [itemSurveyType]="item_ImageType"
+                                    (outValue)="selectImageType($event)"></app-control-survey-type>
+                            </div>
+                        </div>
+                    </div>
+                    <hr> <input id="posmfile" #myInputImageposm type="file" (change)="
+                        onUploadImge($event)" accept=".png, .jpg, .jpeg" />
+                </div>
+
+                <div class="card flex justify-content-center"
+                    *ngIf="KPI === 'OSA' && OSAconfig && OSAconfig.length > 0">
+                    <h6>Bố sung hình: </h6>
+                    <p-dropdown [filter]="true" filterBy="product_name" [options]="OSAconfig"
+                        [(ngModel)]="selectedcofigImageOSA" optionLabel="product_name">
+                    </p-dropdown>
+
+
+                    <hr> <input id="osafile" #myInputImageosa type="file" (change)="
+                        onUploadImge($event)" accept=".png, .jpg, .jpeg" />
+                </div>
+
+                <!-- this.selectedcofigImageOOL.ool_result_id, this.selectedcofigImageOOL.ool_detail_id,  this.selectedcofigImageOOL.ool_id -->
+                <!-- *ngIf="KPI == 'OOL' && OOLconfig && OOLconfig.length > 0" -->
+
+                <div class="card flex justify-content-center"
+                    *ngIf="KPI === 'OOL' && OOLconfig && OOLconfig.length > 0">
+                    <h6>Bố sung hình: </h6>
+                    <p-dropdown [filter]="true" filterBy="detail_ool_toolTip" [options]="OOLconfig"
+                        [(ngModel)]="selectedcofigImageOOL" optionLabel="detail_ool_toolTip"></p-dropdown>
+
+                    <hr> <input id="oolfile" #myInputImageool type="file" (change)="
+                        onUploadImge($event)" accept=".png, .jpg, .jpeg" />
+                </div>
+
+                <!--  && ACTIVATIONconfig && ACTIVATIONconfig.length > 0 -->
+                <div class="card flex justify-content-center"
+                    *ngIf="KPI === 'ACTIVATION' && ACTIVATIONconfig.list_question && ACTIVATIONconfig.list_question.length > 0">
+                    <h6>Bổ sung hình: </h6>
+                    <p-dropdown [options]="ACTIVATIONconfig.list_question" [(ngModel)]="selectedQuestion"
+                        optionLabel="question_name" [filter]="true" filterBy="question_name" [showClear]="true"
+                        placeholder="Select a question">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>[{{ item.question_id }}] - {{ item.question_name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <hr>
+                    <p>
+                        <input id="myInputImage" #myInputImage type="file"
+                            (change)="onUploadFileImage($event, ACTIVATIONconfig, shop_code)"
+                            accept=".png, .jpg, .jpeg" />
+                    </p>
+
+                </div>
+
+                <div class="card flex justify-content-center w-full"
+                    *ngIf="KPI === 'INVENTORY' && INVENTORYconfig && INVENTORYconfig.length > 0">
+                    <h6>Bố sung hình: </h6>
+                    <p-dropdown [options]="listInvenImageTypes" [style]="{'minWidth':'100%', 'text-align': 'start'}"
+                        [(ngModel)]="selectedcofigImageINVENTORY" (onChange)="selectedInvenImageType($event)"
+                        optionLabel="detail_inventory_toolTip" optionLabel="Name" filterBy="Name"
+                        placeholder="Select Image Type" [showClear]="true" (onClear)="clearInvenDetail($event)">
+                    </p-dropdown>
+                    <br />
+                    <div *ngIf="allowChooseProductDetail === true">
+                        <p-dropdown [options]="listInvenDetails" [style]="{'minWidth':'100%', 'text-align': 'start'}"
+                            [(ngModel)]="selectedcofigDetailINVENTORY" (onChange)="selectedInvenDetail($event)"
+                            optionLabel="detail_inventory_toolTip" optionLabel="Name" filterBy="Name"
+                            placeholder="Select Inventory Detail" [showClear]="true"></p-dropdown>
+                    </div>
+                    <hr>
+                    <div *ngIf="allowUploadProductFile === true">
+                        <input id="inventoryfile" #myInputImageinventory type="file" (change)="onUploadImge($event)"
+                            accept=".png, .jpg, .jpeg" />
+                    </div>
+                </div>
+
+                <div class="card flex justify-content-center w-full"
+                    *ngIf="KPI === 'SOS' && SOSconfig && SOSconfig.length >= 0">
+                    <h6>Bố sung hình: </h6>
+                    <p-dropdown [options]="listSOSImageTypes" [style]="{'minWidth':'100%', 'text-align': 'start'}"
+                        [(ngModel)]="selectedcofigImageSOS" (onChange)="selectedSOSImageType($event)"
+                        optionLabel="detail_sos_toolTip" optionLabel="Name" filterBy="Name"
+                        placeholder="Select Image Type" [showClear]="true" (onClear)="clearSOSDetail($event)">
+                    </p-dropdown>
+                    <br />
+                    <div *ngIf="allowChooseSOSDetail === true">
+                        <p-dropdown [options]="listSOSDetails" [style]="{'minWidth':'100%', 'text-align': 'start'}"
+                            [(ngModel)]="selectedcofigDetailSOS" (onChange)="selectedSOSDetail($event)"
+                            optionLabel="detail_sos_toolTip" optionLabel="FullName" filterBy="FullName"
+                            placeholder="Select SOS Detail" [showClear]="true"></p-dropdown>
+                    </div>
+                    <hr>
+                    <div *ngIf="allowUploadSOSFile === true">
+                        <input id="sosfile" #myInputImagesos type="file" (change)="onUploadImge($event)"
+                            accept=".png, .jpg, .jpeg" />
+                    </div>
+                </div>
+
+                <div class="card flex justify-content-center w-full"
+                    *ngIf="KPI === 'FIELDCOACHING' && FIELDCOACHINGconfig && FIELDCOACHINGconfig.length >= 0">
+                    <h6>Bố sung hình: </h6>
+                    <p-dropdown [options]="listFIELDCOACHINGImageTypes"
+                        [style]="{'minWidth':'100%', 'text-align': 'start'}"
+                        [(ngModel)]="selectedcofigImageFIELDCOACHING"
+                        (onChange)="selectedFIELDCOACHINGImageType($event)" optionLabel="detail_fieldcoaching_toolTip"
+                        optionLabel="Name" filterBy="Name" placeholder="Select Image Type" [showClear]="true"
+                        (onClear)="clearFIELDCOACHINGDetail($event)"></p-dropdown>
+                    <br />
+                    <div *ngIf="allowChooseSOSDetail === true">
+                        <p-dropdown [options]="listSOSDetails" [style]="{'minWidth':'100%', 'text-align': 'start'}"
+                            [(ngModel)]="selectedcofigDetailFIELDCOACHING"
+                            (onChange)="selectedFIELDCOACHINGDetail($event)" optionLabel="detail_fieldcoaching_toolTip"
+                            optionLabel="FullName" filterBy="FullName" placeholder="Select FIELDCOACHINGtail"
+                            [showClear]="true"></p-dropdown>
+                    </div>
+                    <hr>
+                    <div *ngIf="allowUploadFIELDCOACHINGFile === true">
+                        <input id="sosfile" #myInputImagFIELDCOACHING type="file" (change)="onUploadImge($event)"
+                            accept=".png, .jpg, .jpeg" />
+                    </div>
+                </div>
+            </div>
+            <div class="card flex justify-content-center justify-content-between text-center"
+                *ngIf="images && images.length === 0">
+                <h5>No data</h5>
+            </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Audios" *ngIf="inValue !== undefined && inValue.audio && inValue.audio.length > 0">
+            <div *ngIf="audios && audios.length>0" class="flex justify-content-center">
+                <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="title"
+                    [listStyle]="{ 'max-height': '250px' }">
+                    <ng-template let-audio pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ audio.title }}</div>
+                            <audio controls style="width: 278px; height: 35px;">
+                                <source [src]="audio.url" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </ng-template>
+                </p-listbox>
+            </div>
+
+            <div class="card flex justify-content-center justify-content-between text-center"
+                *ngIf="audios && audios.length === 0">
+                <h5>No data</h5>
+            </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Videos" *ngIf="inValue !== undefined && inValue.video && inValue.video.length > 0">
+            <p-accordion [activeIndex]="0">
+                <p-accordionTab [header]="item.title" *ngFor="let item of inValue.video">
+                    <h6>{{item.alt}}</h6>
+                    <video width="320" height="240" controls>
+                        <source [src]="item.url" type="video/mp4">
+                    </video>
+                </p-accordionTab>
+            </p-accordion>
+        </p-tabPanel>
+
+    </p-tabView>
+</div>

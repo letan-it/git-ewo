@@ -1,0 +1,6 @@
+ 
+<p-dropdown [options]="listSurvey" (onChange)="returnValue(selectedSurvey)" [disabled]="statusAction"
+    [filter]="true" filterBy="Name" [style]="{'minWidth':'100%'}" 
+    [placeholder]="nameSurvey" [(ngModel)]="selectedSurvey" [showClear]="true" aria-sort="ascending" 
+    optionLabel="Name" appendTo="body"></p-dropdown>
+ 

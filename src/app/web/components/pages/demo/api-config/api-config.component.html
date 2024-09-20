@@ -1,0 +1,276 @@
+<p-toast></p-toast>
+<p-table *ngIf="new_api==0" [value]="API_List" dataKey="api_id" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 5rem" rowspan="2"></th>
+            <th class="text-center" rowspan="2">Methods</th>
+            <th class="text-center" >api_id</th>
+
+            <th class="text-center" style="width: 50rem" >API</th>
+            <!-- <th class="text-center" rowspan="2">Description</th> -->
+            <th class="text-center" rowspan="2">Cache Minutes</th>
+            <th class="text-center" rowspan="2">Count Token</th>
+            <th class="text-center">
+                <i class="pi pi-sync" style="cursor: pointer; margin-left: 2%;" (click)="loadApiList()"
+                    pTooltip="Load Data" tooltipPosition="top"></i>
+                <i class="pi pi-plus ml-2" style="cursor: pointer; margin-left: 2%;" pTooltip="Create API" (click)="newAPI()"
+                    tooltipPosition="top"></i>
+            </th>
+        </tr>
+        <tr>
+            <th class="text-center">
+                <p-columnFilter [style]="{'minWidth':'30%'}"  type="text" field="api_id" [showMenu]="true"
+                [matchMode]="'contains'"></p-columnFilter>
+            </th>
+            <th class="text-center">
+                <p-columnFilter [style]="{'minWidth':'30%'}"  type="text" field="url" [showMenu]="true"
+                [matchMode]="'contains'"></p-columnFilter>
+            </th>
+            <th class="text-center">Action </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-expanded="expanded">
+        <tr>
+            <td>
+                <button type="button" pButton pRipple [pRowToggler]="item"
+                    class="p-button-text p-button-rounded p-button-plain"
+                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+            </td>
+            <td class="text-center"><p-tag severity="success" value="GET"></p-tag></td>
+            <td class="text-center">{{ item.api_id }}</td>
+            <td>{{ item.url }}</td>
+            <!-- <td>{{ item.desc }}</td> -->
+            <td class="text-center">{{ item.cache_minutes }}</td>
+            <td class="text-center">{{ item.count_token }}</td>
+            <td class="text-center">
+                <i class="pi pi-trash" style="cursor: pointer;color:red"
+                 pTooltip="delete api" (click)="deleteAPI(item)"
+                tooltipPosition="top"></i>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-item>
+        <tr>
+            <td colspan="100%">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card p-fluid">
+                            <div class="field">
+                                <h5>API URL</h5>
+                                <input pInputText [(ngModel)]="item.url" type="text" />
+                            </div>
+                            <h5>Description</h5>
+                            <div class="field">
+                                <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="item.desc"
+                                    [config]='editorConfig'></angular-editor>
+                            </div>
+                            <div class="field">
+                                <h5>Cache Minutes</h5>
+                                <input pInputText [(ngModel)]="item.cache_minutes" type="text" />
+                            </div>
+                        </div>
+                        <div class="card p-fluid">
+                            <div class="field">
+                                <i class="pi pi-eye" style="cursor: pointer;color:green"
+                                    (click)="testAPI(item.url_preview)" pTooltip="test api" tooltipPosition="top"></i>
+                                <label htmlFor="name1" class="ml-2">URL Preview </label>
+                                <input pInputText disabled [(ngModel)]="item.url_preview" type="text" />
+                            </div>
+                            <h5 *ngIf="item.param && item.param.length > 0">[FromFrom]</h5>
+                            <div class="field" *ngFor="let p of item.param">
+                                <i class="pi pi-trash" style="cursor: pointer;color:red"
+                                    (click)="removeKey(item,p.key_request)" pTooltip="delete key"
+                                    tooltipPosition="top"></i>
+                                <label htmlFor="name1" class="ml-2">{{p.key_request}}</label>
+
+                                <input pInputText (change)="changeURLPreview(item)" [(ngModel)]="p.value_desc"
+                                    type="text" />
+                            </div>
+                            <hr>
+                            <h5  *ngIf="item.header && item.header.length > 0">[Header]</h5>
+                            <div class="field" *ngFor="let p of item.header">
+                                <i class="pi pi-trash" style="cursor: pointer;color:red"
+                                    (click)="removeKey(item,p.key_request)" pTooltip="delete key"
+                                    tooltipPosition="top"></i>
+                                <label htmlFor="name1" class="ml-2">{{p.key_request}}</label>
+
+                                <input pInputText (change)="changeURLPreview(item)" [(ngModel)]="p.value_desc"
+                                    type="text" />
+                            </div>
+                            <button pButton pRipple class="p-button-success" size="small" label="Update"
+                                (click)="onUpdate(item)" icon="pi pi-save"></button>
+                        </div>
+                        <div class="text-center">
+                            <div class="field" *ngIf="item.newkey==1">
+                                <input pInputText placeholder="key_request" [(ngModel)]="item.newkey_request"
+                                    type="text" />
+                                <input pInputText placeholder="value_desc" [(ngModel)]="item.newkey_desc" class="ml-2 mr-2"
+                                    type="text" /> 
+                                 <p-dropdown [options]="paramType" [(ngModel)]="selectparamType" optionLabel="name" [showClear]="true" placeholder="Select a City"></p-dropdown>
+  
+                            </div>
+                            <span class="p-buttonset ">
+                                <button pButton pRipple size="small" *ngIf="item.newkey==0" (click)="newKey(item)"
+                                    label="New key" icon="pi pi-plus"></button>
+                                <button pButton pRipple size="small" *ngIf="item.newkey==1" class="p-button-secondary"
+                                    (click)="newKey(item)" label="Close" icon="pi pi-close"></button>
+                                <button pButton pRipple class="p-button-success" size="small" (click)="savekey(item)"
+                                    *ngIf="item.newkey==1" class="ml-2" label="Save" icon="pi pi-check"></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card p-fluid">
+                        <p-table [value]="item.token_list"   dataKey="uuid" [tableStyle]="{ 'width':'100%' }">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">code</th>
+                                    <th class="text-center">count connect</th>
+                                    <th class="text-center">status</th>
+                                    <th class="text-center">created_date</th>
+                                    <th class="text-center">View</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-token let-expanded="expanded">
+                                <tr>
+                                    <td>
+                                        <button type="button" pButton pRipple [pRowToggler]="token"
+                                            class="p-button-text p-button-rounded p-button-plain"
+                                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    </td>
+                                    <td class="text-center">{{ token.uuid }}</td>
+                                    <td class="text-center">{{ token.count_connect }}</td>
+                                    <td class="text-center">{{ token.status }}</td>
+                                    <td class="text-center">{{ token.created_date }}</td>
+                                    <td class="text-center">   
+                                        <i class="pi  pi-copy mr-1" (click)="copyText(token.content)" pTooltip="copy data"  style="cursor: pointer;color:green" tooltipPosition="top"></i>
+                                        <i class="pi pi-database mr-1" (click)="testAPI(token.url_preview)" pTooltip="view data"  style="cursor: pointer;color:green" tooltipPosition="top"></i>
+                                        <i class="pi pi-eye ml-1" (click)="viewAPI(token.uuid)" pTooltip="view api"  style="cursor: pointer;color:green" tooltipPosition="top"></i>
+                                        <i class="pi pi-stop-circle ml-2" pTooltip="disabled" *ngIf="token.status == 1" (click)="changeStatusToken(token,0,item.token_list)"  style="cursor: pointer;color:red" tooltipPosition="top"></i>
+                                        <i class="pi pi-play ml-2" pTooltip="active"  *ngIf="token.status == 0" (click)="changeStatusToken(token,1,item.token_list)"  style="cursor: pointer;color:blue" tooltipPosition="top"></i>
+                                        <i class="pi pi-trash ml-2" pTooltip="DELETE" *ngIf="token.status == 0" (click)="changeStatusToken(token,-1,item.token_list)"  style="cursor: pointer;color:red" tooltipPosition="top"></i>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="rowexpansion" let-item>
+                                <tr>
+                                   
+                                    <td colspan="100%">
+                                        <div class="card p-fluid">
+                                            <div class="field">
+                                                <i class="pi  pi-copy mr-1" (click)="copyText(item.url_preview)" pTooltip="copy data"  style="cursor: pointer;color:green" tooltipPosition="top"></i>
+                                                <label htmlFor="name1" class="ml-2">URL Preview </label>
+                                                <input pInputText disabled [(ngModel)]="item.url_preview" type="text" />
+                                            </div>
+                                            <div class="field">
+                                                <i class="pi  pi-copy mr-1" (click)="copyText(item.url_public)" pTooltip="copy data"  style="cursor: pointer;color:green" tooltipPosition="top"></i>
+
+                                                <label htmlFor="name1" class="ml-2">URL Publish </label>
+                                                <input pInputText disabled [(ngModel)]="item.url_public" type="text" />
+                                            </div>
+                                            <h6>[Header]</h6>
+                                            <div class="field" *ngFor="let h of item.header">
+                                                <label htmlFor="name1" class="ml-2">{{h.request_key}} </label>
+                                                <input pInputText disabled [(ngModel)]="h.value" type="text" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                        <div class="card p-fluid" *ngIf="item.createtoken==1">
+                            <div class="field" *ngFor="let p of item.param_new">
+                                <label htmlFor="name1" class="ml-2">{{p.key_request}}</label>
+                                <input pInputText  [(ngModel)]="p.value_desc"
+                                    type="text" />
+                            </div>
+                            <div class="field" *ngFor="let p of item.param_new_header">
+                                <label htmlFor="name1" class="ml-2">{{p.key_request}}</label>
+                                <input pInputText  [(ngModel)]="p.value_desc"
+                                    type="text" />
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <span class="p-buttonset ">
+                                <button pButton pRipple size="small" *ngIf="item.createtoken==0"  (click)="createtoken(item)" label="Create token" icon="pi pi-plus"></button>
+                                <button pButton pRipple size="small" *ngIf="item.createtoken==1"  class="p-button-secondary" (click)="createtoken(item)"  label="Close" icon="pi pi-close"></button>
+                                <button pButton pRipple class="p-button-success" size="small" *ngIf="item.createtoken==1" (click)="OnCreateToken(item)"  class="ml-2" label="Save" icon="pi pi-check"></button>
+                            </span>
+                        </div>
+                        
+                    </div>
+                </div>
+            </td>
+
+        </tr>
+    </ng-template>
+</p-table>
+
+<div class="col-12" *ngIf="new_api == 1">
+    <div class="card p-fluid">
+        <div class="field">
+            <h5>API URL</h5>
+            <input pInputText [(ngModel)]="item_new.url" type="text" />
+        </div>
+        <h5>Description</h5>
+        <div class="field">
+            <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="item_new.desc"
+                [config]='editorConfig'></angular-editor>
+        </div>
+        <div class="field">
+            <h5>Cache Minutes</h5>
+            <input pInputText [(ngModel)]="item_new.cache_minutes" type="text" />
+        </div>
+        <div class="field">
+                <h5>List Param</h5>
+                <div class="formgroup-inline">
+                    <div class="field">
+                        <label  class="p-sr-only">key request</label>
+                        <input pInputText  type="text" placeholder="key request" [(ngModel)]="item_new.key_request" />
+                    </div>
+                    <div class="field">
+                        <label   class="p-sr-only">value desc</label>
+                        <input pInputText  type="text" placeholder="value desc"  [(ngModel)]="item_new.value_desc" />
+                    </div>
+                    <div class="field">
+                         <p-dropdown [options]="paramType" [(ngModel)]="selectparamType" optionLabel="name" [showClear]="true" placeholder="Select a City"></p-dropdown>
+                    </div>
+                    <button pButton style="width: 15rem;" label="Add" (click)="addParam()"></button>
+                </div>
+            
+        </div>
+        <div class="field">
+            <p-table [value]="item_new.param" [tableStyle]="{ 'max-width': '50rem' }">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>key_request</th>
+                        <th>value_desc</th>
+                        <th>type</th>
+                        <th>#</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{ item.key_request }}</td>
+                        <td>{{ item.value_desc }}</td>
+                        <td>{{ item.type }}</td>
+                        <td>
+                            <i class="pi pi-trash" style="cursor: pointer;color:red"
+                            (click)="removeKeyParam(item.key_request)" pTooltip="delete key"
+                            tooltipPosition="top"></i>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="card p-fluid text-center">
+        <span class="p-buttonset ">
+        <button pButton pRipple size="small"    (click)="newAPI()" class="p-button-secondary" label="Cancel" icon="pi pi-close"></button>
+        <button pButton pRipple class="p-button-success" size="small"  (click)="onCreateAPI()"   class="ml-2" label="Save" icon="pi pi-check"></button>
+    </span>
+    </div>
+
+</div>

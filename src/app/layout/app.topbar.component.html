@@ -1,0 +1,149 @@
+<div class="layout-topbar" style="z-index: 1100 !important">
+    <p-toast></p-toast>
+
+    <a class="layout-topbar-logo" routerLink="" style="width: auto !important;">
+        <!-- <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}-acacy.png"
+            alt="logo" style="    height: 90px !important"> -->
+        <!-- <span>Name Project</span> -->
+
+    </a>
+    <div style="pointer-events: none;">
+        <p-dropdown [options]="countries" [(ngModel)]="selectedCountry" optionLabel="project_name" [showClear]="true"
+            placeholder="Select a Project">
+            <ng-template pTemplate="selectedItem">
+                <div class="flex align-items-center gap-2" *ngIf="selectedCountry">
+                    <img [src]="selectedCountry.image" style="width: 18px" />
+                    <div><b>{{ selectedCountry.project_name }}</b></div>
+                </div>
+            </ng-template>
+            <ng-template let-country pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                    <img [src]="country.image" style="width: 18px" />
+                    <div><b>{{ country.project_name }}</b></div>
+                </div>
+            </ng-template>
+        </p-dropdown>
+    </div>
+
+
+
+    <button *ngIf="menuMode == 0" #menubutton class="p-link layout-menu-button layout-topbar-button"
+        (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+    <ng-container *ngIf="menuMode == 1">
+        <div class="ml-8">
+            <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="menu.toggle($event)">
+                <i class="pi pi-bars"></i>
+            </button>
+
+            <p-slideMenu #menu [model]="model" [popup]="true" [viewportHeight]="250" [menuWidth]="200"></p-slideMenu>
+
+        </div>
+        <div class="ml-8">
+            <p-menubar [model]="model" *ngIf="isMobile == 0"></p-menubar>
+
+        </div>
+    </ng-container>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
+        (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+
+
+    <div #topbarmenu class="layout-topbar-menu"
+        [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+       
+      
+        <div class="flex align-items-center gap-2 p-3" *ngIf="userProfile">
+            <!-- <img [src]="country.image" style="width: 18px" /> -->
+  
+            <div style="display: inline-flex;justify-content: center; align-items: center;">
+                {{userProfile.employee_name}} - {{userProfile.employee_type_name}}</div>
+        </div>
+
+        <div *ngIf="CountNotification(0) > 0" (click)="showDialog()" class="p-link"
+            style="display: inline-flex;justify-content: center; align-items: center;">
+            <i class="pi pi-bell p-text-secondary" severity="danger" pBadge style="font-size: 1.5rem"
+                [value]="CountNotification(0)"></i>
+        </div>
+
+        <button *ngIf="CountNotification(0) == 0 " (click)="showDialog()" class="p-link layout-topbar-button mr-2">
+            <i class="pi pi-bell"></i>
+            <span>Notification</span>
+        </button>
+
+        <!-- <button class="p-link layout-topbar-button" (click)="routerLink('/user-profile')">
+            <i class="pi pi-user"></i>
+            <span>Profile</span>
+        </button> -->
+        <div style="padding-left:15px">
+        <p-avatar  styleClass="mr-2 ml-4" (click)="routerLink('/user-profile')" [style]="{'cursor': 'pointer'}" [image]="userProfile.image" styleClass="mr-2" size="large" shape="circle"></p-avatar>
+    </div>
+
+        <!-- <p-avatar *ngIf="image_200== 0" icon="pi pi-user" styleClass="mr-2 ml-4" size="large" (click)="routerLink('/user-profile')" [style]="{'background-color':'white', 'color': 'gray','cursor': 'pointer'}" shape="circle"></p-avatar> -->
+        <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
+            <i class="pi pi-info-circle"></i>
+            <span>Instruct</span>
+        </button>
+
+        <button class="p-link layout-topbar-button" [routerLink]="'/settings'"
+            *ngIf="userProfile && userProfile.employee_type_id == 1">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </button>
+
+        <!-- <ng-container *ngIf="menu_key === 'proxy_link'; else internalBlock">
+            <a class="p-link layout-topbar-button" [href]="'/login/'"><i class="pi pi-fw pi-sign-out"></i>
+                <span>Quit</span></a>
+          </ng-container>
+          <ng-template #internalBlock>
+            <button class="p-link layout-topbar-button" [routerLink]="'/auth/login'">
+                <i class="pi pi-fw pi-sign-out"></i>
+                <span>Quit</span>
+            </button>
+          </ng-template> -->
+
+          <button class="p-link layout-topbar-button" (click)="logout()">
+            <i class="pi pi-fw pi-sign-out"></i>
+            <span>Quit</span>
+        </button>
+        <!-- <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </button> -->
+    </div>
+</div>
+<p-dialog header="Header" [(visible)]="visible" [position]="position" [style]="{ width: '30vw', height: '700px' }"
+    [maximizable]="true">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">Notification</span>
+    </ng-template>
+    <ng-container *ngFor="let item of msg">
+        <p-fieldset class="line-height-3 m-0">
+            <ng-template pTemplate="header">
+                <div class="flex align-items-center text-primary" style="cursor: pointer;"
+                    (click)="ReadNotification(item)">
+                    <span class="font-bold text-sm" [ngStyle]="{
+                        'color': item.isRead == 0 ? 'red' : ''
+                      }">{{item.from}}</span>
+                    <i *ngIf="item.isRead == 0" class="" pBadge style="margin-left: 5px;font-size: 2rem"
+                        severity="danger"></i>
+                </div>
+            </ng-template>
+            <p>{{item.message}}</p>
+            <p>{{item.content}}</p>
+            <p class=" text-right">{{ item.timestamp }}</p>
+        </p-fieldset>
+        <hr>
+    </ng-container>
+    <ng-template pTemplate="footer">
+        <p-button *ngIf="msg.length > 0" icon="pi pi-check" (click)="ClearNotification()"
+            label="Clear all notifications" styleClass="p-button-text"></p-button>
+        <p-button *ngIf="CountNotification(0) > 0" icon="pi pi-check" (click)="ReadAll()" label="Read all notifications"
+            styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-angle-up" (click)="visible = false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>

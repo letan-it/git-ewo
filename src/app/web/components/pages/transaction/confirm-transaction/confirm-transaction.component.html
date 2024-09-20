@@ -1,0 +1,255 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="row">
+    <h4>DANH SÁCH CHỜ DUYỆT</h4>
+    <div class="md:col-2">
+        <h6>{{ GetLanguage("f_transaction_id") }}</h6>
+        <input [style]="{ minWidth: '100%' }" type="number" min="0" pInputText [(ngModel)]="transaction_id"
+            placeholder="transaction id" />
+    </div>
+    <div class="md:col-2 p-fluid">
+        <h6>{{ GetLanguage("f_start_date") }}</h6>
+        <input pInputText id="dateStart" class="text-center font-bold mr-2" type="date" [(ngModel)]="dateStart" />
+    </div>
+    <div class="md:col-2 p-fluid">
+        <h6>{{ GetLanguage("f_end_date") }}</h6>
+        <input pInputText id="dateEnd" class="text-center font-bold mr-2" type="date" [(ngModel)]="dateEnd" />
+    </div>
+</div>
+<div class="row">
+    <p-toolbar>
+        <div class="p-toolbar-group-left flex flex-wrap">
+            <button pButton type="button" label="Filter" (click)="filterTransaction()" icon="pi pi-search"
+                class="p-button-sm p-button-success mr-2 ml-2"></button>
+            <i class="pi pi-bars p-toolbar-separator"></i>
+            <button pButton type="button" label="Back" (click)="backTransaction()" *ngIf="div_transaction == 2"
+                icon="pi pi-angle-left" class="p-button-sm p-button-secondary mr-2 ml-2"></button>
+        </div>
+    </p-toolbar>
+</div>
+<div class="row mt-2" *ngIf="div_transaction == 1">
+    <div class="md:col-12">
+        <p-table selectionMode="single" [value]="list_nhan" [paginator]="true" [tableStyle]="{ width: '100%' }"
+            [rows]="5" [showCurrentPageReport]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [rowsPerPageOptions]="[5, 10, 20]">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th class="text-center">Nhận Từ</th>
+                    <th class="text-center">Thời gian</th>
+                    <th class="text-center">Ghi chú</th>
+                    <th class="text-center">Trạng thái</th>
+                </tr>
+                <tr>
+                    <th class="text-center">
+                        <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="from_name" [showMenu]="true"
+                            [matchMode]="'contains'"></p-columnFilter>
+                    </th>
+                    <th class="text-center">
+                        <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="created_date" [showMenu]="true"
+                            [matchMode]="'contains'"></p-columnFilter>
+                    </th>
+                    <th class="text-center">
+                        <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="note" [showMenu]="true"
+                            [matchMode]="'contains'"></p-columnFilter>
+                    </th>
+                    <th class="text-center">
+                        <p-columnFilter [style]="{ minWidth: '30%' }" type="text" field="transaction_status_name"
+                            [showMenu]="true" [matchMode]="'contains'"></p-columnFilter>
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr (click)="
+                    ViewDetailTransaction(rowData, 'nhan')
+                " tooltipPosition="top" class="cursor_pointer">
+                    <td class="text-left">
+                        {{ rowData.from_name }}
+                    </td>
+                    <td class="text-center">
+                        {{ rowData.created_date }}
+                    </td>
+                    <td class="text-left">
+                        <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="rowData.note" />
+                    </td>
+                    <td class="text-center">
+                        <p-tag [severity]="
+                            getSeverityStatus(
+                                rowData.transaction_status_code
+                            )
+                        " [value]="
+                            rowData.transaction_status_code ==
+                            'Done'
+                                ? 'Chờ xác nhận'
+                                : rowData.transaction_status_name
+                        "></p-tag>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<div class="row mt-2" *ngIf="div_transaction == 2">
+    <div class="md:col-4 mt-2">
+        <div class="card justify-content-center">
+            <div class="row">
+                <div class="col-12">
+                    <p-button (click)="copyText(temp_rowData.transaction_id)" icon="pi pi-copy"
+                        styleClass="p-button-success  p-button-sm  m-1" pTooltip="copyText" tooltipPosition="bottom"
+                        label="seri:  {{ temp_rowData.transaction_id }}"></p-button>
+
+                    <p-button *ngIf="temp_rowData.transaction_status == 2" icon="pi pi-check-circle"
+                        styleClass="p-button-success  p-button-sm  m-1" (click)="confirm_OK()" tooltipPosition="bottom"
+                        [label]="GetLanguage('b_ok')"></p-button>
+
+                    <p-button *ngIf="temp_rowData.transaction_status == 2" icon="pi pi-times-circle"
+                        styleClass="p-button-danger  p-button-sm  m-1" (click)="confirm_Reject()"
+                        tooltipPosition="bottom" [label]="GetLanguage('b_reject')"></p-button>
+                </div>
+            </div>
+            <div class="row" *ngIf="temp_rowData.transaction_status == 2">
+                <div class="col-12">
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="note_confirm"
+                        placeholder="Enter note confirm" />
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="row">
+                <div class="md:col-12">
+                    <h6 *ngIf="temp_rowData.type == 'nhan'">
+                        {{ GetLanguage("lb_from_to") }}
+                        <label class="allow">*</label>
+                    </h6>
+                    <h6 *ngIf="temp_rowData.type == 'gui'">
+                        {{ GetLanguage("lb_send_to") }}
+                        <label class="allow">*</label>
+                    </h6>
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText *ngIf="temp_rowData.type == 'nhan'"
+                        [(ngModel)]="temp_rowData.from_name" />
+                    <input [style]="{ minWidth: '100%' }" type="text" pInputText *ngIf="temp_rowData.type == 'gui'"
+                        [(ngModel)]="temp_rowData.to_name" />
+                </div>
+                <div class="row mt-2">
+                    <div class="md:col-12">
+                        <h6>
+                            {{
+                            GetLanguage(
+                            "lb_transaction_note"
+                            )
+                            }}
+                        </h6>
+                        <input [style]="{ minWidth: '100%' }" type="text" pInputText [(ngModel)]="temp_rowData.note"
+                            placeholder="Enter note" />
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="flex col-12 flex-column max-w-full gap-2">
+                        <div class="flex align-items-center" *ngFor="
+                                let item of temp_rowData.file
+                            ">
+                            <i class="pi pi-paperclip"></i>
+                            <div class="text-900 font-semibold block ml-2">
+                                <a target="_blank" [href]="item.file_url">{{ item.file_name }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-2">
+            <div class="row mt-1" *ngFor="let h of temp_rowData.history">
+                <h5>
+                    <p-tag [severity]="
+                            getSeverityStatus(
+                                h.transaction_status_code
+                            )
+                        " [value]="
+                            h.transaction_status == 2
+                                ? 'Chờ xác nhận'
+                                : h.transaction_status_name
+                        "></p-tag>
+                </h5>
+                <div class="md:col-6">
+                    Ghi chú: {{ h.note }}
+                </div>
+                <div class="md:col-6">
+                    {{ h.created_date }}
+                </div>
+                <hr />
+            </div>
+        </div>
+    </div>
+    <div class="md:col-8 mt-2">
+        <div class="card">
+            <p-panel header="SẢN PHẨM" *ngIf="
+                    temp_rowData &&
+                    temp_rowData.product &&
+                    temp_rowData.product.length > 0
+                ">
+                <p-dataView #dv [value]="temp_rowData.product">
+                    <ng-template let-item pTemplate="listItem">
+                        <div class="col-4" *ngIf="item.item_type == 'PRODUCT'">
+                            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                <p-image [src]="item.product_image" [alt]="item.product_name" width="40"
+                                    [preview]="true"></p-image>
+                                <div
+                                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                    <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                        <div class="text-2xl font-bold text-900">
+                                            {{
+                                            item.product_name
+                                            }}
+                                        </div>
+                                        <div class="textfont-bold text-900">
+                                            Số lượng
+                                            <b>{{
+                                                item.quantity
+                                                }}
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dataView>
+            </p-panel>
+            <br />
+            <p-panel header="QUÀ TẶNG" *ngIf="
+                    temp_rowData &&
+                    temp_rowData.gift &&
+                    temp_rowData.gift.length > 0
+                ">
+                <p-dataView #dv [value]="temp_rowData.gift">
+                    <ng-template let-item pTemplate="listItem">
+                        <div class="col-4" *ngIf="item.item_type == 'GIFT'">
+                            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                <p-image [src]="item.gift_image" [alt]="item.gift_name" width="40"
+                                    [preview]="true"></p-image>
+                                <div
+                                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                    <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                        <div class="text-2xl font-bold text-900">
+                                            {{ item.gift_name }}
+                                        </div>
+                                        <div class="textfont-bold text-900">
+                                            Số lượng
+                                            <b>{{
+                                                item.quantity
+                                                }}
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dataView>
+            </p-panel>
+        </div>
+    </div>
+</div>

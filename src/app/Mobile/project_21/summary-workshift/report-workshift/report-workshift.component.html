@@ -1,0 +1,203 @@
+<!-- <p-toolbar [style]="{ 'position': 'sticky', 'z-index': '1', 'background-color': '#188A42' }">
+    <div class="p-toolbar-group-start flex flex-column align-items-start">
+    </div>
+    <div class="p-toolbar-group-center">
+        <div class="text-2xl text-blue-50">{{currDate}}</div>
+    </div>
+    <div class="p-toolbar-group-end gap-3">
+        <i class="pi pi-filter text-blue-50" style="font-size: 1.5rem"></i>
+        <p-calendar [(ngModel)]="calendarVal" appendTo="body" [showClear]="true" placeholder="Filter by date" (onSelect)="selectDate($event)"
+        [style]="{'minWidth':'100%', 'cursor': 'pointer'}" dateFormat="dd/mm/yy"></p-calendar>   
+    </div>
+</p-toolbar> -->
+
+<div class="card mt-2">
+    <div class="row">
+        <div class="col-6  p-3">
+            <div class="flex flex-column gap-2 w-full">
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_number_trail")}}</span> -->
+                    <span class="text-base font-semibold">Số Trial</span>
+                    <span>{{ listSummary?.trial }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_product_sold")}}</span> -->
+                    <span class="text-base font-semibold">Tổng Sản Phẩm Đã Bán</span>
+                    <span>{{ listSummary?.qty }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_product_shop")}}</span> -->
+                    <span class="text-base font-semibold">Tổng Sản Phẩm Của Điểm Bán</span>
+                    <span>{{ listSummary?.qty_Store }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_product_DTC")}}</span> -->
+                    <span class="text-base font-semibold">Tổng Sản Phẩm Của DTC</span>
+                    <span>{{ listSummary?.qty_DTC }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_number_of_people_reach")}}</span> -->
+                    <span class="text-base font-semibold">Số người tiếp cận</span>
+                    <span>{{ listSummary?.customer_visit }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_gift_used")}}</span> -->
+                    <span class="text-base font-semibold">Số quà tặng đã sử dụng</span>
+                    <span>{{ listSummary?.gift }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 p-3">
+            <div class="flex flex-column gap-2">
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_money_shop")}}</span> -->
+                    <span class="text-base font-semibold">Tổng Tiền Trả Cho Điểm Bán</span>
+                    <span>{{ listSummary?.return_store }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_money_manager")}}</span> -->
+                    <span class="text-base font-semibold">Tổng Tiền Trả Cho Quản Lý</span>
+                    <span>{{ listSummary?.return_DTC }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_money")}}</span> -->
+                    <span class="text-base font-semibold">Tổng Cộng</span>
+                    <span>{{ listSummary?.total_amount }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_money_discount")}}</span> -->
+                    <span class="text-base font-semibold">Tổng tiền chiết khấu</span>
+                    <span>{{ listSummary?.GAP }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_people_used")}}</span> -->
+                    <span class="text-base font-semibold">Số người hút</span>
+                    <span>{{ listSummary?.value_smoker }}</span>
+                </div>
+                <div class="flex align-items-center justify-content-between gap-3 w-9">
+                    <!-- <span class="text-base font-semibold">{{GetLanguage("f_total_image")}}</span> -->
+                    <span class="text-base font-semibold">Tổng số hình</span>
+                    <span>{{ listSummary?.photo }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-table #dt [value]="listProduct" *ngIf="listProduct && listProduct.length > 0" [rows]="listProduct.length" styleClass="p-datatable-header">
+    <ng-template pTemplate="header">
+        <tr class="text-base">
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_order")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_product_name")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_quantity")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_quantity_store")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_quantity_DTC")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_money_store")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_money_manager")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_money_total")}}</th> -->
+            <th class="text-center bg-green-300">STT</th>
+            <th class="text-center bg-green-300">Tên Sản Phẩm</th>
+            <th class="text-center bg-green-300">Số lượng</th>
+            <th class="text-center bg-green-300">Số Lượng Của Điểm Bán</th>
+            <th class="text-center bg-green-300">Số Lượng Của DTC</th>
+            <th class="text-center bg-green-300">Tiền Trả Cho Điểm Bán</th>
+            <th class="text-center bg-green-300">Tiền Trả Cho Quản Lý</th>
+            <th class="text-center bg-green-300">Tổng Cộng</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="item">
+            <td class="text-center">
+                <span class="font-medium">{{ rowIndex + 1 }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.product_name }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.quantity }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.quantity_Store }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.quantity_DTC }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.amount_Store }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.amount_DTC }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.total_amount }}</span>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<br />
+<p-table #dt id="table" [value]="listSmoker" *ngIf="listSmoker && listSmoker.length > 0"
+    [globalFilterFields]="[]">
+    <ng-template pTemplate="header">
+        <tr class="text-base">
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_order")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_order_id")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_smoker_name")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_discount_amount")}}</th> -->
+            <th class="text-center bg-green-300">STT</th>
+            <th class="text-center bg-green-300">Số Đơn Hàng</th>
+            <th class="text-center bg-green-300">Tên Smoker</th>
+            <th class="text-center bg-green-300">Số Tiền Chiết Khấu</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="item">
+            <td class="text-center">
+                <span class="font-medium">{{ rowIndex + 1 }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">1</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.value_string }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.GAP }}</span>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<br />
+<p-table #dt id="table" [value]="listGift" *ngIf="listGift && listGift.length > 0"
+    [globalFilterFields]="[]">
+    <ng-template pTemplate="header">
+        <tr class="text-base">
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_order")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_order_id")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_smoker_name")}}</th> -->
+            <!-- <th class="text-center bg-green-300">{{GetLanguage("th_discount_amount")}}</th> -->
+            <th class="text-center bg-green-300">STT</th>
+            <th class="text-center bg-green-300">Mã Quà Tặng</th>
+            <th class="text-center bg-green-300">Tên Quà Tặng</th>
+            <th class="text-center bg-green-300">Số Lượng</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="item">
+            <td class="text-center">
+                <span class="font-medium">{{ rowIndex + 1 }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.gift_id }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.gift_name }}</span>
+            </td>
+            <td class="text-center">
+                <span class="font-medium">{{ item.quantity }}</span>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

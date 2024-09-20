@@ -1,0 +1,688 @@
+<p-toast />
+<p-confirmPopup />
+
+<app-breadcrumb-menu
+    [items_menu]="items_menu"
+    [home]="home"
+></app-breadcrumb-menu>
+
+<div class="grid animation-duration-500 box">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="md:col-2">
+                    <h6>Group Code</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="group_code"
+                    />
+                </div>
+                <div class="md:col-2">
+                    <h6>Group Name</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="file_group"
+                    />
+                </div>
+                <div class="md:col-3">
+                    <h6>Name</h6>
+                    <input
+                        [style]="{ minWidth: '100%' }"
+                        type="text"
+                        pInputText
+                        [(ngModel)]="file_name"
+                    />
+                </div>
+                <div class="md:col-3">
+                    <h6>Create</h6>
+                    <app-control-employee-list
+                        (outValue)="selectEmployee($event)"
+                        class="mr-2"
+                        [inputStyle]="{ minWidth: '100%', maxWidth: '100%' }"
+                        [employee_type_id]="'1 2 3 4 5 6 7 8 9'"
+                        [project_id]="project_id"
+                        [multiSelect]="true"
+                        [placeholder]="'Select employee'"
+                        (outClear)="clearSelectEmployee($event)"
+                    ></app-control-employee-list>
+                </div>
+                <div class="md:col-2">
+                    <h6>Status</h6>
+                    <p-dropdown
+                        [style]="{ minWidth: '100%' }"
+                        [options]="statuses"
+                        (onChange)="selectStatus($event)"
+                        placeholder="Any"
+                        optionLabel="title"
+                        optionValue="value"
+                        [showClear]="true"
+                        appendTo="body"
+                    >
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>
+                                    <p-tag
+                                        [severity]="getSeverity(item.value)"
+                                        [value]="item.title"
+                                    ></p-tag>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="row">
+            <p-toolbar>
+                <div class="p-toolbar-group-left flex flex-wrap">
+                    <button
+                        pButton
+                        type="button "
+                        label="Filter"
+                        [loading]="isLoading_Filter"
+                        icon="pi pi-search"
+                        (click)="loadData(1)"
+                        class="p-button-sm mr-2 mt-2"
+                    ></button>
+                    <button
+                        pButton
+                        type="button"
+                        label="Create"
+                        icon="pi pi-plus"
+                        (click)="showDetailsModal(null, 'create')"
+                        class="p-button-sm mr-2 mt-2"
+                    ></button>
+
+                    <button
+                        type="button"
+                        label="Raw data"
+                        pButton
+                        (click)="export()"
+                        pRipple
+                        icon="pi pi-file-excel"
+                        style="float: right"
+                        class="p-button-sm mr-2 mt-2"
+                    ></button>
+
+                    <i class="pi pi-bars p-toolbar-separator"></i>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Show Filter"
+                        pStyleClass=".box"
+                        enterClass="hidden"
+                        enterActiveClass="fadeinup"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye"
+                        class="p-button-success mr-2 mt-2"
+                        [ngStyle]="{
+                            display: showFilter === 1 ? 'none' : 'flex'
+                        }"
+                    ></button>
+
+                    <button
+                        pButton
+                        type="button"
+                        pTooltip="Hide Filter"
+                        (click)="ShowHideFilter()"
+                        tooltipPosition="top"
+                        icon="pi pi-eye-slash"
+                        class="p-button-warning mr-2 mt-2"
+                        pStyleClass=".box"
+                        leaveActiveClass="fadeoutup"
+                        leaveToClass="hidden"
+                        [ngStyle]="{
+                            display: showFilter === 0 ? 'none' : 'flex'
+                        }"
+                    ></button>
+                </div>
+            </p-toolbar>
+        </div>
+    </div>
+</div>
+
+<div class="flex flex-row align-items-center justify-content-center">
+    <div class="card w-full" *ngIf="listDocuments && listDocuments.length > 0">
+        <p-table
+            #dt
+            [value]="listDocuments"
+            [rowHover]="true"
+            dataKey="file_id"
+            styleClass="p-datatable-gridlines"
+            rowGroupMode="subheader"
+            groupRowsBy="_group"
+        >
+            <!-- <ng-template pTemplate="groupheader" let-data>
+                <tr pRowGroupHeader>
+                    <td colspan="7">
+                        <span class="font-bold ml-2">{{ data._group }}</span>
+                    </td>
+                </tr>
+            </ng-template> -->
+
+            <ng-template pTemplate="caption">
+                Total Item: {{ totalRecords }}
+                <p-paginator
+                    (onPageChange)="onPageChange($event)"
+                    [first]="first"
+                    [rows]="rows"
+                    [totalRecords]="totalRecords"
+                    [rowsPerPageOptions]="[20, 50, 100]"
+                ></p-paginator>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-center font-bold">RowNum</th>
+                    <th class="text-center font-bold">Group Code</th>
+                    <th class="text-center font-bold">Group Name</th>
+                    <th class="text-center font-bold">Name</th>
+                    <th class="text-center font-bold">Url</th>
+                    <th class="text-center font-bold">Create</th>
+                    <th class="text-center font-bold">Status</th>
+                    <th class="text-center font-bold">Action</th>
+                </tr>
+            </ng-template>
+            <ng-template
+                pTemplate="body"
+                let-item
+                let-editing="editing"
+                let-ri="rowIndex"
+                let-expanded="expanded"
+            >
+                <tr [pEditableRow]="item">
+                    <td
+                        class="text-center"
+                        [pTooltip]="'File ID: ' + item.file_id"
+                        tooltipPosition="top"
+                    >
+                        <span class="text-center">{{ item.RowNum }}</span>
+                    </td>
+                    <td class="bold">{{ item.group_code }}</td>
+                    <td>{{ item.file_group }}</td>
+                    <td class="style-name">{{ item.file_name }}</td>
+                    <td
+                        class="text-center"
+                        [pTooltip]="item.file_url"
+                        tooltipPosition="top"
+                    >
+                        <a
+                            target="_blank"
+                            [href]="item.file_url"
+                            *ngIf="item.file_url"
+                        >
+                            <i class="pi pi-book style-file"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <span>
+                            <span class="style-create"
+                                >[{{ item.created_by }}]</span
+                            >
+                            - {{ item.created_code }} - {{ item.created_name }}
+                        </span>
+                        |
+                        <i
+                            class="pi pi-clock"
+                            style="font-weight: bold; color: green"
+                        ></i>
+                        {{ item.created_date }}
+                    </td>
+                    <td class="text-center">
+                        <i
+                            class="pi"
+                            [ngClass]="{
+                                'text-green-500 pi-check-circle': item._status,
+                                'text-red-500 pi-times-circle': !item._status
+                            }"
+                        ></i>
+                    </td>
+                    <td class="text-center">
+                        <div
+                            class="flex align-items-center justify-content-center gap-2"
+                        >
+                            <button
+                                *ngIf="!editing"
+                                pButton
+                                pRipple
+                                pTooltip="Add Employee"
+                                tooltipPosition="top"
+                                (click)="showEmpFileModal(item)"
+                                type="button"
+                                icon="pi pi-check-square"
+                                class="p-button-rounded p-button-text pointer"
+                            ></button>
+                            <!-- push noti -->
+                            <button
+                                *ngIf="!editing"
+                                pButton
+                                pRipple
+                                pTooltip="Push notification"
+                                tooltipPosition="top"
+                                (click)="showEmpFileModal(item, 1)"
+                                type="button"
+                                icon="pi pi-bell"
+                                class="p-button-rounded p-button-text pointer"
+                            ></button>
+                            <!--  (click)="onRowEditInit(item)" -->
+                            <button
+                                *ngIf="!editing"
+                                pButton
+                                pRipple
+                                type="button"
+                                pInitEditableRow
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-text"
+                                (click)="showDetailsModal(item, 'update')"
+                            ></button>
+                            <button
+                                *ngIf="!editing"
+                                (click)="confirm($event, item)"
+                                pButton
+                                pRipple
+                                type="button"
+                                pCancelEditableRow
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-text p-button-danger"
+                            ></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div
+        class="card flex justify-content-center justify-content-between text-center w-full"
+        *ngIf="listDocuments && listDocuments.length <= 0"
+        style="float: right"
+    >
+        <h5>No data</h5>
+    </div>
+</div>
+
+<p-dialog
+    *ngIf="config_model_File == true"
+    header="Add employee"
+    [(visible)]="config_model_File"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [maximizable]="true"
+>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-3">
+                <div class="field p-fluid" *ngIf="false">
+                    <div class="flex align-items-end justify-content-end gap-2">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-search"
+                            class="p-button-rounded p-button-text p-button-text"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-plus"
+                            class="p-button-rounded p-button-text p-button-success"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-trash"
+                            class="p-button-rounded p-button-text p-button-danger"
+                        ></button>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col p-fluid">
+                        <h6>
+                            Employee Code List<span
+                                style="color: red; font-weight: bold"
+                            >
+                                *</span
+                            >
+                        </h6>
+                        <p>
+                            <input
+                                pInputText
+                                id="employee_list"
+                                placeholder="EMP1 EMP2 ..."
+                                [(ngModel)]="employee_list"
+                                type="text"
+                            />
+                        </p>
+                    </div>
+                    <div class="field col p-fluid">
+                        <h6>
+                            Start Date<span
+                                style="color: red; font-weight: bold"
+                            >
+                                *</span
+                            >
+                            - End Date
+                        </h6>
+                        <p-calendar
+                            inputId="date"
+                            [(ngModel)]="rangeDates"
+                            selectionMode="range"
+                            placeholder="yy/mm/dd - yy/mm/dd"
+                            appendTo="body"
+                            dateFormat="yy/mm/dd"
+                            [readonlyInput]="true"
+                            class="mr-2"
+                            [showButtonBar]="true"
+                        ></p-calendar>
+                    </div>
+                </div>
+                <div class="field p-fluid" *ngIf="false">
+                    <p-button
+                        label="Update"
+                        (click)="UpdateEmployeeFile()"
+                        styleClass="p-button-success p-button-sm"
+                    ></p-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="col-12">
+            <div class="row">
+                <p-toolbar>
+                    <div class="p-toolbar-group-left flex flex-wrap">
+                        <div
+                            *ngIf="true"
+                            class="flex align-items-start justify-content-start gap-2"
+                        >
+                            <p-button
+                                icon="pi pi-search"
+                                (click)="FilterEmployeeFile()"
+                                styleClass="p-button-success p-button-sm"
+                            ></p-button>
+                            <p-button
+                                icon="pi pi-plus"
+                                (click)="UpdateEmployeeFile()"
+                                styleClass="p-button-success p-button-sm"
+                            ></p-button>
+                            <i class="pi pi-bars p-toolbar-separator mt-3"></i>
+                            <p-button
+                                icon="pi pi-trash"
+                                (click)="confirmListEmp($event)"
+                                styleClass="p-button-danger p-button-sm"
+                            ></p-button>
+                        </div>
+                    </div>
+                </p-toolbar>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p-table
+                #dt1
+                dataKey="id"
+                [value]="employeeListFile"
+                [tableStyle]="{ 'min-width': '50rem' }"
+                [paginator]="true"
+                [rows]="5"
+                [rowsPerPageOptions]="[5, 10, 20]"
+                [globalFilterFields]="[
+                    'employee_code',
+                    'employee_name',
+                    '_date'
+                ]"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center font-bold">Employee Code</th>
+                        <th class="text-center font-bold">Employee Name</th>
+                        <th class="text-center font-bold">Date</th>
+                        <th class="text-center font-bold" *ngIf="false">
+                            Action
+                        </th>
+                    </tr>
+                    <tr *ngIf="false">
+                        <th class="text-center">
+                            <p-columnFilter
+                                [style]="{ minWidth: '30%' }"
+                                type="text"
+                                field="employee_code"
+                                [matchMode]="'contains'"
+                            ></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter
+                                [style]="{ minWidth: '30%' }"
+                                type="text"
+                                field="employee_name"
+                                [matchMode]="'contains'"
+                            ></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter
+                                [style]="{ minWidth: '30%' }"
+                                type="text"
+                                field="_date"
+                                [matchMode]="'contains'"
+                            ></p-columnFilter>
+                        </th>
+                        <th class="text-center"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-editing="editing">
+                    <tr [pEditableRow]="item">
+                        <td class="style-name">{{ item.employee_code }}</td>
+                        <td>{{ item.employee_name }}</td>
+                        <td class="text-center">{{ item._date }}</td>
+                        <td class="field p-fluid" *ngIf="false">
+                            <div
+                                class="flex align-items-center justify-content-center gap-2"
+                            >
+                                <button
+                                    *ngIf="!editing"
+                                    (click)="confirmEmpFile($event, item)"
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    pCancelEditableRow
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-text p-button-danger"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary" *ngIf="employeeListFile">
+                    <div
+                        class="flex align-items-center justify-content-between"
+                    >
+                        In total there are
+                        {{ employeeListFile ? employeeListFile.length : 0 }}
+                        list.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog
+    header="Push notification"
+    [(visible)]="notiModal"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [maximizable]="true"
+>
+    <div class="grid">
+        <div class="col-12 card">
+            <div class="row">
+                <div class="col-2">
+                    <p-toolbar>
+                        <div class="p-toolbar-group-left flex flex-wrap">
+                            <div
+                                class="flex align-items-start justify-content-start gap-2"
+                            >
+                                <p-button
+                                    icon="pi pi-search"
+                                    (click)="FilterEmployeeFile()"
+                                    styleClass="p-button-success p-button-sm"
+                                ></p-button>
+                                <i
+                                    class="pi pi-bars p-toolbar-separator mt-3"
+                                ></i>
+                                <p-button
+                                    icon="pi pi-send"
+                                    (click)="pushNoti($event)"
+                                    styleClass="p-button-success p-button-sm"
+                                ></p-button>
+                            </div>
+                        </div>
+                    </p-toolbar>
+                </div>
+                <div class="col-12 m-0 p-0">
+                    <div class="col-12">
+                        <h6>Nội dung thông báo</h6>
+                        <textarea
+                            rows="1"
+                            cols="100"
+                            pInputTextarea
+                            [(ngModel)]="content"
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p-table
+                #dt1
+                dataKey="id"
+                [value]="employeeListFile"
+                [tableStyle]="{ 'min-width': '50rem' }"
+                [paginator]="true"
+                [rows]="10"
+                [rowsPerPageOptions]="[10, 20, 50]"
+                [globalFilterFields]="[
+                    'employee_code',
+                    'employee_name',
+                    '_date'
+                ]"
+                [(selection)]="notiList"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                        <th class="text-center font-bold">Employee Code</th>
+                        <th class="text-center font-bold">Employee Name</th>
+                        <th class="text-center font-bold">Date</th>
+                        <th class="text-center font-bold" *ngIf="false">
+                            Action
+                        </th>
+                    </tr>
+                    <tr *ngIf="false">
+                        <th class="text-center">
+                            <p-columnFilter
+                                [style]="{ minWidth: '30%' }"
+                                type="text"
+                                field="employee_code"
+                                [matchMode]="'contains'"
+                            ></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter
+                                [style]="{ minWidth: '30%' }"
+                                type="text"
+                                field="employee_name"
+                                [matchMode]="'contains'"
+                            ></p-columnFilter>
+                        </th>
+                        <th class="text-center">
+                            <p-columnFilter
+                                [style]="{ minWidth: '30%' }"
+                                type="text"
+                                field="_date"
+                                [matchMode]="'contains'"
+                            ></p-columnFilter>
+                        </th>
+                        <th class="text-center"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-editing="editing">
+                    <tr [pEditableRow]="item">
+                        <td>
+                            <p-tableCheckbox
+                                [value]="item"
+                                *ngIf="item.isNotifi"
+                            />
+                        </td>
+                        <td class="style-name">{{ item.employee_code }}</td>
+                        <td>{{ item.employee_name }}</td>
+                        <td class="text-center">{{ item._date }}</td>
+                        <td class="field p-fluid" *ngIf="false">
+                            <div
+                                class="flex align-items-center justify-content-center gap-2"
+                            >
+                                <button
+                                    *ngIf="!editing"
+                                    (click)="confirmEmpFile($event, item)"
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    pCancelEditableRow
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-text p-button-danger"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary" *ngIf="employeeListFile">
+                    <div
+                        class="flex align-items-center justify-content-between"
+                    >
+                        In total there are
+                        {{ employeeListFile ? employeeListFile.length : 0 }}
+                        list.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog
+    *ngIf="config_model_details == true"
+    header="Details"
+    [(visible)]="config_model_details"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [maximizable]="true"
+>
+    <div class="row">
+        <div class="col-12">
+            <app-doc-details
+                [data]="details"
+                [actionDetails]="action"
+                (outValue)="readData($event)"
+            ></app-doc-details>
+        </div>
+    </div>
+</p-dialog>

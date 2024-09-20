@@ -1,0 +1,376 @@
+<div class="container">
+    <div class="main-body">
+        <!-- /Breadcrumb -->
+        <!-- {{userProfile|json}} -->
+
+        <div class="row ">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card">
+                        <div class="d-flex flex-column align-items-center text-center">
+                            <!-- <img *ngIf="userProfile.image == null" src="https://bootdey.com/img/Content/avatar/avatar7.png" 
+                            alt="Admin" class="rounded-circle" width="150">  
+
+                            <p-image *ngIf="userProfile.image" [src]="userProfile.image" [preview]="true"
+                            alt="Image" alt="Admin" class="rounded-circle" width="150"> </p-image> -->
+
+                            <img *ngIf="!image" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
+                                class="rounded-circle" width="150" />
+
+                            <p-image *ngIf="image" [src]="image" [preview]="true" alt="Image" alt="Admin"
+                                class="rounded-circle" width="150">
+                            </p-image>
+                            <div class="mt-3">
+                                <h4>{{ userProfile.login_name }}</h4>
+                                <h6 class="mb-1 text-sm">
+                                    {{ userProfile.employee_code }}
+                                </h6>
+
+                                <!-- <p-messages [value]="msgs"></p-messages> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="p-fluid">
+                        <!-- <h5 class="font-bold">Account
+                        </h5> -->
+
+                        <div class="field">
+                            <h6>Login name</h6>
+                            <input pInputText id="login name" class="text-center font-bold" type="text"
+                                [value]="userProfile.login_name" [disabled]="true" />
+                        </div>
+
+                        <div class="field">
+                            <h6>Password<span style="color: red; font-weight: bold">
+                                    *</span></h6>
+                            <p-password pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
+                                placeholder="please input password" [(ngModel)]="userProfile.passEncrypt"
+                                [disabled]="false" [toggleMask]="true">
+                                <ng-template pTemplate="footer">
+                                    <p-divider></p-divider>
+                                    <p class="mt-2">Suggestions</p>
+                                    <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                                        <li>At least one lowercase</li>
+                                        <li>At least one uppercase</li>
+                                        <li>At least one numeric</li>
+                                        <li>Minimum 8 characters</li>
+                                    </ul>
+                                </ng-template>
+                            </p-password>
+                        </div>
+
+                        <div class="field">
+                            <h6 htmlFor="password">Confirm Password<span style="color: red; font-weight: bold">
+                                    *</span></h6>
+                            <p-password id="confirm_password " placeholder="Confirm password"
+                                [(ngModel)]="confirmPassword" [disabled]="false" [toggleMask]="true">
+                                <ng-template pTemplate="footer">
+                                    <p-divider></p-divider>
+                                    <p class="mt-2">Suggestions</p>
+                                    <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                                        <li>At least one lowercase</li>
+                                        <li>At least one uppercase</li>
+                                        <li>At least one numeric</li>
+                                        <li>Minimum 8 characters</li>
+                                    </ul>
+                                </ng-template>
+                            </p-password>
+                        </div>
+
+                        <div class="field">
+                            <h6 htmlFor="Device ">Device</h6>
+                            <p-selectButton [options]="stateDeviceOptions" [(ngModel)]="userProfile.device"
+                                optionLabel="label" optionValue="value" [disabled]="true"></p-selectButton>
+                        </div>
+
+                        <div class="field">
+                            <h6 htmlFor="name1 ">Device info</h6>
+                            <input pInputText id="device info " class="text-center font-bold" type="text "
+                                [value]="userProfile.device_info" [disabled]="true" />
+                        </div>
+
+                        <div class="field flex flex-wrap justify-content-around gap-4">
+                            <div>
+                                <h6 htmlFor="name1 ">Verify</h6>
+                                <p>
+                                    <p-checkbox name="group_name" [binary]="true" [(ngModel)]="_verify"
+                                        (click)="clickVerify()"></p-checkbox>
+                                </p>
+                            </div>
+                            <div>
+                                <h6 htmlFor="name1 ">Status</h6>
+                                <div class="field-checkbox">
+                                    <p-checkbox name="group_name" [binary]="true"
+                                        [(ngModel)]="userProfile._status"></p-checkbox>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="field" class="cursor_pointer_none">
+                            <p-button *ngIf="userProfile.device_status === 'offline'" label="OFFLINE "
+                                styleClass="p-button-danger p-button-sm p-button-text "></p-button>
+                            <p-button *ngIf="userProfile.device_status !== 'offline'" label="ONLINE "
+                                styleClass="p-button-success p-button-sm p-button-text "></p-button>
+                        </div>
+
+                        <!-- <div class="field ">
+                            <p-splitButton label="Change Password " styleClass="p-button-success p-button-sm " icon="pi pi-save " (onClick)="Change_Password() " [model]="items "></p-splitButton>
+                            <p-messages [value]="msgsAccount "></p-messages>
+                        </div> -->
+
+                        <div class="field">
+                            <p-button label="Change Password " (onClick)="Change_Password()"
+                                styleClass="p-button-success p-button-sm "></p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="p-fluid">
+                            <!-- <h5 class="font-bold">Info</h5> -->
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="email1 ">Employee Name<span style="
+                                                color: red;
+                                                font-weight: bold;
+                                            ">
+                                            *</span></h6>
+                                </div>
+                                <div class="col-9">
+                                    <input pInputText id="_employee_name " [(ngModel)]="userProfile.employee_name"
+                                        type="text " />
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="email1 ">Employee Code</h6>
+                                </div>
+                                <div class="col-9">
+                                    <input class="font-bold" pInputText id=" _employee_code "
+                                        [(ngModel)]="userProfile.employee_code" type="text " [disabled]="true" />
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="email1 ">CCCD<span style="
+                                                color: red;
+                                                font-weight: bold;
+                                            ">
+                                            *</span></h6>
+                                </div>
+                                <div class="col-9">
+                                    <!-- <input
+                                        pInputText
+                                        id="card_number"
+                                        [(ngModel)]="userProfile.card_number"
+                                        type="number"
+                                    /> -->
+                                    <p-inputMask mask="999999999999"
+                                        [(ngModel)]="userProfile.card_number"></p-inputMask>
+
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="email1 ">Mobile<span style="
+                                                color: red;
+                                                font-weight: bold;
+                                            ">
+                                            *</span></h6>
+                                </div>
+                                <div class="col-9">
+                                    <p-inputMask mask="0999999999" [(ngModel)]="userProfile.mobile"></p-inputMask>
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="email1 ">Birthday Date<span style="
+                                                color: red;
+                                                font-weight: bold;
+                                            ">
+                                            *</span></h6>
+                                </div>
+                                <div class="col-5">
+                                    <input pInputText id="date" class="mr-2" type="date" [maxlength]="10" [max]="date"
+                                        [(ngModel)]="userProfile.birthday_date" />
+                                    <!-- <p-inputMask [(ngModel)]="userProfile.birthday_date " mask="9999-99-99 " placeholder="yyyy-mm-dd " slotChar="yyyy-mm-dd "></p-inputMask> -->
+                                </div>
+
+                                <div class="col-1">
+                                    <h6 htmlFor="sex">Gender</h6>
+                                </div>
+                                <div class="col-3">
+                                    <div class="flex flex-wrap gap-3">
+                                        <div class="flex align-items-center">
+                                            <div *ngFor="let item of gerders" class="field-checkbox">
+                                                <p-radioButton name="item" [value]="item"
+                                                    [(ngModel)]="selectedGender" />
+                                                <label [for]="item.key" class="mr-2">
+                                                    {{ item.name }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="email1 ">Email<span style="
+                                                color: red;
+                                                font-weight: bold;
+                                            ">
+                                            *</span></h6>
+                                </div>
+                                <div class="col-9">
+                                    <input pInputText id="email" [(ngModel)]="userProfile.email" type="email " />
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="image">Image Profile</h6>
+                                </div>
+                                <div class="col-6">
+                                    <input pInputText id="image" #myInputImage type="file"
+                                        (change)="onChangeImage($event)" />
+                                </div>
+                            </div>
+
+                            <!-- <div class="grid">
+                                <div class="col-3"></div>
+                                <div class="col-9">
+                                    <p-image *ngIf="image_card_before" [src]="image_card_before" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50">
+                                    </p-image>
+                                </div>
+                            </div> -->
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="image_card_before">Image Card Before</h6>
+                                </div>
+                                <div class="col-6">
+                                    <input pInputText id="image_card_before" #myInputBefore type="file"
+                                        (change)="onChangeImageBefore($event)" />
+                                </div>
+                                <div class="col-3">
+                                    <p-image *ngIf="image_card_before" [src]="image_card_before" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50">
+                                    </p-image>
+                                </div>
+                            </div> 
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="image_card_after">Image Card After</h6>
+                                </div>
+                                <div class="col-6">
+                                    <input pInputText id="image_card_after" #myInputAfter type="file"
+                                        (change)="onChangeImageAfter($event)" />
+                                </div>
+                                <div class="col-3">
+                                    <p-image *ngIf="image_card_after" [src]="image_card_after" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50">
+                                    </p-image>
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="image_face_left">Image Face Left</h6>
+                                </div>
+                                <div class="col-6">
+                                    <input pInputText id="image_face_left" #myInputFaceLeft type="file"
+                                        (change)="onChangeImageFaceLeft($event)" />
+                                </div>
+                                <div class="col-3">
+                                    <p-image *ngIf="image_face_left" [src]="image_face_left" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50">
+                                    </p-image>
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="image_face_right">Image Face Right</h6>
+                                </div>
+                                <div class="col-6">
+                                    <input pInputText id="image_face_right" #myInputFaceRight type="file"
+                                        (change)="onChangeImageFaceRight($event)" />
+                                </div>
+                                <div class="col-3">
+                                    <p-image *ngIf="image_face_right" [src]="image_face_right" [preview]="true"
+                                        alt="Image" alt="Admin" class="rounded-circle" width="50">
+                                    </p-image>
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="email1 ">Employee Type</h6>
+                                </div>
+                                <!-- {{userProfile| json}} -->
+                                <div class="col-9">
+                                    <app-control-employee-type [displayControl]="true"
+                                        (outValue)="selectEmployeeType($event)" [itemEmployeeType]="
+                                            userProfile.employee_type_id
+                                        " [placeholder]="'Select a Employee Type'"></app-control-employee-type>
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="manager_code ">Manager Code</h6>
+                                </div>
+                                <div class="col-9">
+                                    <input class="font-bold" pInputText id="manager_code "
+                                        [(ngModel)]="userProfile.manager_code" type="text" [disabled]="true" />
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="manager_mobile ">Manager Mobile</h6>
+                                </div>
+                                <div class="col-9">
+                                    <input class="font-bold" pInputText id="manager_mobile"
+                                        [(ngModel)]="userProfile.manager_mobile" type="text" [disabled]="true" />
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="col-3">
+                                    <h6 htmlFor="manager_name ">Manager Name</h6>
+                                </div>
+                                <div class="col-9">
+                                    <input class="font-bold" pInputText id="manager_name "
+                                        [(ngModel)]="userProfile.manager_name" type="text" [disabled]="true" />
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <p-button label="Update " (click)="save_info()"
+                                    styleClass="p-button-success p-button-sm "></p-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

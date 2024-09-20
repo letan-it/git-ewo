@@ -1,0 +1,35 @@
+<!-- UI Supervision Page -->
+<div class="flex flex-wrap justify-content-center w-screen p-1">
+    <div class="w-full mb-3">
+        <p-dropdown
+            [options]="ListMonth"
+            [editable]="false"
+            [showClear]="true"
+            (onChange)="chooseMonthYear()"
+            [filter]="false"
+            filterBy="name"
+            [style]="{ minWidth: '80px', maxWidth: '100%', boxShadow: '0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2)' }"
+            [(ngModel)]="selectMonth"
+            [placeholder]="
+                selectMonth
+                    ? selectMonth.name
+                    : GetLanguage('Chọn tháng - năm')
+            "
+            optionLabel="name"
+        ></p-dropdown>
+    </div>
+
+    <div class="flex flex-wrap gap-2 w-full">
+        <ng-container *ngFor="let item of listRawDataSupervision">
+            <a href="{{item.link}}" class="custom_size_supervision flex flex-row max-w-12rem h-fit p-3 bg-white shadow-6 border-round">
+                <div class="flex flex-column justify-content-between w-full">
+                    <p class="text-green-200 text-xl font-semibold">{{item.name_vn}}</p>
+                    <div class="flex flex-row align-items-center justify-content-between w-full">
+                        <i class="{{item.icon}}" style="font-size: 2rem"></i>
+                        <p [ngStyle]="{color: item.color}" class="font-bold text-3xl text-right">{{item.Values}}</p>
+                    </div>
+                </div>
+            </a>
+        </ng-container>
+    </div>
+</div>

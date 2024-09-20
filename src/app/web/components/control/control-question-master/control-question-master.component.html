@@ -1,0 +1,6 @@
+<ng-container *ngIf="listQuestionMaster && isLoadForm==0">
+   <p-dropdown [options]="listQuestionMaster" (onChange)="returnValue(selectedQuestionMaster)" [filter]="true"
+      filterBy="Name" [style]="{'minWidth':'100%'}" [placeholder]="nameQuestionMaster"
+      [(ngModel)]="selectedQuestionMaster" [showClear]="true" appendTo="body" optionLabel="Name"></p-dropdown>
+</ng-container>
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

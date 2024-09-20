@@ -1,0 +1,497 @@
+<!-- {
+"result_id": 1,  
+"UUID": "b28e5e37-aa9f-4ddd-a692-017ec195d45d", 
+"result": 1,
+"result_code": "OK",
+"result_nameVN": "Thành công",
+"result_nameEN": "Success",
+"result_note": "Hoa Test Inventory",
+} -->
+
+<div class="card">
+    <p-tabView
+        styleClass="tabview-custom"
+        *ngFor="let result of inValue.data_inventory"
+    >
+        <p-tabPanel header="INVENTORY">
+            <ng-template pTemplate="header">
+                <div class="flex align-items-center gap-2">
+                    <p-tag
+                        [value]="result.result_nameVN"
+                        [severity]="getSeverity(result.result_code)"
+                    />
+                    <span
+                        class="font-bold white-space-nowrap m-0"
+                        *ngIf="result.result !== null"
+                    >
+                        <i
+                            class="pi pi-comment"
+                            [pTooltip]="result.result_note"
+                            tooltipPosition="top"
+                        ></i>
+                    </span>
+                </div>
+            </ng-template>
+
+            <div>
+                <div class="row">
+                    <div class="md:col-8">
+                        <p-table
+                            [value]="result.details"
+                            [tableStyle]="{ 'min-width': '50rem' }"
+                            dataKey="id"
+                            editMode="row"
+                        >
+                            <!-- {{result.listProduct|json}} -->
+
+                            <ng-template
+                                pTemplate="caption"
+                                *ngIf="
+                                    result &&
+                                    result.listProduct &&
+                                    result.listProduct.length > 0
+                                "
+                            >
+                                <!-- <div class="table-header">
+                                    <span class="p-input-icon-left" class="p-fluid">
+                                        <p-dropdown [options]="result.listProduct" [(ngModel)]="selectedProduct"
+                                            placeholder="Select product" optionLabel="name" display="chip"
+                                            [showClear]="true" appendTo="body" class="mr-2" [filter]="true"
+                                            filterBy="name" (onChange)="selectProduct_Filter($event, result )"
+                                            [style]="{ maxWidth: '250px' }">
+                                        </p-dropdown>
+                                    </span>
+                                </div> -->
+
+                                <div class="table-header mt-2">
+                                    <span
+                                        class="p-input-icon-left"
+                                        class="p-fluid"
+                                    >
+                                        <p-columnFilter
+                                            field="representative.value"
+                                            matchMode="equals"
+                                            [showMenu]="false"
+                                            style="margin-top: -10px"
+                                        >
+                                            <ng-template
+                                                pTemplate="filter"
+                                                let-value
+                                                let-filter="filterCallback"
+                                            >
+                                                <p-dropdown
+                                                    [ngModel]="selectedProduct"
+                                                    [options]="
+                                                        result.listProduct
+                                                    "
+                                                    (onChange)="
+                                                        selectProduct_Filter(
+                                                            $event,
+                                                            result
+                                                        )
+                                                    "
+                                                    placeholder="Select a product"
+                                                    [showClear]="true"
+                                                    appendTo="body"
+                                                    [showClear]="true"
+                                                    [filter]="true"
+                                                    filterBy="name"
+                                                    optionLabel="name"
+                                                >
+                                                </p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </span>
+                                </div>
+                            </ng-template>
+
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <!-- <th class="text-center font-bold md:col-1">Image</th> -->
+                                    <th
+                                        class="text-center font-bold md:col-6"
+                                        pSortableColumn="product_id"
+                                    >
+                                        Product
+                                        <p-sortIcon field="product_id" />
+                                    </th>
+                                    <!-- <th class="text-center font-bold">Before Input</th>
+                                    <th class="text-center font-bold">After Input</th> -->
+                                    <th class="text-center font-bold">
+                                        Before Input
+                                    </th>
+                                    <th class="text-center font-bold">
+                                        After Input
+                                    </th>
+                                    <th class="text-center font-bold md:col-2">
+                                        Reason Input
+                                    </th>
+                                    <th class="text-center font-bold md:col-2">
+                                        Note
+                                    </th>
+                                    <th class="text-center font-bold">
+                                        Action
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="body"
+                                let-item
+                                let-editing="editing"
+                                let-ri="rowIndex"
+                            >
+                                <tr
+                                    [pEditableRow]="item"
+                                    [pTooltip]="item.tooltip"
+                                    tooltipPosition="top"
+                                >
+                                    <!-- <td class="text-center md:col-1">
+                                        <i style="cursor: pointer; font-size: 2.5rem" class="pi pi-image" 
+                                            (click)="showImageProduct(item.product_image)">
+                                        </i> 
+                                    </td> -->
+                                    <td class="text-center md:col-6">
+                                        <div
+                                            class="flex flex-row align-items-center justify-content-start gap-2 w-full h-full"
+                                        >
+                                            <i
+                                                style="
+                                                    cursor: pointer;
+                                                    font-size: 1.5rem;
+                                                "
+                                                class="pi pi-image"
+                                                pTooltip="Model"
+                                                tooltipPosition="top"
+                                                (click)="
+                                                    showImageProduct(
+                                                        item.product_image
+                                                    )
+                                                "
+                                            >
+                                            </i>
+                                            <p
+                                                class="font-bold text-center m-0"
+                                                style="color: green"
+                                            >
+                                                {{ item.product_id }}
+                                            </p>
+                                            <p class="text-start">
+                                                - {{ item.product_name }}
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="text-center font-bold"
+                                        style="color: green"
+                                    >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="
+                                                        item.before_input
+                                                    "
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.before_input }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td
+                                        class="text-center font-bold"
+                                        style="color: green"
+                                    >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="
+                                                        item.after_input
+                                                    "
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.after_input }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td class="text-start md:col-2">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown
+                                                    [options]="reasons"
+                                                    [filter]="true"
+                                                    optionLabel="reason_name"
+                                                    filterBy="reason_name"
+                                                    appendTo="body"
+                                                    [(ngModel)]="reason"
+                                                    [style]="{ width: '100%' }"
+                                                    placeholder="{{
+                                                        item.reason_name
+                                                    }}"
+                                                >
+                                                    <ng-template
+                                                        let-reason
+                                                        pTemplate="item"
+                                                    >
+                                                        <div
+                                                            class="flex align-items-center gap-2"
+                                                        >
+                                                            <!-- <div>{{reason.reason_id}} - {{reason.reason_name}}</div> -->
+                                                            <div
+                                                                *ngIf="
+                                                                    reason.reason_name
+                                                                "
+                                                            >
+                                                                {{
+                                                                    reason.reason_name
+                                                                }}
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <p>{{ item.reason_name }}</p>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td class="text-center md:col-2">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input
+                                                    pInputText
+                                                    type="text"
+                                                    class="w-full"
+                                                    [(ngModel)]="item.note"
+                                                />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.note }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td class="text-center">
+                                        <div
+                                            class="flex align-items-center justify-content-center gap-2"
+                                        >
+                                            <button
+                                                *ngIf="!editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pInitEditableRow
+                                                icon="pi pi-pencil"
+                                                (click)="onRowEditInit(item)"
+                                                class="p-button-rounded p-button-text"
+                                            ></button>
+
+                                            <button
+                                                (click)="op.toggle($event)"
+                                                *ngIf="
+                                                    !editing &&
+                                                    item &&
+                                                    item.his &&
+                                                    item.his.length > 0
+                                                "
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                icon="pi pi-history"
+                                                (click)="onRowEditInit(item)"
+                                                class="p-button-rounded p-button-text"
+                                            ></button>
+
+                                            <button
+                                                *ngIf="editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pSaveEditableRow
+                                                icon="pi pi-check"
+                                                (click)="onRowEditSave(item)"
+                                                class="p-button-rounded p-button-text p-button-success mr-2"
+                                            ></button>
+                                            <button
+                                                *ngIf="editing"
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                pCancelEditableRow
+                                                icon="pi pi-times"
+                                                (click)="
+                                                    onRowEditCancel(item, ri)
+                                                "
+                                                class="p-button-rounded p-button-text p-button-danger"
+                                            ></button>
+                                        </div>
+
+                                        <p-overlayPanel
+                                            #op
+                                            [style]="{ width: '650px' }"
+                                            [showCloseIcon]="true"
+                                        >
+                                            <ng-template pTemplate="content">
+                                                <p-table
+                                                    [value]="item.his"
+                                                    [tableStyle]="{
+                                                        'min-width': '50rem'
+                                                    }"
+                                                    [paginator]="true"
+                                                    [first]="0"
+                                                    [rows]="5"
+                                                    [rowsPerPageOptions]="[
+                                                        5, 10, 20
+                                                    ]"
+                                                >
+                                                    <ng-template
+                                                        pTemplate="header"
+                                                    >
+                                                        <tr>
+                                                            <!-- 
+                                                                    l.before_input, l.after_input,
+                                    l.reason_input, l.note, l.update_date, l.update_by , e.employee_code [update_code] , e.employee_name [update_name]
+                                                                -->
+                                                            <th
+                                                                class="text-center font-bold"
+                                                            >
+                                                                Before Input
+                                                            </th>
+                                                            <th
+                                                                class="text-center font-bold"
+                                                            >
+                                                                After Input
+                                                            </th>
+                                                            <th
+                                                                class="text-center font-bold"
+                                                            >
+                                                                Reason Input
+                                                            </th>
+                                                            <th
+                                                                class="text-center font-bold"
+                                                            >
+                                                                Note
+                                                            </th>
+                                                            <th
+                                                                class="text-center font-bold"
+                                                            >
+                                                                Update By
+                                                            </th>
+                                                            <th
+                                                                class="text-center font-bold"
+                                                            >
+                                                                Update Date
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template
+                                                        pTemplate="body"
+                                                        let-product
+                                                    >
+                                                        <tr>
+                                                            <td
+                                                                class="text-center font-bold"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{
+                                                                    product.before_input
+                                                                }}
+                                                            </td>
+                                                            <td
+                                                                class="text-center font-bold"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{
+                                                                    product.after_input
+                                                                }}
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    class="font-bold"
+                                                                    style="
+                                                                        color: green;
+                                                                    "
+                                                                    >{{
+                                                                        product.reason_input
+                                                                    }}</span
+                                                                >
+                                                                -
+                                                                {{
+                                                                    product.reason_name
+                                                                }}
+                                                            </td>
+                                                            <td>
+                                                                {{
+                                                                    product.note
+                                                                }}
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    class="font-bold"
+                                                                    style="
+                                                                        color: green;
+                                                                    "
+                                                                    >{{
+                                                                        product.update_by
+                                                                    }}</span
+                                                                >
+                                                                -
+                                                                {{
+                                                                    product.update_code
+                                                                }}
+                                                                -
+                                                                {{
+                                                                    product.update_name
+                                                                }}
+                                                            </td>
+                                                            <td
+                                                                class="font-bold"
+                                                                style="
+                                                                    color: green;
+                                                                "
+                                                            >
+                                                                {{
+                                                                    product.update_date
+                                                                }}
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </ng-template>
+                                        </p-overlayPanel>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <div class="md:col-4">
+                        <app-control-tab-photo
+                            [KPI]="'INVENTORY'"
+                            [fulldata]="inValue"
+                            [INVENTORYconfig]="result.details"
+                            [inValue]="result.image"
+                            [is_edit_data]="inValue.data_inventory.is_edit_data"
+                        ></app-control-tab-photo>
+                    </div>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+
+    <div class="grid">
+        <app-qc-result
+            [KPI]="'INVENTORY'"
+            [inValue]="inValue.report_id"
+        ></app-qc-result>
+    </div>
+</div>

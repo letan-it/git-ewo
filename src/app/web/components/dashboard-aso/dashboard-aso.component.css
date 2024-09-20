@@ -1,0 +1,28 @@
+.card {
+    padding: 1rem;
+}
+.total-employee {
+    background-color: white;
+    border-radius: 10%;
+    border-color: #7f7f7f;
+}
+
+.CICO_DungGio {
+    color: #00b050 !important
+    ;
+}
+.BoSungCong {
+    color: #548335 !important;
+}
+.CI_Tre {
+    color: #0a75c2 !important;
+}
+.CO_Som {
+    color: #ed7d31 !important;
+}
+.Chua_CO {
+    color: #7f7f7f !important;
+}
+.No_CICO {
+    color: #ffc000 !important;
+}

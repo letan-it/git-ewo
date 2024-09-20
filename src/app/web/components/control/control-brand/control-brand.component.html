@@ -1,0 +1,15 @@
+<ng-container *ngIf="listBrand && isLoadForm==0 && selectMulti == false">
+    <p-dropdown [options]="listBrand" [showClear]="true" (onChange)="returnValue(selectedBrand)" [filter]="true"
+        display="chip" filterBy="name" [style]="inputStyle" [(ngModel)]="selectedBrand" placeholder="Select a Brand"
+        optionLabel="name" appendTo="body"></p-dropdown>
+</ng-container>
+
+<ng-container *ngIf="listBrand && isLoadForm == 0 && selectMulti == true">
+
+    <p-multiSelect [showClear]="true" (onChange)="returnValue(selectedBrand)" [filter]="true" display="chip"
+        filterBy="name" [style]="inputStyle" [options]="listBrand" [(ngModel)]="selectedBrand" optionLabel="name"
+        appendTo="body" placeholder="Select Brand" (onClear)="resetSelection()" class="p-fluid"></p-multiSelect>
+</ng-container>
+
+
+<p-skeleton width="100%" height="30px" *ngIf="isLoadForm==1"></p-skeleton>

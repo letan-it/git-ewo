@@ -1,0 +1,103 @@
+<p-dialog [header]="info_modal.header" [(visible)]="info_modal.visible" [modal]="true" [style]="{ width: '60vw' }"
+    [maximizable]="true">
+    <!-- <ng-template pTemplate="header">
+        <span class="text-xl font-bold">{{info_modal.header}}</span>
+    </ng-template> -->
+
+    <div class="col-12 md:col-12">
+        <div class="row">
+            <!-- <p-chip [label]="task_code" class="cursor_pointer mr-4" icon="pi pi-hashtag"></p-chip> -->
+
+            <div class="col-12 md:col-6">
+                <h5>Task Name<span class="font-bold" style="color: red;"> *</span></h5>
+                <div class="field">
+                    <input [style]="{'minWidth':'100%'}" placeholder="Task Name" pInputText id="taskname"
+                        [(ngModel)]="data.task_name" type="text" />
+                </div>
+
+                <h5>Prioritize</h5>
+                <div class="field">
+                    <p-inputNumber id="prioritize" [(ngModel)]="data.prioritize"
+                        [style]="{'minWidth':'100%','maxWidth':'100%', 'width' : '100%'}"
+                        placeholder="Prioritize"></p-inputNumber>
+                </div>
+
+            </div>
+
+            <div class="col-12 md:col-6">
+                <h5>Tag<span class="font-bold" style="color: red;"> *</span></h5>
+                <div class="field">
+                    <input [style]="{'minWidth':'100%'}" placeholder="Tag" pInputText id="tag" [(ngModel)]="data.tag"
+                        type="text" />
+                    <hr>
+                    <span *ngFor="let item of listTag" class="ml-2 cursor_pointer" (click)="GetChip(item)"><p-chip
+                            [label]="item"></p-chip></span>
+
+                </div>
+            </div>
+
+            <h5>Description</h5>
+            <div class="field">
+                <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="data.description"
+                    [config]='editorConfig'></angular-editor>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12 md:col-4">
+                <h5>Time<span class="font-bold" style="color: red;"> *</span></h5>
+                <p-calendar [style]="{'minWidth':'100%'}" [(ngModel)]="time" [showIcon]="true" selectionMode="range"
+                    placeholder="yy/mm/dd - yy/mm/dd" dateFormat="yy/mm/dd" [readonlyInput]="true"
+                    appendTo="body"></p-calendar>
+            </div>
+            <div class="col-12 md:col-4">
+                <h5>Assignees<span class="font-bold" style="color: red;"> *</span></h5>
+                <div class="field">
+                    <app-employee-task [action]="data.action" (outValue)="selectItem_user($event)"
+                        [employee_id]="0"></app-employee-task>
+                </div>
+            </div>
+            <div class="col-12 md:col-4">
+                <h5>Team Follow</h5>
+                <div class="field">
+                    <app-employee-task [action]="data.action" (outValueTeam)="selectItem_TeamUser($event)"
+                        [control]="'team-follow'" [employee_id]="0"></app-employee-task>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="p-fluid">
+            <div class="p-formgrid grid">
+                <div class="field md:col-6 col-12">
+                    <h5>File attachment</h5>
+                    <input pInputText class="text-center font-bold mr-2 mb-2" [(ngModel)]="filename"
+                        placeholder="file name" />
+                    <input id="file" class="form-control form-control-sm" #myInput (change)="
+                    onUploadFile($event)" type="file" />
+                </div>
+                <div class="field md:col-6 col-12">
+                    <div class="h-2rem"></div>
+                    <div class="flex align-items-center mb-2" *ngFor="let item of list_file">
+                        <i class="pi pi-paperclip"></i>
+                        <span class="text-900 font-semibold ml-2"><a target="_blank"
+                                [href]="item.url">{{item.file_name}} </a></span>
+                        <i (click)="removeItem(item.url)" class="pi pi-trash cursor_pointer ml-4"
+                            style="color: red;"></i>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" label="Cancel" (click)="onCancel()" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (click)="onSave()" label="Save" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>

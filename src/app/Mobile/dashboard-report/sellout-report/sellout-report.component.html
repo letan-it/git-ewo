@@ -1,0 +1,323 @@
+<div class="flex flex-wrap justify-content-center w-full h-fit p-1">
+    <div class="w-full mb-3">
+        <p-dropdown [options]="ListMonth" [editable]="false" [showClear]="true" appendTo="body"
+            (onChange)="chooseMonthYear()" [filter]="false" filterBy="name"
+            [style]="{ minWidth: '80px', maxWidth: '100%', boxShadow: '0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2)' }"
+            [(ngModel)]="selectMonth" [placeholder]="
+                selectMonth
+                    ? selectMonth.name
+                    : GetLanguage('Chọn tháng - năm')
+            " optionLabel="name"></p-dropdown>
+    </div>
+
+    <!-- Manager -->
+    <div class="flex flex-wrap gap-3 w-full" *ngIf="listRawDataManager.length > 0">
+        <ng-container *ngFor="let item of listRawDataManager">
+            <div pRipple class="flex flex-row w-full h-fit p-3 bg-white shadow-4 border-round">
+                <div class="flex flex-column justify-content-between w-9">
+                    <p [ngStyle]="{ 'color': project?.color}" class="text-xl font-semibold">{{item.name_vn}}</p>
+                    <div class="flex flex-column align-items-center gap-3 w-full">
+                        <div class="flex flex-row align-items-center gap-3 w-full">
+                            <i class="{{item.icon}}" style="font-size: 2rem"></i>
+                            <p [ngStyle]="{ 'color': project?.color}" class="font-bold text-3xl text-right m-0">
+                                {{item.Values}}</p>
+                        </div>
+                        <div class="flex flex-row align-items-end justify-content-end align-self-start gap-2"
+                            *ngIf="item.name_vn === 'Doanh số bán của cả team' && nowTotalSales > previousTotalSales">
+                            <div
+                                class="flex flex-row align-items-center justify-content-start gap-2 border-round-3xl px-2 py-1 bg-green-200">
+                                <i class="pi pi-sort-amount-up"
+                                    style="color: green; font-size: 1.2rem; font-weight: 700;"></i>
+                                <span class="text-lg font-semibold" style="color: green">{{percentDifference}}%</span>
+                            </div>
+                            <span class="text-base font-medium text-gray-500">so với tháng trước</span>
+                        </div>
+                        <div class="flex flex-row align-items-end justify-content-end align-self-start gap-2"
+                            *ngIf="item.name_vn === 'Doanh số bán của cả team' && previousTotalSales > nowTotalSales">
+                            <div
+                                class="flex flex-row align-items-center justify-content-start gap-2 border-round-3xl px-2 py-1 bg-red-200">
+                                <i class="pi pi-sort-amount-down-alt"
+                                    style="color: red; font-size: 1.2rem; font-weight: 700;"></i>
+                                <span class="text-lg font-semibold" style="color: red">{{percentDifference}}%</span>
+                            </div>
+                            <span class="text-base font-medium text-gray-500">so với tháng trước</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-3 flex flex-row align-items-end" *ngIf="item.name_vn === 'Doanh số bán của cả team'">
+                    <div class="flex flex-row align-items-end justify-content-center gap-1"
+                        *ngIf="nowTotalSales > previousTotalSales">
+                        <div class="w-1rem h-2rem border-green-300 border-1 border-round-2xl"></div>
+                        <div class="previous w-1rem h-5rem border-green-300 bg-green-200 border-1 border-round-2xl">
+                        </div>
+                        <div class="now w-1rem h-8rem border-green-300 border-1 border-round-2xl"
+                            style="background-color: green;"></div>
+                        <div class="w-1rem h-3rem border-green-300 border-1 border-round-2xl"></div>
+                    </div>
+                    <div class="flex flex-row align-items-end justify-content-center gap-1"
+                        *ngIf="previousTotalSales > nowTotalSales">
+                        <div class="w-1rem h-3rem border-red-300 border-1 border-round-2xl"></div>
+                        <div class="previous w-1rem h-8rem border-red-300 bg-red-200 border-1 border-round-2xl"></div>
+                        <div class="now w-1rem h-6rem border-red-300 border-1 border-round-2xl"
+                            style="background-color: red;"></div>
+                        <div class="w-1rem h-2rem border-red-300 border-1 border-round-2xl"></div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="w-full h-full" *ngIf="listRawDataManager.length === 0">
+            <p-skeleton styleClass="my-3 w-full h-7rem border-round" />
+        </div>
+
+        <div pRipple class="flex flex-row w-full h-fit p-3 bg-white shadow-4 border-round">
+            <div class="flex flex-column justify-content-between w-full">
+                <p [ngStyle]="{ 'color': project?.color}" class="text-xl font-semibold">Doanh thu từng nhân viên</p>
+
+                <ng-container *ngFor="let item of listSellOutEmployee">
+                    <div class="flex flex-column w-full h-fit py-3">
+                        <div class="flex flex-row align-items-center justify-content-between w-full h-fit mb-2 gap-3">
+                            <div class="flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+                                <p-avatar image="{{item.image}}" size="large" shape="circle" />
+                                <p-skeleton shape="circle" size="2rem" styleClass="mr-2" *ngIf="!item.image" />
+                                <div
+                                    class="flex flex-column align-items-start justify-content-between w-full h-fit gap-1">
+                                    <!-- <a href="{{link}}">
+                                        <span class="employee-name text-xl"><b>{{item.employee_name}}</b></span>
+                                    </a> -->
+                                    <span class="employee-name text-xl"><b>{{item.employee_name}}</b></span>
+                                    <div class="flex flex-row align-items-center">
+                                        <i class="pi pi-envelope" style="font-size: 1rem; margin-right: 0.5rem"></i>
+                                        {{item.email}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex align-items-end justify-content-end w-fit h-fit">
+                                <a href="tel:{{item.mobile}}">
+                                    <i class="pi pi-phone text-blue-500" style="font-size: 1.5rem;"
+                                        pTooltip="{{item.mobile}}"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-column w-full justify-content-center">
+                            <p-accordion (onOpen)="openDetail($event, item.emp)">
+                                <p-accordionTab>
+                                    <ng-template pTemplate="header">
+                                        <div
+                                            class="flex flex-column w-full h-fit align-items-start justify-content-between text-base">
+                                            <p>Tổng doanh số: <b>{{item.money}} (VNĐ)</b></p>
+                                        </div>
+                                    </ng-template>
+
+                                    <p-table #dt [value]="item.emp" styleClass="p-datatable-gridlines"
+                                        [tableStyle]="{ 'width': '100%' }">
+                                        <ng-template pTemplate="header">
+                                            <tr class="text-sm">
+                                                <th class="text-center">
+                                                    Ngày
+                                                </th>
+                                                <th class="text-center">
+                                                    Doanh thu
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-item>
+                                            <tr class="text-sm">
+                                                <td class="text-center">
+                                                    {{item.report_date}}
+                                                </td>
+                                                <td class="text-end">
+                                                    {{item.amount}}
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+
+                                </p-accordionTab>
+                            </p-accordion>
+                        </div>
+
+                        <!-- Chỉ tiêu tháng -->
+                        <div class="flex flex-row w-full h-fit align-items-center justify-content-start gap-2 text-base"
+                            *ngIf="item.emp[0].target < item.amount">
+                            <span class="text-base text-gray-500">Chỉ tiêu tháng: <b>{{item.emp[0].target}}
+                                    (VNĐ)</b></span>
+                            <i class="pi pi-arrow-up" style="color: green; font-size: 1.3rem; font-weight: 600;"></i>
+                            <span class="text-lg font-medium text-green-700">{{item.emp[0].percent_kpi}}%</span>
+                        </div>
+                        <div class="flex flex-row w-full h-fit align-items-center justify-content-start gap-2 text-base"
+                            *ngIf="item.emp[0].target > item.amount">
+                            <span class="text-base text-gray-500">Chỉ tiêu tháng: <b>{{item.emp[0].target}}
+                                    (VNĐ)</b></span>
+                            <i class="pi pi-arrow-up" style="color: red; font-size: 1.3rem; font-weight: 600;"></i>
+                            <span class="text-lg font-medium text-red-700">{{item.emp[0].percent_kpi}}%</span>
+                        </div>
+
+                        <!-- Vượt chỉ tiêu tháng -->
+                        <div class="flex flex-row w-full h-fit align-items-center justify-content-start gap-2 text-base"
+                            *ngIf="item.emp[0].target < item.amount">
+                            <span class="text-base text-gray-500">Vượt chỉ tiêu tháng: <b class="text-green-600">
+                                {{item.emp[0].differenceTarget}} (VNĐ)</b></span>
+                        </div>
+                        <div class="flex flex-row w-full h-fit align-items-center justify-content-start gap-2 text-base"
+                            *ngIf="item.emp[0].target > item.amount">
+                            <span class="text-base text-gray-500">Thiếu chỉ tiêu tháng: <b class="text-red-600">
+                                {{item.emp[0].differenceTarget}} (VNĐ)</b></span>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <div class="w-full h-full" *ngIf="listSellOutEmployee.length === 0">
+            <p-skeleton styleClass="my-3 w-full h-screen border-round" />
+        </div>
+    </div>
+
+
+    <!-- Employee -->
+    <div class="flex flex-wrap gap-3 w-full" *ngIf="listRawDataEmployee.length > 0">
+        <ng-container *ngFor="let item of listRawDataEmployee">
+            <div pRipple class="flex flex-row w-full h-fit p-3 bg-white shadow-4 border-round">
+                <div class="flex flex-column justify-content-between w-9">
+                    <p [ngStyle]="{ 'color': project?.color }" class="text-xl font-semibold">{{item.name_vn}}</p>
+                    <div class="flex flex-column align-items-center gap-3 w-full">
+                        <div class="flex flex-row align-items-center gap-3 w-full">
+                            <i class="{{item.icon}}" style="font-size: 2rem"></i>
+                            <p [ngStyle]="{ 'color': project?.color }" class="font-bold text-3xl text-right m-0">
+                                {{item.Values}}</p>
+                        </div>
+                        <div class="flex flex-row align-items-end justify-content-end align-self-start gap-2"
+                            *ngIf="item.name_vn === 'Doanh số bán trong tháng' && nowTotalSales > previousTotalSales">
+                            <div
+                                class="flex flex-row align-items-center justify-content-start gap-2 border-round-3xl px-2 py-1 bg-green-200">
+                                <i class="pi pi-sort-amount-up"
+                                    style="color: green; font-size: 1.2rem; font-weight: 700;"></i>
+                                <span class="text-lg font-semibold" style="color: green">{{percentDifference}}%</span>
+                            </div>
+                            <span class="text-base font-medium text-gray-500">so với tháng trước</span>
+                        </div>
+                        <div class="flex flex-row align-items-end justify-content-end align-self-start gap-2"
+                            *ngIf="item.name_vn === 'Doanh số bán trong tháng' && previousTotalSales > nowTotalSales">
+                            <div
+                                class="flex flex-row align-items-center justify-content-start gap-2 border-round-3xl px-2 py-1 bg-red-200">
+                                <i class="pi pi-sort-amount-down-alt"
+                                    style="color: red; font-size: 1.2rem; font-weight: 700;"></i>
+                                <span class="text-lg font-semibold" style="color: red">{{percentDifference}}%</span>
+                            </div>
+                            <span class="text-base font-medium text-gray-500">so với tháng trước</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-3 flex flex-row align-items-end" *ngIf="item.name_vn === 'Doanh số bán trong tháng'">
+                    <div class="flex flex-row align-items-end justify-content-center gap-1"
+                        *ngIf="nowTotalSales > previousTotalSales">
+                        <div class="w-1rem h-2rem border-green-300 border-1 border-round-2xl"></div>
+                        <div class="previous w-1rem h-5rem border-green-300 bg-green-200 border-1 border-round-2xl">
+                        </div>
+                        <div class="now w-1rem h-8rem border-green-300 border-1 border-round-2xl"
+                            style="background-color: green;"></div>
+                        <div class="w-1rem h-3rem border-green-300 border-1 border-round-2xl"></div>
+                    </div>
+                    <div class="flex flex-row align-items-end justify-content-center gap-1"
+                        *ngIf="previousTotalSales > nowTotalSales">
+                        <div class="w-1rem h-3rem border-red-300 border-1 border-round-2xl"></div>
+                        <div class="previous w-1rem h-8rem border-red-300 bg-red-200 border-1 border-round-2xl"></div>
+                        <div class="now w-1rem h-6rem border-red-300 border-1 border-round-2xl"
+                            style="background-color: red;"></div>
+                        <div class="w-1rem h-2rem border-red-300 border-1 border-round-2xl"></div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="w-full h-full" *ngIf="listRawDataEmployee.length === 0">
+            <p-skeleton styleClass="my-3 w-full h-7rem border-round" />
+        </div>
+
+        <div pRipple class="flex flex-row w-full h-fit p-3 bg-white shadow-4 border-round">
+            <div class="flex flex-column justify-content-between w-full">
+                <p [ngStyle]="{ 'color': project?.color}" class="text-xl font-semibold">Chi tiết doanh thu</p>
+
+                <ng-container *ngFor="let item of listSellOutEmployee">
+                    <div class="flex flex-column w-full h-fit py-3">
+                        <div class="flex flex-row align-items-center justify-content-between w-full h-fit mb-2 gap-3">
+                            <div class="flex flex-row w-full h-fit align-items-center justify-content-between gap-3">
+                                <p-avatar image="{{item.image}}" size="large" shape="circle" />
+                                <p-skeleton shape="circle" size="2rem" styleClass="mr-2" *ngIf="!item.image" />
+                                <div
+                                    class="flex flex-column align-items-start justify-content-between w-full h-fit gap-1">
+                                    <!-- <a href="{{link}}">
+                                        <span class="employee-name text-xl"><b>{{item.employee_name}}</b></span>
+                                    </a> -->
+                                    <span class="employee-name text-xl"><b>{{item.employee_name}}</b></span>
+                                    <div class="flex flex-row align-items-center">
+                                        <i class="pi pi-envelope" style="font-size: 1rem; margin-right: 0.5rem"></i>
+                                        {{item.email}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex align-items-end justify-content-end w-fit h-fit">
+                                <a href="tel:{{item.mobile}}">
+                                    <i class="pi pi-phone text-blue-500" style="font-size: 1.5rem;"
+                                        pTooltip="{{item.mobile}}"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-column w-full justify-content-center gap-2">
+                            <div
+                                class="flex flex-column w-full h-fit align-items-start justify-content-between text-base">
+                                <p>Tổng doanh số: <b>{{item.money}} (VNĐ)</b></p>
+                            </div>
+                            <!-- Chỉ tiêu tháng -->
+                            <div class="flex flex-row w-full h-fit align-items-center justify-content-start gap-2 text-base"
+                                *ngIf="item.emp[0].target < item.amount">
+                                <span class="text-base text-gray-500">Chỉ tiêu tháng: <b>{{item.emp[0].target}}
+                                        (VNĐ)</b></span>
+                                <i class="pi pi-arrow-up" style="color: green; font-size: 1.3rem; font-weight: 600;"></i>
+                                <span class="text-lg font-medium text-green-700">{{item.emp[0].percent_kpi}}%</span>
+                            </div>
+                            <div class="flex flex-row w-full h-fit align-items-center justify-content-start gap-2 text-base"
+                                *ngIf="item.emp[0].target > item.amount">
+                                <span class="text-base text-gray-500">Chỉ tiêu tháng: <b>{{item.emp[0].target}}
+                                        (VNĐ)</b></span>
+                                <i class="pi pi-arrow-up" style="color: red; font-size: 1.3rem; font-weight: 600;"></i>
+                                <span class="text-lg font-medium text-red-700">{{item.emp[0].percent_kpi}}%</span>
+                            </div>
+                            <!-- Vượt chỉ tiêu bao nhiêu -->
+                            <p-table #dt [value]="item.emp" styleClass="p-datatable-gridlines"
+                                [tableStyle]="{ 'width': '100%' }">
+                                <ng-template pTemplate="header">
+                                    <tr class="text-sm">
+                                        <th class="text-center">
+                                            Ngày
+                                        </th>
+                                        <th class="text-center">
+                                            Doanh thu
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr class="text-sm">
+                                        <td class="text-center">
+                                            {{item.report_date}}
+                                        </td>
+                                        <td class="text-end">
+                                            {{item.amount}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <div class="w-full h-full" *ngIf="listSellOutEmployee.length === 0">
+            <p-skeleton styleClass="my-3 w-full h-screen border-round" />
+        </div>
+    </div>
+</div>

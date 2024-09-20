@@ -1,0 +1,9 @@
+<p-dropdown [options]="filterProcesses" (onChange)="selectedFilterProcess($event)"
+    optionLabel="process_name" [showClear]="true" [filter]="true" filterBy="process_name"
+    [style]="{'minWidth':'100%'}" placeholder="Select Process">
+    <ng-template let-filterProcess pTemplate="item">
+        <div class="flex align-items-center gap-2">
+            <div>{{filterProcess.process_name}}</div>
+        </div>
+    </ng-template>
+</p-dropdown>

@@ -1,0 +1,25 @@
+<div *ngIf="!ishow">
+  <highcharts-chart #chart [Highcharts]="Highcharts" [callbackFunction]="chartCallback" [options]="Options_Pie" [constructorType]="chartConstructor"  [(update)]="updateFlag"
+    style="display: block; width:100%; height:400p;"></highcharts-chart>
+</div>
+
+
+
+<div   style="height:400px" *ngIf="ishow" >
+  <p-table [value]="tablePie" styleClass="p-datatable-gridlines"  class="w-12"> 
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="font-bold">Khảo sát</th>
+        <th class="w-6rem text-center font-bold">Value</th>
+        <th class="w-6rem text-center font-bold">Tỉ lệ %</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-pie>
+      <tr>
+        <td  class="text-base">{{ pie.label }}</td>
+        <td class="w-6rem text-center text-base">{{ pie.value }}</td>
+        <td class="w-6rem text-center text-base">{{ pie.percent}}%</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

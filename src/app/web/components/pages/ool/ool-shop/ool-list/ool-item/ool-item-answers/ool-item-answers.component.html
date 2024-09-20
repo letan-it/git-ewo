@@ -1,0 +1,88 @@
+<div class="">
+    <p-toast></p-toast>
+    <p-table [value]="listItemAnswers" dataKey="ool_answer_id" editMode="row" [tableStyle]="{'min-width': '50rem'}"
+        [globalFilterFields]="['ool_answer_id', 'value', '_status']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center">
+                    <button pButton pRipple icon="pi pi-plus" class="p-button-sm mr-2" (click)="openNew()"></button>
+                </th>
+                <th class="text-center">ID</th>
+                <th class="text-center">Value</th>
+                <th class="text-center">Status</th>
+                <!-- <th class="text-center">ID <p-columnFilter type="numeric" field="ool_answer_id" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center">Value <p-columnFilter type="text" field="value" display="menu"
+                        class="ml-auto"></p-columnFilter> </th>
+                <th class="text-center">Status <p-columnFilter type="boolean" field="_status" display="menu"
+                        class="ml-auto"></p-columnFilter> </th> -->
+
+                <th class="text-center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="item">
+                <td class="text-center"> </td>
+                <td class="text-center">{{item.ool_answer_id}}</td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="item.value">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{item.value}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td class="text-center">
+                    <i class="pi"
+                        [ngClass]="{ 'text-green-500 pi-check-circle': item._status, 'text-red-500 pi-times-circle': !item._status }"></i>
+                </td>
+                <td>
+                    <div class="flex align-items-center justify-content-center gap-2">
+
+                        <button pButton icon="pi pi-pencil" class="p-button-icon p-button-success mr-2"
+                            (click)="editOOLItemAnswer(item)"></button>
+                        <button pButton icon="pi pi-trash" class="p-button-icon p-button-danger"
+                            (click)="deleteOOLItemAnswer(item)"></button>
+
+                        <!-- <button *ngIf="!editing" pButton pInitEditableRow icon="pi pi-pencil"
+                            (click)="onRowEditInit(item)" class="p-button-icon p-button-success mr-2"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(item)"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            (click)="onRowEditCancel(item, ri)"
+                            class="p-button-rounded p-button-text p-button-danger"></button> -->
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="oolItemAnswerDialog" [style]="{ width: '450px' }" header="Answers Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="value">Value<span class="font-bold" style="color: red;"> *</span></label>
+            <input type="text" pInputText id="value" [(ngModel)]="oolItemAnswer.value" />
+        </div>
+        <div class="field">
+            <label class="mr-2" for="status">Status</label>
+            <p-checkbox [(ngModel)]="oolItemAnswer._status" [binary]="true" inputId="binary"></p-checkbox>
+        </div>
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveAnswers()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog> -->

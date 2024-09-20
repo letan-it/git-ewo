@@ -1,0 +1,201 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="grid">
+    <div class="col-12">
+        <p-toolbar>
+            <div class="p-toolbar-group-left flex flex-wrap">
+                <button type="button" (click)="export()" label="Raw data" pButton pRipple icon="pi pi-file-excel"
+                    style="float: right" class="p-button-sm"></button>
+            </div>
+        </p-toolbar>
+    </div>
+</div>
+<div class="card">
+    <!-- <p-toast></p-toast> -->
+    <h6>
+        <b>Total Item: {{ ListStoreType.length }}</b>
+    </h6>
+
+    <p-table [globalFilterFields]="[
+            'shop_type_code',
+            'shop_type_name',
+            'employee_code',
+            'employee_name',
+            'created_date',
+            'status'
+        ]" [value]="ListStoreType" dataKey="shop_type_id" editMode="row" [tableStyle]="{ 'min-width': '50rem' }">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Employee Code</th>
+                <th>Employee Name</th>
+                <th>Create Date</th>
+                <th class="text-center">Status</th>
+                <!-- <th style="width: 20%"></th> -->
+            </tr>
+
+            <tr>
+                <th>
+                    <p-columnFilter type="text" [matchMode]="'contains'"  field="shop_type_code"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter type="text" [matchMode]="'contains'"  field="shop_type_name"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter type="text" [matchMode]="'contains'"  field="employee_code"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter type="text" [matchMode]="'contains'"  field="employee_name"></p-columnFilter>
+                </th>
+                <th>
+                    <!-- <p-columnFilter type="date" field="created_date"></p-columnFilter> -->
+                </th>
+                <th>
+                    <!-- <p-columnFilter type="text" field="status"></p-columnFilter> -->
+                    <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                placeholder="Any" [showClear]="true" appendTo="body">
+                            </p-dropdown>
+                        </ng-template>
+                    </p-columnFilter>
+                </th>
+                <!-- <th>
+                    <button
+                        type="button"
+                        pButton
+                        pRipple
+                        icon="pi pi-plus"
+                        (click)="createStoreRouter()"
+                    ></button>
+                </th> -->
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-storeType let-editing="editing" let-ri="rowIndex">
+            <!-- {{storeType|json}} -->
+            <tr [pEditableRow]="storeType">
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input class="font-bold" pInputText type="text" [(ngModel)]="storeType.shop_type_code"
+                                [disabled]="true" />
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{ storeType.shop_type_code }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="storeType.shop_type_name" />
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{ storeType.shop_type_name }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="storeType.employee_code" />
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{ storeType.employee_code }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="storeType.employee_name" />
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{ storeType.employee_name }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input class="font-bold" pInputText type="text" [(ngModel)]="storeType.created_date"
+                                [disabled]="true" />
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{ storeType.created_date }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td class="text-center">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <!-- {{posm._status}} -->
+                            <p-checkbox name="group1" [binary]="true" [(ngModel)]="storeType._status"
+                                [inputId]="storeType.shop_type_id">
+                            </p-checkbox>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            <i class="pi"
+                                [ngClass]="{'true-icon pi-check-circle text-green-500': storeType.status == 1, 
+                                                'false-icon pi-times-circle text-pink-500': storeType.status == 0}"></i>
+
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <!-- <td>
+                    <div
+                        class="flex align-items-center justify-content-center gap-2"
+                    >
+                        <button
+                            *ngIf="!editing"
+                            pButton
+                            pRipple
+                            type="button"
+                            pInitEditableRow
+                            icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text"
+                        ></button>
+                        <button
+                            *ngIf="editing"
+                            pButton
+                            pRipple
+                            type="button"
+                            pSaveEditableRow
+                            icon="pi pi-check"
+                            (click)="onRowEditSave(storeType)"
+                            class="p-button-rounded p-button-text p-button-success mr-2"
+                        ></button>
+                        <button
+                            *ngIf="editing"
+                            pButton
+                            pRipple
+                            type="button"
+                            pCancelEditableRow
+                            (click) ="onRowRemoveSave()"
+                            icon="pi pi-times"
+                            class="p-button-rounded p-button-text p-button-danger"
+                        ></button>
+                    </div>
+                </td> -->
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">No store type found.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog header="Create Store Type" [modal]="true" [(visible)]="StoreTypeCreate" [style]="{ width: '50vw' }"
+    [maximizable]="true">
+    <app-store-type-detail (newItemEvent)="addItem($event)" [clearMess]="clearMess" [inValue]="ListStoreType"
+        [action]="'create'"></app-store-type-detail>
+</p-dialog>

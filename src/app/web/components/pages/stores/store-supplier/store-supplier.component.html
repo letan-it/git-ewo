@@ -1,0 +1,139 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+<div class="card">
+    <p-toast></p-toast>
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="openNew()"></button>
+            <button pButton pRipple label="Raw data" icon="pi pi-file-excel" class="p-button-sm mr-2"
+                (click)="export()"></button>
+
+            <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedSupplier()" [disabled]="!selectedProducts || !selectedProducts.length"></button> -->
+        </ng-template>
+
+        <ng-template pTemplate="right">
+
+        </ng-template>
+    </p-toolbar>
+
+
+    <p-table #dt [value]="suppliers" [rows]="10" [paginator]="true"
+        [globalFilterFields]="['supplier_code', 'supplier_name', 'status']" [tableStyle]="{ 'min-width': '75rem' }"
+        [(selection)]="selectedProducts" [rowHover]="true" dataKey="supplier_id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Supplier</h5>
+                <span class="p-input-icon-left">
+
+                </span>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <!-- <th style="width: 4rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th> -->
+                <th pSortableColumn="supplier_code">Supplier Code <p-sortIcon field="supplier_code"></p-sortIcon></th>
+                <th pSortableColumn="supplier_name">Supplier Name <p-sortIcon field="supplier_name"></p-sortIcon></th>
+                <th pSortableColumn="employee_code">Employee Code <p-sortIcon field="employee_code"></p-sortIcon></th>
+                <th pSortableColumn="employee_name">Employee Name <p-sortIcon field="employee_name"></p-sortIcon></th>
+                <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                <th pSortableColumn="created_date">Created Date <p-sortIcon field="created_date"></p-sortIcon></th>
+                <th class="text-center">Action</th>
+            </tr>
+            <tr>
+                <!-- <th></th> -->
+                <th>
+                    <p-columnFilter supplier="text" [matchMode]="'contains'"  field="supplier_code"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter supplier="text"  [matchMode]="'contains'" field="supplier_name"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter supplier="text"  [matchMode]="'contains'" field="employee_code"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter supplier="text"  [matchMode]="'contains'" field="employee_name"></p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                placeholder="Any" [showClear]="true" appendTo="body">
+                            </p-dropdown>
+                        </ng-template>
+                    </p-columnFilter>
+                </th>
+                <th>
+                    <!-- <p-columnFilter supplier="date" field="created_date"></p-columnFilter> -->
+                </th>
+                <th></th>
+
+
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="body" let-supplier>
+            <tr>
+                <!-- <td>
+                    <p-tableCheckbox [value]="supplier"></p-tableCheckbox>
+                </td> -->
+                <td>{{ supplier.supplier_code }}</td>
+                <td>{{ supplier.supplier_name }}</td>
+                <td>{{ supplier.employee_code }}</td>
+                <td>{{ supplier.employee_name }}</td>
+                <td>
+                    <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500': supplier.status == 1, 
+                    'false-icon pi-times-circle text-pink-500': supplier.status == 0}"></i>
+                </td>
+                <td>{{ supplier.created_date }}</td>
+
+                <td class=" text-center">
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                        (click)="editSupplier(supplier)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="deleteSupplier(supplier)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">In total there are {{ suppliers ?
+                suppliers.length : 0 }} suppliers.</div>
+        </ng-template>
+    </p-table>
+</div>
+<p-dialog [(visible)]="supplierDialog" [style]="{ width: '450px' }" header="Supplier Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="supplier_code">Supplier Code<span style="color: red;"> *</span> </label>
+            <input type="text" pInputText id="supplier_code" [(ngModel)]="supplier.supplier_code"
+               class="font-bold"  [disabled]="action == 'create' ? false : true" />
+        </div>
+        <div class="field">
+            <label for="supplier_name">Supplier Name<span style="color: red;"> *</span> </label>
+            <input type="text" pInputText id="supplier_name" [(ngModel)]="supplier.supplier_name" />
+        </div>
+
+        <div class="field">
+            <label for="_status">Status</label>
+            <!-- {{supplier._status|json}} -->
+            <p>
+                <p-checkbox [(ngModel)]="supplier._status" [binary]="true" inputId="binary"></p-checkbox>
+            </p>
+        </div>
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveSupplier()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

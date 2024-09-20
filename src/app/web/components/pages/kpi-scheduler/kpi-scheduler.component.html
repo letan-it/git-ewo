@@ -1,0 +1,117 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+
+
+<div class="card">
+    <p-table [value]="listKPIScheduler" [tableStyle]="{ 'min-width': '50rem' }" dataKey="Id" [rows]="10"
+        [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading" [paginator]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" aria-sort="ascending"
+        sortField="Orders" [globalFilterFields]="['Id', 'Code', 'NameVN', 'NameEN', 'Orders']">
+        <ng-template pTemplate="header">
+            <tr>
+
+                <th class="text-center"> ID
+                    <p-columnFilter type="numeric" field="Id" display="menu"></p-columnFilter>
+                </th>
+                <th class="text-center"> Code
+                    <p-columnFilter type="text" field="Code" display="menu"></p-columnFilter>
+                </th>
+                <th class="text-center"> NameVN
+                    <p-columnFilter type="text" field="NameVN" display="menu"></p-columnFilter>
+                </th>
+                <th class="text-center"> NameEN
+                    <p-columnFilter type="text" field="NameEN" display="menu"></p-columnFilter>
+                </th>
+                <th class="text-center"> Orders
+                    <p-columnFilter type="text" field="NameEN" display="menu"></p-columnFilter>
+                </th>
+                <th class="text-center"> Action </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td class="text-center font-bold " style="color: green;"> {{ item.Id }}</td>
+                <td>{{ item.Code }}</td>
+                <td>{{ item.NameVN }}</td>
+                <td>{{ item.NameEN }}</td>
+                <td class="text-center">{{ item.Orders }}</td>
+                <td class="text-center">
+                    <button class="p-button-rounded p-button-text" pButton pRipple type="button" icon="pi pi-pencil"
+                        (click)="updateKPI(item)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<!--  
+    "Id": 1, 
+    "Code": "INVENTORY",
+    "NameVN": "Tồn kho",
+    "NameEN": "Inventory", 
+    "Orders": 1, 
+ -->
+
+<p-dialog [(visible)]="kpiDialog" [style]="{ width: '750px' }" header="KPI Scheduler Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <!-- {{selectedType|json}} -->
+        <div class="card flex justify-content-center">
+            <div class="flex flex-wrap gap-3">
+                <div *ngFor="let item of type" class="field-checkbox">
+                    <!-- (onClick)="changeValue($event )" -->
+                    <p-radioButton [inputId]="item.key" name="category" [value]="item"
+                        [(ngModel)]="selectedType"></p-radioButton>
+                    <label [for]="item.key" class="ml-2">{{ item.name }}</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- {{selectedDayName|json}} -->
+        <div class="card flex justify-content-center"
+            *ngIf="selectedType && selectedType.key && selectedType.key === 'weekly'">
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let item of dayName" class="field-checkbox">
+                    <p-checkbox [label]="item.name" name="group" [value]="item"
+                        [(ngModel)]="selectedDayName"></p-checkbox>
+                </div>
+            </div>
+        </div>
+
+        <div class="card flex justify-content-center"
+            *ngIf="selectedType && selectedType.key && selectedType.key === 'monthly'">
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let item of calendar" class="field-checkbox">
+                    <p-checkbox [label]="item.name" name="group" [value]="item"
+                        [(ngModel)]="selectedCalendar"></p-checkbox>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- {{selectedPostion|json}} -->
+        <div class="card flex justify-content-center">
+            <h5 style="color:red">Note: No installation, default not check</h5>
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let item of position" class="field-checkbox">
+                    <p-checkbox [label]="item.name" name="group" [value]="item" [(ngModel)]="selectedPostion"
+                        class="mr-4"></p-checkbox>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let item of category" class="field-checkbox">
+                    <p-checkbox [label]="item.name" name="group" [value]="item" [(ngModel)]="selectedCategory"
+                        class="mr-4"></p-checkbox>
+                </div>
+            </div>
+
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveKPI()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

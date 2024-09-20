@@ -1,0 +1,300 @@
+<app-breadcrumb-menu [items_menu]="items_menu" [home]="home"></app-breadcrumb-menu>
+<!-- 
+<div class="container">
+    <div class="main-body"> -->
+
+<!-- /Breadcrumb -->
+
+<div class="row gutters-sm">
+
+    <div class="col-md-4 mb-3">
+
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex flex-column align-items-center text-center">
+
+                    <img *ngIf="!image" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
+                        class="rounded-circle" width="150">
+
+                    <p-image *ngIf="image" [src]="image" [preview]="true" alt="Image" alt="Admin" class="rounded-circle"
+                        width="150"> </p-image>
+
+                    <div class="mt-3">
+                        <!-- {{ userProfile.login_name }} -->
+                        <h4></h4>
+                        <!-- {{userProfile.birthday_date}} -->
+                        <p class="text-secondary mb-1"></p>
+
+                        <!-- <p-messages [value]="msgs"></p-messages> -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+
+            <div class="p-fluid">
+
+                <!-- <h5 class="font-bold">Account
+                        </h5> -->
+
+                <div class="field">
+                    <h6 htmlFor="name1">Login name<span style="color: red; font-weight: bold;">
+                            *</span></h6>
+                    <!-- userProfile.login_name -->
+                    <input pInputText id="login_name" [(ngModel)]="login_name" class="text-center font-bold" type="text"
+                        [value]="userProfile" [disabled]="false" />
+                </div>
+
+                <div class="field">
+                    <h6 htmlFor="password">Password</h6>
+                    <p-password id="password" placeholder="please input password" [(ngModel)]="password"
+                        [disabled]="true" [toggleMask]="true ">
+
+                        <ng-template pTemplate="footer">
+                            <p-divider></p-divider>
+                            <p class="mt-2">Suggestions</p>
+                            <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                                <li>At least one lowercase</li>
+                                <li>At least one uppercase</li>
+                                <li>At least one numeric</li>
+                                <li>Minimum 8 characters</li>
+                            </ul>
+                        </ng-template>
+
+                    </p-password>
+                </div>
+
+
+                <!-- <div class="field ">
+                            <h6 htmlFor="name1 ">Account Test</h6>
+                            <p> 
+                                <p-checkbox [(ngModel)]="checked" (click)="checkAccountTest()" [binary]="true" inputId="binary"></p-checkbox> 
+
+                            </p>
+                        </div> -->
+
+                <div class="field">
+                    <h6 htmlFor="name1 ">Status</h6>
+                    <div class="field-checkbox">
+                        <p-checkbox name="group_name" (onChange)="changeStatus($event)" [binary]="true"
+                            [(ngModel)]="status"></p-checkbox>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <div class=" p-fluid ">
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1 ">Employee Code<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                        </div>
+                        <div class="col-9">
+                            <input pInputText id="_employee_code " [(ngModel)]="employee_code" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1 ">Employee Name<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                        </div>
+                        <div class="col-9">
+                            <input pInputText id="_employee_name " [(ngModel)]="employee_name" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1 ">CCCD<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                        </div>
+                        <div class="col-9">
+                            <!-- <input pInputText id="card_number" [(ngModel)]="card_number" type="number" /> -->
+
+                            <p-inputMask mask="999999999999" [(ngModel)]="card_number"></p-inputMask>
+
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1 ">Mobile<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                        </div>
+                        <div class="col-9">
+                            <p-inputMask mask="0999999999" [(ngModel)]="mobile"></p-inputMask>
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1 ">Birthday Date<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                        </div>
+                        <div class="col-5">
+                            <input pInputText id="date" class="mr-2" type="date" [(ngModel)]="birthday_date"
+                                [maxlength]="10" [max]="date" />
+
+                        </div>
+                        <div class="col-1">
+                            <h6 htmlFor="sex">Gender</h6>
+                        </div>
+                        <div class="col-3">
+                            <div class="flex flex-wrap gap-3">
+                                <div class="flex align-items-center">
+                                    <div *ngFor="let item of gerders" class="field-checkbox">
+                                        <p-radioButton name="item" [value]="item" [(ngModel)]="selectedGender" />
+                                        <label [for]="item.key" class="mr-2">
+                                            {{ item.name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1 ">Email<span style="color: red; font-weight: bold;">
+                                    *</span></h6>
+                        </div>
+                        <div class="col-9">
+                            <input pInputText id="email" [(ngModel)]="email" type="email " />
+                        </div>
+                    </div>
+
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="image">Image Profile</h6>
+                        </div>
+                        <div class="col-6">
+                            <input pInputText id="image" #myInputImage type="file" (change)="onChangeImage($event)">
+                        </div>
+                    </div>
+
+                    <!-- <div class="grid">
+                        <div class="col-3">
+                        </div>
+                        <div class="col-9">
+                            <p-image *ngIf="image_card_before" [src]="image_card_before" [preview]="true" alt="Image"
+                                alt="Admin" class="rounded-circle" width="50"> </p-image>
+                        </div>
+                    </div> -->
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="image_card_before">Image Card Before</h6>
+                        </div>
+                        <div class="col-6">
+                            <input pInputText id="image_card_before" #myInputBefore type="file"
+                                (change)="onChangeImageBefore($event)">
+                        </div>
+                        <div class="col-3">
+                            <p-image *ngIf="image_card_before" [src]="image_card_before" [preview]="true" alt="Image"
+                                alt="Admin" class="rounded-circle" width="50"> </p-image>
+                        </div>
+                    </div>
+ 
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="image_card_after">Image Card After</h6>
+                        </div>
+                        <div class="col-6">
+                            <input pInputText id="image_card_after" #myInputAfter type="file"
+                                (change)="onChangeImageAfter($event)">
+                        </div>
+                        <div class="col-3">
+                            <p-image *ngIf="image_card_after" [src]="image_card_after" [preview]="true" alt="Image"
+                                alt="Admin" class="rounded-circle" width="50"> </p-image>
+                        </div>
+                    </div>
+
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="image_face_left">Image Face Left</h6>
+                        </div>
+                        <div class="col-6">
+                            <input pInputText id="image_face_left" #myInputFaceLeft type="file"
+                                (change)="onChangeImageFaceLeft($event)">
+                        </div>
+                        <div class="col-3">
+                            <p-image *ngIf="image_face_left" [src]="image_face_left" [preview]="true" alt="Image"
+                                alt="Admin" class="rounded-circle" width="50"> </p-image>
+                        </div>
+                    </div>
+
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="image_face_right">Image Face Right</h6>
+                        </div>
+                        <div class="col-6">
+                            <input pInputText id="image_face_right" #myInputFaceRight type="file"
+                                (change)="onChangeImageFaceRight($event)">
+                        </div>
+                        <div class="col-3">
+                            <p-image *ngIf="image_face_right" [src]="image_face_right" [preview]="true" alt="Image"
+                                alt="Admin" class="rounded-circle" width="50"> </p-image>
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1">Employee Type <span style="color: red; font-weight: bold;">*</span></h6>
+                        </div>
+                        <div class="col-9">
+                            <app-control-employee-type [itemEmployeeType]="employee_type_id"
+                                (outValue)="selectEmployeeType($event)"
+                                [placeholder]="'Select a Employee Type'"></app-control-employee-type>
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <div class="col-3">
+                            <h6 htmlFor="email1 ">Manager <span style="color: red; font-weight: bold;">*</span></h6>
+                        </div>
+                        <div class="col-9">
+                            <!-- [employee_id]="employee_type_id" -->
+                            <app-control-employee-list [itemManagerCode]="item_ASM"
+                                [employee_type_id]="parent_employee_type" (outValue)="selectASM($event)"
+                                [placeholder]="'Select a Manager '"></app-control-employee-list>
+                        </div>
+                    </div>
+
+                    <p-toast></p-toast>
+                    <p-confirmDialog></p-confirmDialog>
+                    <div class="field ">
+                        <p-button label="Save" (click)="save_info()"
+                            styleClass="p-button-success p-button-sm "></p-button>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!-- 
+    </div>
+</div> -->
