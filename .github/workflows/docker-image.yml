@@ -14,6 +14,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-  
+
     - name: Log in to Docker registry
       run: echo docker login reg.acacy.vn:5443 -u dev -p TienNguyen@2310
+  
+    - name: Set the timestamp
+      run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
+    
+    - name: Build Docker Image 
+      run: docker build --no-cache -t tiennv1510/web_audit:${{ env.TIMESTAMP }} -f "./Dockerfile" .
+     
+    - name: Tag the Docker image
+      run: docker tag tiennv1510/web_audit:${{ env.TIMESTAMP }} reg.acacy.vn:5443/acacy/web_audit:${{ env.TIMESTAMP }}
+    
+    - name: Push the Docker image
+      run: docker push reg.acacy.vn:5443/acacy/web_audit:${{ env.TIMESTAMP }}
