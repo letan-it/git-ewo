@@ -16,3 +16,12 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build --no-cache -t tiennv1510/web_audit:$(date +%s) -f "./Dockerfile" .
+
+    - name: Tag the Docker image
+      run: docker tag tiennv1510/web_audit:$(date +%s) reg.acacy.vn:5443/acacy/web_audit:$(date +%s)
+
+    - name: Log in to Docker registry
+      run: echo "TienNguyen@2310" | docker login reg.acacy.vn:5443 -u "tiennv1510" --password-stdin
+
+    - name: Push the Docker image
+      run: docker push reg.acacy.vn:5443/acacy/web_audit:$(date +%s)
