@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Log in to Docker registry
-      run: echo docker login reg.acacy.vn:5443 -u dev -p TienNguyen@2310
+      run: echo docker login reg.acacy.vn:5443 -u tiennv1510 -p dckr_pat_OOG47Oo70ybvIrwRwNOKlaBn_FA
   
     - name: Set the timestamp
       run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
